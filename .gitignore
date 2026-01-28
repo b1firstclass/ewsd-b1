@@ -1,0 +1,91 @@
+############################################
+# OS / Editor
+############################################
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.user
+*.sln.docstates
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.iml
+
+############################################
+# .NET / Visual Studio
+############################################
+bin/
+obj/
+.vs/
+TestResults/
+*.user
+*.suo
+*.cache
+*.log
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# ASP.NET Core
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+############################################
+# Build outputs
+############################################
+[Bb]uild/
+[Rr]elease/
+x64/
+x86/
+
+############################################
+# React / Node
+############################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# React build output
+build/
+dist/
+
+############################################
+# Environment variables
+############################################
+.env
+.env.*
+!.env.example
+
+############################################
+# Coverage / Tests
+############################################
+coverage/
+*.coverage
+*.coveragexml
+
+############################################
+# Logs
+############################################
+logs/
+*.log
+
+############################################
+# Docker
+############################################
+docker-compose.override.yml
+
+############################################
+# Misc
+############################################
+*.tmp
+*.bak
