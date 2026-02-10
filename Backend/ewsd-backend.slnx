@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ewsd-backend.Api/ewsd-backend.Api.csproj" />
+  <Project Path="ewsd-backend.Application/ewsd-backend.Application.csproj" Id="8a4bfa99-66ea-411d-9bd7-5c501cfc50e4" />
+  <Project Path="ewsd-backend.Domain/ewsd-backend.Domain.csproj" Id="3e2de785-e252-40dd-9eb8-041d5804a8de" />
+  <Project Path="ewsd-backend.Infrastructure/ewsd-backend.Infrastructure.csproj" Id="7bfd6848-8b57-4cf2-bd84-28809718c4d1" />
+</Solution>
