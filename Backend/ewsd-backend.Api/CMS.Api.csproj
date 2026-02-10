@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>ewsd_backend.Api</RootNamespace>
+    <RootNamespace>CMS.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ewsd-backend.Application\ewsd-backend.Application.csproj" />
-    <ProjectReference Include="..\ewsd-backend.Infrastructure\ewsd-backend.Infrastructure.csproj" />
+    <ProjectReference Include="..\ewsd-backend.Application\CMS.Application.csproj" />
+    <ProjectReference Include="..\ewsd-backend.Infrastructure\CMS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

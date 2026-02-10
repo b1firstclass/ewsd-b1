@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ewsd_backend.Api.Controllers
+namespace CMS.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

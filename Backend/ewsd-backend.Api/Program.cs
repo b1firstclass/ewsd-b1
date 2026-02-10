@@ -1,11 +1,11 @@
 
-using ewsd_backend.Application;
-using ewsd_backend.Infrastructure;
+using CMS.Application;
+using CMS.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Scalar.AspNetCore;
 using System.Reflection;
 
-namespace ewsd_backend.Api
+namespace CMS.Api
 {
     public class Program
     {

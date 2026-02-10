@@ -1,6 +1,6 @@
-@ewsd_backend.Api_HostAddress = http://localhost:5014
+@CMS.Api_HostAddress = http://localhost:5014
 
-GET {{ewsd_backend.Api_HostAddress}}/weatherforecast/
+GET {{CMS.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

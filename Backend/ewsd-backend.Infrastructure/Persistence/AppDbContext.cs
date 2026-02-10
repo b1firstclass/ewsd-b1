@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using ewsd_backend.Infrastructure;
+using CMS.Domain.Entities;
 
-namespace ewsd_backend.Infrastructure.Persistence;
+namespace CMS.Infrastructure.Persistence;
 
 public partial class AppDbContext : DbContext
 {

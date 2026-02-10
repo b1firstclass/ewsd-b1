@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ewsd_backend.Application
+namespace CMS.Application
 {
     public static class DependencyInjection
     {

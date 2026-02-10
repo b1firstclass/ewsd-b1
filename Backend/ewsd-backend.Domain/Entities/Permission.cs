@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ewsd_backend.Infrastructure;
+namespace CMS.Domain.Entities;
 
 public partial class Permission
 {

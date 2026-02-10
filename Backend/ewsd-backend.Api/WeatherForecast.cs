@@ -1,4 +1,4 @@
-namespace ewsd_backend.Api
+namespace CMS.Api
 {
     public class WeatherForecast
     {

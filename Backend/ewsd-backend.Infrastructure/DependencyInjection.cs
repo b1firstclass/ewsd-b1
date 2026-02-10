@@ -1,9 +1,9 @@
-﻿using ewsd_backend.Infrastructure.Persistence;
+﻿using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ewsd_backend.Infrastructure
+namespace CMS.Infrastructure
 {
     public static class DependencyInjection
     {

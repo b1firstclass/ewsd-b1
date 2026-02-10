@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ewsd-backend.Domain\ewsd-backend.Domain.csproj" />
+    <ProjectReference Include="..\ewsd-backend.Domain\CMS.Domain.csproj" />
   </ItemGroup>
 
 </Project>
