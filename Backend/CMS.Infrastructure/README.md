@@ -22,5 +22,5 @@ Add registrations (e.g., DbContext, repositories, external service clients) insi
 ## Migration Script
 
 ```cmd
-dotnet ef dbcontext scaffold "Host=pg-114e3ca1-project-0b1c.l.aivencloud.com;Port=16774;Database=CMS;Username=avnadmin;Password=AVNS_HrT7gA3tm0aOuDXle2H" Npgsql.EntityFrameworkCore.PostgreSQL --context AppDbContext --context-dir Persistence --output-dir ../ewsd-backend.Domain/Entities --use-database-names --no-onconfiguring
+dotnet ef dbcontext scaffold "Host=pg-114e3ca1-project-0b1c.l.aivencloud.com;Port=16774;Database=CMS;Username=avnadmin;Password=AVNS_HrT7gA3tm0aOuDXle2H" Npgsql.EntityFrameworkCore.PostgreSQL --context AppDbContext --context-dir Persistence --output-dir ../CMS.Domain/Entities --use-database-names --no-onconfiguring
 ```

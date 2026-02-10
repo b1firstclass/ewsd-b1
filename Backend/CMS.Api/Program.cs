@@ -1,5 +1,6 @@
 
 using CMS.Application;
+using CMS.Application.Common;
 using CMS.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Scalar.AspNetCore;
@@ -15,13 +16,15 @@ namespace CMS.Api
 
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile($"appsettings.{environment}.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"serilog.{environment}.json", optional: false, reloadOnChange: true);
+                .AddJsonFile($"serilog.{environment}.json", optional: false, reloadOnChange: true)
+                .Build();
 
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
-            
             builder.Services.AddOpenApi();
+            builder.Services.AddHealthChecks();
+
             builder.Services.AddAutoMapper(c =>
             {
                 c.AddMaps(Assembly.GetExecutingAssembly());
@@ -29,6 +32,11 @@ namespace CMS.Api
 
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
+
+            var jwtOptions = configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
+                ?? throw new InvalidOperationException("AppSettings configuration is missing.");
+
+            builder.Services.Configure<AppSettings>(configuration.GetSection(AppSettings.SectionName));
 
             var app = builder.Build();
 
