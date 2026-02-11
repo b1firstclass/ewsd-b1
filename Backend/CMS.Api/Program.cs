@@ -64,7 +64,7 @@ namespace CMS.Api
                 app.MapScalarApiReference();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
