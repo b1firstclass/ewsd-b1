@@ -1,9 +1,6 @@
 ﻿using CMS.Application.Interfaces.Repositories;
 using CMS.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Infrastructure.Repositories
 {
@@ -13,6 +10,31 @@ namespace CMS.Infrastructure.Repositories
         public Repository(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<TEntity?> GetByIdAsync(Guid id)
+        {
+            return await _context.Set<TEntity>().FindAsync(id);
+        }
+
+        public async Task<IReadOnlyList<TEntity>> GetAllAsync()
+        {
+            return await _context.Set<TEntity>().ToListAsync();
+        }
+
+        public async Task AddAsync(TEntity entity)
+        {
+            await _context.Set<TEntity>().AddAsync(entity);
+        }
+
+        public void Update(TEntity entity)
+        {
+            _context.Set<TEntity>().Update(entity);
+        }
+
+        public void Remove(TEntity entity)
+        {
+            _context.Set<TEntity>().Remove(entity);
         }
     }
 }

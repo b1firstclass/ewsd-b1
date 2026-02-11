@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CMS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using CMS.Domain.Entities;
 
 namespace CMS.Infrastructure.Persistence;
 

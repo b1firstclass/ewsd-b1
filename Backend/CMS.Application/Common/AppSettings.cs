@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CMS.Application.Common
+﻿namespace CMS.Application.Common
 {
     public class AppSettings
     {
         public const string SectionName = "AppSettings";
+        public required JwtSettings JwtSettings { get; set; }
     }
 
     public class JwtSettings

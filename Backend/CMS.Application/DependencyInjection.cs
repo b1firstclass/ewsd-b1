@@ -1,3 +1,7 @@
+using CMS.Application.Interfaces.Services;
+using CMS.Application.Services;
+using CMS.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CMS.Application
@@ -6,7 +10,10 @@ namespace CMS.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            // Register application layer services here
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IFacultiesService, FacultiesService>();
+
             return services;
         }
     }

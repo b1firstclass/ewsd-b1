@@ -1,9 +1,6 @@
 ﻿using CMS.Application.Interfaces.Repositories;
 using CMS.Infrastructure.Persistence;
 using ewsd_backend.Application.Interfaces.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CMS.Infrastructure.Repositories
 {

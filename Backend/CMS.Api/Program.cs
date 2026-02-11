@@ -2,9 +2,11 @@
 using CMS.Application;
 using CMS.Application.Common;
 using CMS.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Reflection;
+using System.Text;
 
 namespace CMS.Api
 {
@@ -24,6 +26,7 @@ namespace CMS.Api
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
             builder.Services.AddHealthChecks();
+            builder.Services.AddAuthorization();
 
             builder.Services.AddAutoMapper(c =>
             {
@@ -33,10 +36,25 @@ namespace CMS.Api
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
-            var jwtOptions = configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
+            var appSettings = configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
                 ?? throw new InvalidOperationException("AppSettings configuration is missing.");
 
             builder.Services.Configure<AppSettings>(configuration.GetSection(AppSettings.SectionName));
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = appSettings.JwtSettings.Issuer,
+                        ValidAudience = appSettings.JwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.Key))
+                    };
+                });
 
             var app = builder.Build();
 
@@ -48,10 +66,11 @@ namespace CMS.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.MapControllers();
+            app.MapHealthChecks("/health");
 
             app.Run();
         }
