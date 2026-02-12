@@ -8,11 +8,24 @@ namespace CMS.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
         private readonly Dictionary<Type, object> _repositories;
+        private readonly IUsersRepository _usersRepository;
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
             _repositories = new Dictionary<Type, object>();
+        }
+
+        public IUsersRepository UsersRepository
+        {
+            get
+            {
+                if (_usersRepository == null)
+                {
+                    return new UsersRepository(_context);
+                }
+                return _usersRepository;
+            }
         }
 
         public IRepository<T> Repository<T>() where T : class

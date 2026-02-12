@@ -23,7 +23,26 @@ namespace CMS.Api
 
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = new Dictionary<string, string[]>();
+                        foreach (var key in context.ModelState.Keys)
+                        {
+                            var state = context.ModelState[key];
+                            if (state != null && state.Errors.Count > 0)
+                            {
+                                errors[key] = state.Errors.Select(e => e.ErrorMessage).ToArray();
+                            }
+                        }
+
+                        var response = ApiResponse.ErrorResponse("Validation failed", errors);
+                        return new Microsoft.AspNetCore.Mvc.ObjectResult(response) { StatusCode = 400 };
+                    };
+                });
+
             builder.Services.AddOpenApi();
             builder.Services.AddHealthChecks();
             builder.Services.AddAuthorization();

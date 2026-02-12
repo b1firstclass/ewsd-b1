@@ -4,6 +4,7 @@ namespace ewsd_backend.Application.Interfaces.Common
 {
     public interface IUnitOfWork : IDisposable
     {
+        IUsersRepository UsersRepository { get; }
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

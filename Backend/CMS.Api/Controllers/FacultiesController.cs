@@ -1,6 +1,9 @@
 ﻿using CMS.Api.Utilities;
+using CMS.Application.Common;
+using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Api.Controllers
@@ -24,7 +27,10 @@ namespace CMS.Api.Controllers
             try
             {
                 var faculties = await _facultyService.GetAllFacultiesAsync();
-                return Ok(faculties);
+
+                var facultyList = new PagedResponse<FaculityInfo>(faculties, faculties.Count());
+               
+                return facultyList.ToApiResponse("Faculties retrieved successfully");
             }
             catch (Exception ex)
             {
