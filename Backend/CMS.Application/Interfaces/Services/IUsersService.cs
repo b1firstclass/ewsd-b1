@@ -1,10 +1,11 @@
-﻿using CMS.Application.DTOs;
+﻿using CMS.Application.Common;
+using CMS.Application.DTOs;
 
 namespace CMS.Application.Interfaces.Services
 {
     public interface IUsersService
     {
-        Task<List<UserInfo>> GetAllUsersAsync();
+        Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest);
         Task<UserInfo?> GetUserByIdAsync(string userId);
         Task<UserInfo> CreateUserAsync(UserRegisterRequest request);
         Task<UserInfo?> UpdateUserAsync(string userId, UserUpdateRequest request);

@@ -21,13 +21,20 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
-                var response = new PagedResponse<UserInfo>(users, users.Count);
-                return response.ToApiResponse("Users retrieved successfully");
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var users = await _userService.GetAllUsersAsync(paginationRequest);
+
+                return users.ToApiResponse("Users retrieved successfully");
             }
             catch (Exception ex)
             {

@@ -38,10 +38,15 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<UserInfo>> GetAllUsersAsync()
+        public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest)
         {
-            var users = await _unitOfWork.Repository<User>().GetAllAsync();
-            return _mapper.Map<List<UserInfo>>(users);
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take);
+
+            var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
+
+            return new PagedResponse<UserInfo>(mappedUsers, pagedUsers.TotalCount);
         }
 
         public async Task<UserInfo?> GetUserByIdAsync(string userId)
@@ -60,6 +65,11 @@ namespace CMS.Application.Services
             if (await LoginIdExistsAsync(request.LoginId))
             {
                 throw new InvalidOperationException($"LoginId '{request.LoginId}' already exists");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Email) && await EmailExistsAsync(request.Email))
+            {
+                throw new InvalidOperationException($"Email '{request.Email}' already exists");
             }
 
             var userEntity = _mapper.Map<User>(request);
@@ -108,6 +118,12 @@ namespace CMS.Application.Services
 
             if (!string.IsNullOrWhiteSpace(request.Email))
             {
+                if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase) &&
+                    await EmailExistsAsync(request.Email, userId))
+                {
+                    throw new InvalidOperationException($"Email '{request.Email}' already exists");
+                }
+
                 user.Email = request.Email;
             }
 
@@ -201,6 +217,23 @@ namespace CMS.Application.Services
             }
 
             var existingUser = await _unitOfWork.UsersRepository.GetByLoginIdAsync(loginId);
+            if (existingUser == null)
+            {
+                return false;
+            }
+
+            return excludeUserId == null ||
+                   !string.Equals(existingUser.UserId, excludeUserId, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task<bool> EmailExistsAsync(string email, string? excludeUserId = null)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            var existingUser = await _unitOfWork.UsersRepository.GetByEmailAsync(email);
             if (existingUser == null)
             {
                 return false;

@@ -1,4 +1,5 @@
-﻿using CMS.Domain.Entities;
+﻿using CMS.Application.Common;
+using CMS.Domain.Entities;
 using System.Threading.Tasks;
 
 namespace CMS.Application.Interfaces.Repositories
@@ -7,5 +8,7 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<User?> GetByLoginIdAsync(string loginId);
         Task<User?> GetByIdWithFacultiesAsync(string userId);
+        Task<PagedResult<User>> GetPagedAsync(int skip, int take);
+        Task<User?> GetByEmailAsync(string email);
     }
 }
