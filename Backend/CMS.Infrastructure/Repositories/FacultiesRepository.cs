@@ -16,7 +16,7 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take)
+        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take, bool? isActive = null)
         {
             if (skip < 0)
             {
@@ -24,6 +24,11 @@ namespace CMS.Infrastructure.Repositories
             }
 
             var query = _context.Faculties.AsNoTracking();
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(f => f.IsActive == isActive.Value);
+            }
             var totalCount = await query.CountAsync();
 
             var items = await query

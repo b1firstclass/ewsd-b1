@@ -42,7 +42,7 @@ namespace CMS.Application.Services
         {
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
-            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take);
+            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
 

@@ -37,7 +37,7 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(r => r.RoleId == roleId);
         }
 
-        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take)
+        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, bool? isActive = null)
         {
             if (skip < 0)
             {
@@ -47,6 +47,11 @@ namespace CMS.Infrastructure.Repositories
             var query = _context.Roles
                 .Include(r => r.Permissions)
                 .AsNoTracking();
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(r => r.IsActive == isActive.Value);
+            }
 
             var totalCount = await query.CountAsync();
 

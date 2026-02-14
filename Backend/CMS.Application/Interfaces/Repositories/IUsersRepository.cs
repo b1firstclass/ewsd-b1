@@ -8,7 +8,7 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<User?> GetByLoginIdAsync(string loginId);
         Task<User?> GetByIdWithFacultiesAsync(string userId);
-        Task<PagedResult<User>> GetPagedAsync(int skip, int take);
+        Task<PagedResult<User>> GetPagedAsync(int skip, int take, bool? isActive = null);
         Task<User?> GetByEmailAsync(string email);
     }
 }

@@ -6,6 +6,6 @@ namespace CMS.Application.Interfaces.Repositories
 {
     public interface IFacultiesRepository : IRepository<Faculty>
     {
-        Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take);
+        Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take, bool? isActive = null);
     }
 }

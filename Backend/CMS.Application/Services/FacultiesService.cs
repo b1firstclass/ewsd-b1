@@ -32,7 +32,7 @@ namespace CMS.Application.Services
 
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
-            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take);
+            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
 
             var mappedFaculties = _mapper.Map<List<FaculityInfo>>(pagedFaculties.Items);
             return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
