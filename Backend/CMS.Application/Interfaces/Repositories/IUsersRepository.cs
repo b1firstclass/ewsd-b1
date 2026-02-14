@@ -1,12 +1,11 @@
 ﻿using CMS.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace CMS.Application.Interfaces.Repositories
 {
     public interface IUsersRepository : IRepository<User>
     {
-        bool IsLoginIdExists(string loginId);
+        Task<User?> GetByLoginIdAsync(string loginId);
+        Task<User?> GetByIdWithFacultiesAsync(string userId);
     }
 }

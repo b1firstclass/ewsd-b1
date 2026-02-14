@@ -1,11 +1,14 @@
 ﻿using CMS.Application.DTOs;
-using CMS.Domain.Entities;
 
 namespace CMS.Application.Interfaces.Services
 {
     public interface IUsersService
     {
-        bool IsLoginIdExists(string loginId);
-        Task<User> RegisterUserAsync(UserRegisterRequest request);
+        Task<List<UserInfo>> GetAllUsersAsync();
+        Task<UserInfo?> GetUserByIdAsync(string userId);
+        Task<UserInfo> CreateUserAsync(UserRegisterRequest request);
+        Task<UserInfo?> UpdateUserAsync(string userId, UserUpdateRequest request);
+        Task<bool> DeleteUserAsync(string userId);
+        Task<UserLoginResponse> LoginAsync(UserLoginRequest request);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
 using CMS.Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CMS.Infrastructure.Repositories
 {
@@ -15,10 +14,30 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public bool IsLoginIdExists(string loginId)
+        public async Task<User?> GetByLoginIdAsync(string loginId)
         {
-            var user = _context.Users.FirstOrDefault(u => u.LoginId == loginId);
-            return user != null;
+            if (string.IsNullOrWhiteSpace(loginId))
+            {
+                return null;
+            }
+
+            return await _context.Users
+                .Include(u => u.Faculties)
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.LoginId == loginId);
+        }
+
+        public async Task<User?> GetByIdWithFacultiesAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return null;
+            }
+
+            return await _context.Users
+                .Include(u => u.Faculties)
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
         }
     }
 }

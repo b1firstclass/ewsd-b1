@@ -1,12 +1,9 @@
 ﻿using CMS.Api.Utilities;
+using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
-using CMS.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Api.Controllers
 {
@@ -23,6 +20,73 @@ namespace CMS.Api.Controllers
             _userService = usersService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _userService.GetAllUsersAsync();
+                var response = new PagedResponse<UserInfo>(users, users.Count);
+                return response.ToApiResponse("Users retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users");
+                return this.ToErrorResponse("An error occurred while retrieving users", 500);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserLoginRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                var loginResponse = await _userService.LoginAsync(request);
+                return loginResponse.ToApiResponse("Login successful");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Invalid login attempt for {LoginId}", request.LoginId);
+                return this.ToErrorResponse(ex.Message, 401);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error logging in user {LoginId}", request.LoginId);
+                return this.ToErrorResponse("An error occurred while logging in", 500);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return this.ToErrorResponse("User id is required", 400);
+                }
+
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return this.ToErrorResponse("User not found", 404);
+                }
+
+                return user.ToApiResponse("User retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user {UserId}", id);
+                return this.ToErrorResponse("An error occurred while retrieving the user", 500);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RegisterUser(UserRegisterRequest request)
@@ -34,17 +98,14 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse("Validation failed", 400, ModelState);
                 }
 
-                var loginExists = _userService.IsLoginIdExists(request.LoginId);
-                if (loginExists)
-                {
-                    return this.ToErrorResponse($"LoginId '{request.LoginId}' already exists", 409);
-                }
-
-                var userEntity = await _userService.RegisterUserAsync(request);
-
-                _logger.LogInformation("User created: {UserId} - {LoginId}", userEntity.UserId, userEntity.LoginId);
+                var userEntity = await _userService.CreateUserAsync(request);
 
                 return userEntity.ToApiResponse("User created successfully", 201);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while creating user");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
@@ -53,5 +114,64 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(string id, UserUpdateRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return this.ToErrorResponse("User id is required", 400);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                var updatedUser = await _userService.UpdateUserAsync(id, request);
+                if (updatedUser == null)
+                {
+                    return this.ToErrorResponse("User not found", 404);
+                }
+
+                return updatedUser.ToApiResponse("User updated successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while updating user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user {UserId}", id);
+                return this.ToErrorResponse("An error occurred while updating the user", 500);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return this.ToErrorResponse("User id is required", 400);
+                }
+
+                var deleted = await _userService.DeleteUserAsync(id);
+                if (!deleted)
+                {
+                    return this.ToErrorResponse("User not found", 404);
+                }
+
+                return this.ToSuccessResponse("User deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user {UserId}", id);
+                return this.ToErrorResponse("An error occurred while deleting the user", 500);
+            }
+        }
     }
 }
