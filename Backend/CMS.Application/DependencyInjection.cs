@@ -14,6 +14,7 @@ namespace CMS.Application
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IFacultiesService, FacultiesService>();
             services.AddScoped<IRolesService, RolesService>();
+            services.AddScoped<IPermissionsService, PermissionsService>();
 
             return services;
         }
