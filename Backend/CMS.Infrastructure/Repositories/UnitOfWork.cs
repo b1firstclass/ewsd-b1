@@ -7,8 +7,10 @@ namespace CMS.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
         private readonly Dictionary<Type, object> _repositories;
-        private readonly IUsersRepository _usersRepository;
-        private readonly IRolesRepository _rolesRepository;
+        private IUsersRepository? _usersRepository;
+        private IRolesRepository? _rolesRepository;
+        private IFacultiesRepository? _facultiesRepository;
+        private IPermissionsRepository? _permissionsRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -20,11 +22,7 @@ namespace CMS.Infrastructure.Repositories
         {
             get
             {
-                if (_usersRepository == null)
-                {
-                    return new UsersRepository(_context);
-                }
-                return _usersRepository;
+                return _usersRepository ??= new UsersRepository(_context);
             }
         }
 
@@ -32,11 +30,23 @@ namespace CMS.Infrastructure.Repositories
         {
             get
             {
-                if (_rolesRepository == null)
-                {
-                    return new RolesRepository(_context);
-                }
-                return _rolesRepository;
+                return _rolesRepository ??= new RolesRepository(_context);
+            }
+        }
+
+        public IFacultiesRepository FacultiesRepository
+        {
+            get
+            {
+                return _facultiesRepository ??= new FacultiesRepository(_context);
+            }
+        }
+
+        public IPermissionsRepository PermissionsRepository
+        {
+            get
+            {
+                return _permissionsRepository ??= new PermissionsRepository(_context);
             }
         }
 

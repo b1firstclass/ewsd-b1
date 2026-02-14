@@ -20,13 +20,19 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllPermissions()
+        public async Task<IActionResult> GetAllPermissions([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var permissions = await _permissionsService.GetAllPermissionsAsync();
-                var response = new PagedResponse<PermissionInfo>(permissions, permissions.Count);
-                return response.ToApiResponse("Permissions retrieved successfully");
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var permissions = await _permissionsService.GetAllPermissionsAsync(paginationRequest);
+                return permissions.ToApiResponse("Permissions retrieved successfully");
             }
             catch (Exception ex)
             {

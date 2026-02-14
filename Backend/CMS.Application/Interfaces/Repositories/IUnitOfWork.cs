@@ -4,6 +4,8 @@
     {
         IUsersRepository UsersRepository { get; }
         IRolesRepository RolesRepository { get; }
+        IFacultiesRepository FacultiesRepository { get; }
+        IPermissionsRepository PermissionsRepository { get; }
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

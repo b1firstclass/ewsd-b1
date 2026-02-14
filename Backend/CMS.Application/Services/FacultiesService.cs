@@ -26,10 +26,16 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<FaculityInfo>> GetAllFacultiesAsync()
+        public async Task<PagedResponse<FaculityInfo>> GetAllFacultiesAsync(PaginationRequest paginationRequest)
         {
-            var faculties = await _unitOfWork.Repository<Faculty>().GetAllAsync();
-            return _mapper.Map<List<FaculityInfo>>(faculties);
+            paginationRequest ??= new PaginationRequest();
+
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take);
+
+            var mappedFaculties = _mapper.Map<List<FaculityInfo>>(pagedFaculties.Items);
+            return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
         }
 
         public async Task<FaculityInfo?> GetFacultyByIdAsync(string facultyId)

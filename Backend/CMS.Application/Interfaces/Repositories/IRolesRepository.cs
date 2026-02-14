@@ -1,3 +1,4 @@
+using CMS.Application.Common;
 using CMS.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,5 +9,6 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<IReadOnlyList<Role>> GetAllWithPermissionsAsync();
         Task<Role?> GetByIdWithPermissionsAsync(string roleId);
+        Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take);
     }
 }

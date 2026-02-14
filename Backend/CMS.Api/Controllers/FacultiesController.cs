@@ -22,15 +22,20 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllFaculties()
+        public async Task<IActionResult> GetAllFaculties([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var faculties = await _facultyService.GetAllFacultiesAsync();
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
 
-                var facultyList = new PagedResponse<FaculityInfo>(faculties, faculties.Count());
-               
-                return facultyList.ToApiResponse("Faculties retrieved successfully");
+                paginationRequest ??= new PaginationRequest();
+
+                var faculties = await _facultyService.GetAllFacultiesAsync(paginationRequest);
+
+                return faculties.ToApiResponse("Faculties retrieved successfully");
             }
             catch (Exception ex)
             {

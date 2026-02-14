@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
@@ -24,10 +25,16 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<PermissionInfo>> GetAllPermissionsAsync()
+        public async Task<PagedResponse<PermissionInfo>> GetAllPermissionsAsync(PaginationRequest paginationRequest)
         {
-            var permissions = await _unitOfWork.Repository<Permission>().GetAllAsync();
-            return _mapper.Map<List<PermissionInfo>>(permissions);
+            paginationRequest ??= new PaginationRequest();
+
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(skip, take);
+
+            var mappedPermissions = _mapper.Map<List<PermissionInfo>>(pagedPermissions.Items);
+            return new PagedResponse<PermissionInfo>(mappedPermissions, pagedPermissions.TotalCount);
         }
 
         public async Task<PermissionInfo?> GetPermissionByIdAsync(string permissionId)

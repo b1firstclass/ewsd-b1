@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
 using CMS.Infrastructure.Persistence;
@@ -33,6 +35,29 @@ namespace CMS.Infrastructure.Repositories
             return await _context.Roles
                 .Include(r => r.Permissions)
                 .FirstOrDefaultAsync(r => r.RoleId == roleId);
+        }
+
+        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take)
+        {
+            if (skip < 0)
+            {
+                skip = 0;
+            }
+
+            var query = _context.Roles
+                .Include(r => r.Permissions)
+                .AsNoTracking();
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderBy(r => r.Name)
+                .ThenBy(r => r.RoleId)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedResult<Role>(items, totalCount);
         }
     }
 }

@@ -1,12 +1,12 @@
+using CMS.Application.Common;
 using CMS.Application.DTOs;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CMS.Application.Interfaces.Services
 {
     public interface IRolesService
     {
-        Task<List<RoleInfo>> GetAllRolesAsync();
+        Task<PagedResponse<RoleInfo>> GetAllRolesAsync(PaginationRequest paginationRequest);
         Task<RoleInfo?> GetRoleByIdAsync(string roleId);
         Task<RoleInfo> CreateRoleAsync(RoleCreateRequest request);
         Task<RoleInfo?> UpdateRoleAsync(string roleId, RoleUpdateRequest request);

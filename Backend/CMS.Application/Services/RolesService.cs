@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
@@ -24,10 +25,16 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<RoleInfo>> GetAllRolesAsync()
+        public async Task<PagedResponse<RoleInfo>> GetAllRolesAsync(PaginationRequest paginationRequest)
         {
-            var roles = await _unitOfWork.RolesRepository.GetAllWithPermissionsAsync();
-            return _mapper.Map<List<RoleInfo>>(roles);
+            paginationRequest ??= new PaginationRequest();
+
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take);
+
+            var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
+            return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
         }
 
         public async Task<RoleInfo?> GetRoleByIdAsync(string roleId)

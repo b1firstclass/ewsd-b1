@@ -20,13 +20,19 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRoles()
+        public async Task<IActionResult> GetAllRoles([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var roles = await _rolesService.GetAllRolesAsync();
-                var response = new PagedResponse<RoleInfo>(roles, roles.Count);
-                return response.ToApiResponse("Roles retrieved successfully");
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var roles = await _rolesService.GetAllRolesAsync(paginationRequest);
+                return roles.ToApiResponse("Roles retrieved successfully");
             }
             catch (Exception ex)
             {
