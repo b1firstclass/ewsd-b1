@@ -16,9 +16,7 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
-    public string FirstName { get; set; } = null!;
-
-    public string LastName { get; set; } = null!;
+    public string FullName { get; set; } = null!;
 
     /// <summary>
     /// If this value is null, then this is the first time login

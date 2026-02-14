@@ -22,6 +22,7 @@ namespace CMS.Application.Services
         private const string FacultyIdsClaim = "cms:faculty_ids";
         private const string FacultyNamesClaim = "cms:faculty_names";
         private const string RoleIdsClaim = "cms:role_ids";
+        private const string PermissionClaim = PermissionClaimTypes.Permission;
 
         private readonly ILogger<UsersService> _logger;
         private readonly IMapper _mapper;
@@ -42,6 +43,7 @@ namespace CMS.Application.Services
         {
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
+
             var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
@@ -51,12 +53,8 @@ namespace CMS.Application.Services
 
         public async Task<UserInfo?> GetUserByIdAsync(string userId)
         {
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return null;
-            }
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
 
-            var user = await _unitOfWork.Repository<User>().GetByIdAsync(userId);
             return user == null ? null : _mapper.Map<UserInfo>(user);
         }
 
@@ -77,6 +75,7 @@ namespace CMS.Application.Services
             userEntity.CreatedDate = DateTime.UtcNow;
             userEntity.IsActive = true;
             await AssignFacultiesAsync(userEntity, request.FacultyIds);
+            await AssignRolesAsync(userEntity, request.RoleIds);
 
             await _unitOfWork.Repository<User>().AddAsync(userEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -88,7 +87,7 @@ namespace CMS.Application.Services
 
         public async Task<UserInfo?> UpdateUserAsync(string userId, UserUpdateRequest request)
         {
-            var user = await _unitOfWork.UsersRepository.GetByIdWithFacultiesAsync(userId);
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
             if (user == null)
             {
                 _logger.LogWarning("User not found for update: {UserId}", userId);
@@ -106,14 +105,9 @@ namespace CMS.Application.Services
                 user.LoginId = request.LoginId;
             }
 
-            if (!string.IsNullOrWhiteSpace(request.FirstName))
+            if (!string.IsNullOrWhiteSpace(request.FullName))
             {
-                user.FirstName = request.FirstName;
-            }
-
-            if (!string.IsNullOrWhiteSpace(request.LastName))
-            {
-                user.LastName = request.LastName;
+                user.FullName = request.FullName;
             }
 
             if (!string.IsNullOrWhiteSpace(request.Email))
@@ -140,6 +134,11 @@ namespace CMS.Application.Services
             if (request.FacultyIds != null)
             {
                 await AssignFacultiesAsync(user, request.FacultyIds);
+            }
+
+            if (request.RoleIds != null)
+            {
+                await AssignRolesAsync(user, request.RoleIds);
             }
 
             user.ModifiedDate = DateTime.UtcNow;
@@ -273,6 +272,36 @@ namespace CMS.Application.Services
             }
         }
 
+        private async Task AssignRolesAsync(User user, IEnumerable<string>? roleIds)
+        {
+            if (user.Roles == null)
+            {
+                user.Roles = new List<Role>();
+            }
+
+            user.Roles.Clear();
+
+            if (roleIds == null)
+            {
+                return;
+            }
+
+            foreach (var roleId in roleIds.Where(id => !string.IsNullOrWhiteSpace(id))
+                     .Select(id => id.Trim())
+                     .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
+                if (role != null)
+                {
+                    user.Roles.Add(role);
+                }
+                else
+                {
+                    _logger.LogWarning("Role not found while assigning to user {UserId}: {RoleId}", user.UserId, roleId);
+                }
+            }
+        }
+
         private (string Token, DateTime ExpiresAt) GenerateJwtToken(User user)
         {
             var jwtSettings = _appSettings.JwtSettings;
@@ -292,6 +321,7 @@ namespace CMS.Application.Services
 
             AppendFacultyClaims(user, claims);
             AppendRoleClaims(user, claims);
+            AppendPermissionClaims(user, claims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -364,6 +394,27 @@ namespace CMS.Application.Services
             foreach (var roleId in roleIds)
             {
                 claims.Add(new Claim(RoleIdsClaim, roleId));
+            }
+        }
+
+        private void AppendPermissionClaims(User user, ICollection<Claim> claims)
+        {
+            if (user.Roles == null || user.Roles.Count == 0)
+            {
+                return;
+            }
+
+            var permissionNames = user.Roles
+                .Where(r => r.Permissions != null && r.Permissions.Count > 0)
+                .SelectMany(r => r.Permissions)
+                .Where(p => p.IsActive && !string.IsNullOrWhiteSpace(p.Name))
+                .Select(p => p.Name.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            foreach (var permission in permissionNames)
+            {
+                claims.Add(new Claim(PermissionClaim, permission));
             }
         }
     }

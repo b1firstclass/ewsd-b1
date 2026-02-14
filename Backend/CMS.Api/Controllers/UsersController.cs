@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
@@ -20,6 +21,7 @@ namespace CMS.Api.Controllers
             _userService = usersService;
         }
 
+        [Authorize(Policy = PermissionNames.UsersRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -40,6 +42,32 @@ namespace CMS.Api.Controllers
             {
                 _logger.LogError(ex, "Error retrieving users");
                 return this.ToErrorResponse("An error occurred while retrieving users", 500);
+            }
+        }
+
+        [Authorize(Policy = PermissionNames.UsersRead)]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return this.ToErrorResponse("User id is required", 400);
+                }
+
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return this.ToErrorResponse("User not found", 404);
+                }
+
+                return user.ToApiResponse("User retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user {UserId}", id);
+                return this.ToErrorResponse("An error occurred while retrieving the user", 500);
             }
         }
 
@@ -67,34 +95,9 @@ namespace CMS.Api.Controllers
                 _logger.LogError(ex, "Error logging in user {LoginId}", request.LoginId);
                 return this.ToErrorResponse("An error occurred while logging in", 500);
             }
-        }
+        }        
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(string id)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    return this.ToErrorResponse("User id is required", 400);
-                }
-
-                var user = await _userService.GetUserByIdAsync(id);
-                if (user == null)
-                {
-                    return this.ToErrorResponse("User not found", 404);
-                }
-
-                return user.ToApiResponse("User retrieved successfully");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving user {UserId}", id);
-                return this.ToErrorResponse("An error occurred while retrieving the user", 500);
-            }
-        }
-
-        [AllowAnonymous]
+        [Authorize(Policy = PermissionNames.UsersCreate)]
         [HttpPost]
         public async Task<IActionResult> RegisterUser(UserRegisterRequest request)
         {
@@ -121,6 +124,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Policy = PermissionNames.UsersUpdate)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, UserUpdateRequest request)
         {
@@ -156,6 +160,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Policy = PermissionNames.UsersDelete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

@@ -6,10 +6,10 @@ namespace CMS.Infrastructure.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly AppDbContext _context;
+        protected readonly AppDbContext context;
         public Repository(AppDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public async Task<TEntity?> GetByIdAsync(string id)
@@ -19,27 +19,27 @@ namespace CMS.Infrastructure.Repositories
                 return null;
             }
 
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await context.Set<TEntity>().FindAsync(id);
         }
 
         public async Task<IReadOnlyList<TEntity>> GetAllAsync()
         {
-            return await _context.Set<TEntity>().ToListAsync();
+            return await context.Set<TEntity>().ToListAsync();
         }
 
         public async Task AddAsync(TEntity entity)
         {
-            await _context.Set<TEntity>().AddAsync(entity);
+            await context.Set<TEntity>().AddAsync(entity);
         }
 
         public void Update(TEntity entity)
         {
-            _context.Set<TEntity>().Update(entity);
+            context.Set<TEntity>().Update(entity);
         }
 
         public void Remove(TEntity entity)
         {
-            _context.Set<TEntity>().Remove(entity);
+            context.Set<TEntity>().Remove(entity);
         }
     }
 }

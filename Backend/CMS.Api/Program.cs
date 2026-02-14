@@ -45,7 +45,17 @@ namespace CMS.Api
 
             builder.Services.AddOpenApi();
             builder.Services.AddHealthChecks();
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(PermissionNames.UsersRead, policy =>
+                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersRead));
+                options.AddPolicy(PermissionNames.UsersCreate, policy =>
+                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersCreate));
+                options.AddPolicy(PermissionNames.UsersUpdate, policy =>
+                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersUpdate));
+                options.AddPolicy(PermissionNames.UsersDelete, policy =>
+                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersDelete));
+            });
 
             builder.Services.AddAutoMapper(c =>
             {

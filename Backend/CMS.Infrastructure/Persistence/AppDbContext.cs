@@ -119,11 +119,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.UserId).HasMaxLength(36);
             entity.Property(e => e.CreatedBy).HasMaxLength(36);
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.LastLoginDate).HasComment("If this value is null, then this is the first time login");
             entity.Property(e => e.LastLoginIp).HasMaxLength(50);
-            entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.LoginId).HasMaxLength(50);
             entity.Property(e => e.ModifiedBy).HasMaxLength(36);
             entity.Property(e => e.Password)

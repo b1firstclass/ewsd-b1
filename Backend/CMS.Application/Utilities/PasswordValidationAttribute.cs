@@ -11,6 +11,8 @@ namespace CMS.Application.Utilities
         private const string DigitPattern = @"[0-9]";
         private const string SpecialCharPattern = @"[@$!%*?&#^()_+\-=\[\]{}|;:,.<>]";
 
+        public bool AllowNull { get; set; }
+
         public PasswordValidationAttribute()
         {
             ErrorMessage = "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#^()_+-=[]{}|;:,.<>)";
@@ -20,7 +22,7 @@ namespace CMS.Application.Utilities
         {
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
             {
-                return new ValidationResult("Password is required");
+                return AllowNull ? ValidationResult.Success : new ValidationResult("Password is required");
             }
 
             var password = value.ToString()!;

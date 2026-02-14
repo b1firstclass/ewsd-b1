@@ -17,16 +17,15 @@ namespace CMS.Application.DTOs
         [PasswordValidation]
         public required string Password { get; set; }
 
-        [StringLength(100)]
-        public string? FirstName { get; set; }
+        [Required(ErrorMessage = "FullName is required")]
+        [StringLength(200)]
+        public required string FullName { get; set; }
 
-        [StringLength(100)]
-        public string? LastName { get; set; }
-
+        [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string? Email { get; set; }
+        public required string Email { get; set; }
         public List<string>? FacultyIds { get; set; }
-        public List<string>? RoleId { get; set; }
+        public List<string>? RoleIds { get; set; }
     }
 
     public class UserUpdateRequest
@@ -34,21 +33,18 @@ namespace CMS.Application.DTOs
         [StringLength(100, MinimumLength = 3, ErrorMessage = "LoginId must be between 3 and 100 characters")]
         public string? LoginId { get; set; }
 
-        [StringLength(100)]
-        public string? FirstName { get; set; }
+        [PasswordValidation(AllowNull = true)]
+        public string? Password { get; set; }
 
-        [StringLength(100)]
-        public string? LastName { get; set; }
+        [StringLength(200)]
+        public string? FullName { get; set; }
 
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string? Email { get; set; }
 
         public List<string>? FacultyIds { get; set; }
-        public List<string>? RoleId { get; set; }
-
+        public List<string>? RoleIds { get; set; }
         public bool? IsActive { get; set; }
-
-        public string? Password { get; set; }
     }
 
     public class UserLoginRequest
@@ -67,11 +63,12 @@ namespace CMS.Application.DTOs
         public required string Id { get; set; }
         public required string LoginId { get; set; }
         public string? Email { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+        public string? FullName { get; set; }
         public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
+        public List<FaculityInfo> Faculties { get; set; } = new();
+        public List<RoleInfo> Roles { get; set; } = new();
     }
 
     public class UserLoginResponse

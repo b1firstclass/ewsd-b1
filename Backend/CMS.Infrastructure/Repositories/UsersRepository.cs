@@ -27,10 +27,11 @@ namespace CMS.Infrastructure.Repositories
             return await _context.Users
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
+                .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.LoginId == loginId);
         }
 
-        public async Task<User?> GetByIdWithFacultiesAsync(string userId)
+        public async Task<User?> GetByUserIdAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -40,6 +41,7 @@ namespace CMS.Infrastructure.Repositories
             return await _context.Users
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
+                .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
