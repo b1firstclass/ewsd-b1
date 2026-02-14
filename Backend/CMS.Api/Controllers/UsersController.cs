@@ -1,4 +1,5 @@
-﻿using CMS.Api.Utilities;
+﻿using CMS.Api.Security;
+using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
@@ -21,7 +22,7 @@ namespace CMS.Api.Controllers
             _userService = usersService;
         }
 
-        [Authorize(Policy = PermissionNames.UsersRead)]
+        [HasPermission(PermissionNames.UsersRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -45,7 +46,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [Authorize(Policy = PermissionNames.UsersRead)]
+        [HasPermission(PermissionNames.UsersRead)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -97,7 +98,7 @@ namespace CMS.Api.Controllers
             }
         }        
 
-        [Authorize(Policy = PermissionNames.UsersCreate)]
+        [HasPermission(PermissionNames.UsersCreate)]
         [HttpPost]
         public async Task<IActionResult> RegisterUser(UserRegisterRequest request)
         {
@@ -124,7 +125,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [Authorize(Policy = PermissionNames.UsersUpdate)]
+        [HasPermission(PermissionNames.UsersUpdate)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, UserUpdateRequest request)
         {
@@ -160,7 +161,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [Authorize(Policy = PermissionNames.UsersDelete)]
+        [HasPermission(PermissionNames.UsersDelete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

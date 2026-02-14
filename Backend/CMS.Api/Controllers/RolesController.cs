@@ -1,13 +1,16 @@
+using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RolesController : ControllerBase
     {
         private readonly ILogger<RolesController> _logger;
@@ -19,6 +22,7 @@ namespace CMS.Api.Controllers
             _rolesService = rolesService;
         }
 
+        [HasPermission(PermissionNames.RolesRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -41,6 +45,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.RolesRead)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRoleById(string id)
         {
@@ -66,6 +71,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.RolesCreate)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(RoleCreateRequest request)
         {
@@ -91,6 +97,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.RolesUpdate)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRole(string id, RoleUpdateRequest request)
         {
@@ -126,6 +133,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.RolesDelete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(string id)
         {

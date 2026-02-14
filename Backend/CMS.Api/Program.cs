@@ -1,8 +1,10 @@
 
+using CMS.Api.Security;
 using CMS.Application;
 using CMS.Application.Common;
 using CMS.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection;
@@ -45,17 +47,7 @@ namespace CMS.Api
 
             builder.Services.AddOpenApi();
             builder.Services.AddHealthChecks();
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy(PermissionNames.UsersRead, policy =>
-                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersRead));
-                options.AddPolicy(PermissionNames.UsersCreate, policy =>
-                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersCreate));
-                options.AddPolicy(PermissionNames.UsersUpdate, policy =>
-                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersUpdate));
-                options.AddPolicy(PermissionNames.UsersDelete, policy =>
-                    policy.RequireClaim(PermissionClaimTypes.Permission, PermissionNames.UsersDelete));
-            });
+            builder.Services.AddAuthorization();
 
             builder.Services.AddAutoMapper(c =>
             {
@@ -64,6 +56,9 @@ namespace CMS.Api
 
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
+
+            builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             var appSettings = configuration.GetSection(AppSettings.SectionName).Get<AppSettings>()
                 ?? throw new InvalidOperationException("AppSettings configuration is missing.");

@@ -1,13 +1,16 @@
+using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PermissionsController : ControllerBase
     {
         private readonly ILogger<PermissionsController> _logger;
@@ -19,6 +22,7 @@ namespace CMS.Api.Controllers
             _permissionsService = permissionsService;
         }
 
+        [HasPermission(PermissionNames.PermissionsRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllPermissions([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -41,6 +45,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.PermissionsRead)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPermissionById(string id)
         {
@@ -66,6 +71,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.PermissionsCreate)]
         [HttpPost]
         public async Task<IActionResult> CreatePermission(PermissionCreateRequest request)
         {
@@ -91,6 +97,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.PermissionsUpdate)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePermission(string id, PermissionUpdateRequest request)
         {
@@ -126,6 +133,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.PermissionsDelete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePermission(string id)
         {
