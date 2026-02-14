@@ -1,0 +1,12 @@
+using CMS.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace CMS.Application.Interfaces.Repositories
+{
+    public interface IRolesRepository : IRepository<Role>
+    {
+        Task<IReadOnlyList<Role>> GetAllWithPermissionsAsync();
+        Task<Role?> GetByIdWithPermissionsAsync(string roleId);
+    }
+}

@@ -26,7 +26,7 @@ namespace CMS.Application.Services
 
         public async Task<List<RoleInfo>> GetAllRolesAsync()
         {
-            var roles = await _unitOfWork.Repository<Role>().GetAllAsync();
+            var roles = await _unitOfWork.RolesRepository.GetAllWithPermissionsAsync();
             return _mapper.Map<List<RoleInfo>>(roles);
         }
 
@@ -37,7 +37,7 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
+            var role = await _unitOfWork.RolesRepository.GetByIdWithPermissionsAsync(roleId);
             return role == null ? null : _mapper.Map<RoleInfo>(role);
         }
 
@@ -50,6 +50,7 @@ namespace CMS.Application.Services
 
             var roleEntity = _mapper.Map<Role>(request);
             roleEntity.CreatedDate = DateTime.UtcNow;
+            await AssignPermissionsAsync(roleEntity, request.PermissionIds);
 
             await _unitOfWork.Repository<Role>().AddAsync(roleEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -61,7 +62,7 @@ namespace CMS.Application.Services
 
         public async Task<RoleInfo?> UpdateRoleAsync(string roleId, RoleUpdateRequest request)
         {
-            var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
+            var role = await _unitOfWork.RolesRepository.GetByIdWithPermissionsAsync(roleId);
             if (role == null)
             {
                 _logger.LogWarning("Role not found for update: {RoleId}", roleId);
@@ -87,6 +88,11 @@ namespace CMS.Application.Services
             if (request.IsActive.HasValue)
             {
                 role.IsActive = request.IsActive.Value;
+            }
+
+            if (request.PermissionIds != null)
+            {
+                await AssignPermissionsAsync(role, request.PermissionIds);
             }
 
             role.ModifiedDate = DateTime.UtcNow;
@@ -126,6 +132,36 @@ namespace CMS.Application.Services
             return roles.Any(r =>
                 string.Equals(r.Name, roleName, StringComparison.OrdinalIgnoreCase) &&
                 (excludeRoleId == null || !string.Equals(r.RoleId, excludeRoleId, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private async Task AssignPermissionsAsync(Role role, IEnumerable<string>? permissionIds)
+        {
+            if (role.Permissions == null)
+            {
+                role.Permissions = new List<Permission>();
+            }
+
+            role.Permissions.Clear();
+
+            if (permissionIds == null)
+            {
+                return;
+            }
+
+            foreach (var permissionId in permissionIds.Where(id => !string.IsNullOrWhiteSpace(id))
+                         .Select(id => id.Trim())
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
+                if (permission != null)
+                {
+                    role.Permissions.Add(permission);
+                }
+                else
+                {
+                    _logger.LogWarning("Permission not found while assigning to role {RoleId}: {PermissionId}", role.RoleId, permissionId);
+                }
+            }
         }
     }
 }

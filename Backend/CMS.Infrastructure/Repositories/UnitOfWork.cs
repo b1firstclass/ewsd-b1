@@ -8,6 +8,7 @@ namespace CMS.Infrastructure.Repositories
         private readonly AppDbContext _context;
         private readonly Dictionary<Type, object> _repositories;
         private readonly IUsersRepository _usersRepository;
+        private readonly IRolesRepository _rolesRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -24,6 +25,18 @@ namespace CMS.Infrastructure.Repositories
                     return new UsersRepository(_context);
                 }
                 return _usersRepository;
+            }
+        }
+
+        public IRolesRepository RolesRepository
+        {
+            get
+            {
+                if (_rolesRepository == null)
+                {
+                    return new RolesRepository(_context);
+                }
+                return _rolesRepository;
             }
         }
 

@@ -51,7 +51,8 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
-                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate))
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.Permissions));
 
             CreateMap<PermissionCreateRequest, Permission>()
                 .ForMember(dest => dest.PermissionId, opt => opt.MapFrom(_ => Guid.NewGuid().ToString()))
