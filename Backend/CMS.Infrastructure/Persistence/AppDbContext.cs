@@ -1,4 +1,6 @@
-﻿using CMS.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using CMS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Infrastructure.Persistence;
@@ -28,11 +30,28 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.FacultyId).HasMaxLength(36);
             entity.Property(e => e.CreatedBy).HasMaxLength(36);
-            entity.Property(e => e.CreatedDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.FacultyName).HasMaxLength(200);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.ModifiedDate).HasColumnType("timestamp without time zone");
+
+            entity.HasMany(d => d.Users).WithMany(p => p.Faculties)
+                .UsingEntity<Dictionary<string, object>>(
+                    "FacultyMemberShip",
+                    r => r.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FacultyMemberShip_UserId_fkey"),
+                    l => l.HasOne<Faculty>().WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FacultyMemberShip_FacultyId_fkey"),
+                    j =>
+                    {
+                        j.HasKey("FacultyId", "UserId").HasName("FacultyMemberShip_pkey");
+                        j.ToTable("FacultyMemberShip");
+                        j.IndexerProperty<string>("FacultyId").HasMaxLength(36);
+                        j.IndexerProperty<string>("UserId").HasMaxLength(36);
+                    });
         });
 
         modelBuilder.Entity<Permission>(entity =>
@@ -45,13 +64,15 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.PermissionId).HasMaxLength(36);
             entity.Property(e => e.CreatedBy).HasMaxLength(36);
-            entity.Property(e => e.CreatedDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.ModifiedDate).HasColumnType("timestamp without time zone");
-            entity.Property(e => e.Module).HasMaxLength(50);
-            entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.Module)
+                .HasMaxLength(50)
+                .HasComment("user");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasComment("user.create");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -62,11 +83,9 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.RoleId).HasMaxLength(36);
             entity.Property(e => e.CreatedBy).HasMaxLength(36);
-            entity.Property(e => e.CreatedDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.ModifiedDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
@@ -99,23 +118,17 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.UserId).HasMaxLength(36);
             entity.Property(e => e.CreatedBy).HasMaxLength(36);
-            entity.Property(e => e.CreatedDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.FacultyId).HasMaxLength(36);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LastLoginDate).HasColumnType("timestamp without time zone");
+            entity.Property(e => e.LastLoginDate).HasComment("If this value is null, then this is the first time login");
             entity.Property(e => e.LastLoginIp).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.LoginId).HasMaxLength(50);
             entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.ModifiedDate).HasColumnType("timestamp without time zone");
-            entity.Property(e => e.Password).HasMaxLength(255);
-
-            entity.HasOne(d => d.Faculty).WithMany(p => p.Users)
-                .HasForeignKey(d => d.FacultyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Users_FacultyId_fkey");
+            entity.Property(e => e.Password)
+                .HasMaxLength(255)
+                .HasComment("hashed password");
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(

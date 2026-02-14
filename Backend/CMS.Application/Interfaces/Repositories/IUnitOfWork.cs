@@ -1,6 +1,4 @@
-﻿using CMS.Application.Interfaces.Repositories;
-
-namespace ewsd_backend.Application.Interfaces.Common
+﻿namespace CMS.Application.Interfaces.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {

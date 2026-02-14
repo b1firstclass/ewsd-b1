@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
+using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
-using ewsd_backend.Application.Interfaces.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

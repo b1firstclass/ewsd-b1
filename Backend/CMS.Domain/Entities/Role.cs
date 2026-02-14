@@ -1,4 +1,7 @@
-﻿namespace CMS.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace CMS.Domain.Entities;
 
 public partial class Role
 {

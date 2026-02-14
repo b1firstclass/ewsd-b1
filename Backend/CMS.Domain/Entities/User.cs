@@ -1,4 +1,7 @@
-﻿namespace CMS.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace CMS.Domain.Entities;
 
 public partial class User
 {
@@ -6,6 +9,9 @@ public partial class User
 
     public string LoginId { get; set; } = null!;
 
+    /// <summary>
+    /// hashed password
+    /// </summary>
     public string Password { get; set; } = null!;
 
     public string Email { get; set; } = null!;
@@ -14,8 +20,9 @@ public partial class User
 
     public string LastName { get; set; } = null!;
 
-    public string FacultyId { get; set; } = null!;
-
+    /// <summary>
+    /// If this value is null, then this is the first time login
+    /// </summary>
     public DateTime? LastLoginDate { get; set; }
 
     public string? LastLoginIp { get; set; }
@@ -30,7 +37,7 @@ public partial class User
 
     public string? ModifiedBy { get; set; }
 
-    public virtual Faculty Faculty { get; set; } = null!;
+    public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
 
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

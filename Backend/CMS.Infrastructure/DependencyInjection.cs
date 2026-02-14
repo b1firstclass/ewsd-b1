@@ -1,7 +1,6 @@
 ﻿using CMS.Application.Interfaces.Repositories;
 using CMS.Infrastructure.Persistence;
 using CMS.Infrastructure.Repositories;
-using ewsd_backend.Application.Interfaces.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

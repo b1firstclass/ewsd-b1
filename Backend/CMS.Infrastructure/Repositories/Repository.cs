@@ -12,8 +12,13 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid id)
+        public async Task<TEntity?> GetByIdAsync(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
             return await _context.Set<TEntity>().FindAsync(id);
         }
 
