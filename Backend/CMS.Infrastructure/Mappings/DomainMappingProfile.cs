@@ -38,6 +38,20 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FacultyName))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FacultyId))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate));
+
+            CreateMap<RoleCreateRequest, Role>()
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(_ => Guid.NewGuid().ToString()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+
+            CreateMap<Role, RoleInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoleId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
         }
     }
 }

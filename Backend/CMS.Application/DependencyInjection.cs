@@ -13,6 +13,7 @@ namespace CMS.Application
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IFacultiesService, FacultiesService>();
+            services.AddScoped<IRolesService, RolesService>();
 
             return services;
         }
