@@ -32,7 +32,7 @@ namespace CMS.Infrastructure.Mappings
             CreateMap<FacultyCreateRequest, Faculty>()
                 .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(_ => Guid.NewGuid().ToString()))
                 .ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
 
             CreateMap<Faculty, FaculityInfo>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FacultyName))
@@ -43,7 +43,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(_ => Guid.NewGuid().ToString()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
 
             CreateMap<Role, RoleInfo>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoleId))
@@ -59,7 +59,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Module, opt => opt.MapFrom(src => src.Module))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
 
             CreateMap<Permission, PermissionInfo>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PermissionId))

@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class UsersController : ControllerBase
     {

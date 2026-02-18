@@ -44,7 +44,7 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
+            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
 
@@ -126,11 +126,6 @@ namespace CMS.Application.Services
                 user.Password = _passwordHasher.HashPassword(user, request.Password);
             }
 
-            if (request.IsActive.HasValue)
-            {
-                user.IsActive = request.IsActive.Value;
-            }
-
             if (request.FacultyIds != null)
             {
                 await AssignFacultiesAsync(user, request.FacultyIds);
@@ -160,10 +155,12 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            _unitOfWork.Repository<User>().Remove(user);
+            user.IsActive = false;
+            user.ModifiedDate = DateTime.UtcNow;
+            _unitOfWork.Repository<User>().Update(user);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("User deleted: {UserId}", user.UserId);
+            _logger.LogInformation("User soft deleted (IsActive=false): {UserId}", user.UserId);
             return true;
         }
 

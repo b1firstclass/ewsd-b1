@@ -12,14 +12,31 @@ namespace CMS.Infrastructure.Repositories
             this.context = context;
         }
 
-        public async Task<TEntity?> GetByIdAsync(string id)
+        public virtual async Task<TEntity?> GetByIdAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
                 return null;
             }
 
-            return await context.Set<TEntity>().FindAsync(id);
+            var entity = await context.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+            {
+                return null;
+            }
+
+            var isActiveProperty = typeof(TEntity).GetProperty("IsActive");
+            if (isActiveProperty != null && isActiveProperty.PropertyType == typeof(bool))
+            {
+                var isActiveValue = (bool)(isActiveProperty.GetValue(entity) ?? false);
+                if (!isActiveValue)
+                {
+                    context.Entry(entity).State = EntityState.Detached;
+                    return null;
+                }
+            }
+
+            return entity;
         }
 
         public async Task<IReadOnlyList<TEntity>> GetAllAsync()

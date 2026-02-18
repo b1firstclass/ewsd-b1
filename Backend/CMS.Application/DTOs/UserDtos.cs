@@ -44,7 +44,6 @@ namespace CMS.Application.DTOs
 
         public List<string>? FacultyIds { get; set; }
         public List<string>? RoleIds { get; set; }
-        public bool? IsActive { get; set; }
     }
 
     public class UserLoginRequest

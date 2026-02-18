@@ -2,14 +2,14 @@
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FacultiesController : ControllerBase
     {
         private readonly ILogger<FacultiesController> _logger;

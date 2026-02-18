@@ -14,8 +14,6 @@ namespace CMS.Application.DTOs
         [StringLength(255)]
         public string? Description { get; set; }
 
-        public bool IsActive { get; set; } = true;
-
         public List<string>? PermissionIds { get; set; }
     }
 
@@ -26,8 +24,6 @@ namespace CMS.Application.DTOs
 
         [StringLength(255)]
         public string? Description { get; set; }
-
-        public bool? IsActive { get; set; }
 
         public List<string>? PermissionIds { get; set; }
     }

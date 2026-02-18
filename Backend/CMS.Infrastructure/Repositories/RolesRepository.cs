@@ -34,10 +34,10 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Roles
                 .Include(r => r.Permissions)
-                .FirstOrDefaultAsync(r => r.RoleId == roleId);
+                .FirstOrDefaultAsync(r => r.RoleId == roleId && r.IsActive);
         }
 
-        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, bool? isActive = null)
+        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take)
         {
             if (skip < 0)
             {
@@ -47,14 +47,10 @@ namespace CMS.Infrastructure.Repositories
             var query = _context.Roles
                 .AsNoTracking();
 
-            if (isActive.HasValue)
-            {
-                query = query.Where(r => r.IsActive == isActive.Value);
-            }
-
             var totalCount = await query.CountAsync();
 
             var items = await query
+                .Where(r => r.IsActive)
                 .OrderBy(r => r.Name)
                 .ThenBy(r => r.RoleId)
                 .Skip(skip)

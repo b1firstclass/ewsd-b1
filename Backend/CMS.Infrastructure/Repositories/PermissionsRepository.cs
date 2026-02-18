@@ -17,7 +17,7 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<Permission>> GetPagedAsync(int skip, int take, bool? isActive = null)
+        public async Task<PagedResult<Permission>> GetPagedAsync(int skip, int take)
         {
             if (skip < 0)
             {
@@ -26,13 +26,10 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Permissions.AsNoTracking();
 
-            if (isActive.HasValue)
-            {
-                query = query.Where(p => p.IsActive == isActive.Value);
-            }
             var totalCount = await query.CountAsync();
 
             var items = await query
+                .Where(p => p.IsActive)
                 .OrderBy(p => p.Module)
                 .ThenBy(p => p.Name)
                 .ThenBy(p => p.PermissionId)

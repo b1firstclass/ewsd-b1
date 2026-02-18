@@ -28,7 +28,7 @@ namespace CMS.Infrastructure.Repositories
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
                 .ThenInclude(r => r.Permissions)
-                .FirstOrDefaultAsync(u => u.LoginId == loginId);
+                .FirstOrDefaultAsync(u => u.LoginId == loginId && u.IsActive);
         }
 
         public async Task<User?> GetByUserIdAsync(string userId)
@@ -42,10 +42,10 @@ namespace CMS.Infrastructure.Repositories
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
                 .ThenInclude(r => r.Permissions)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+                .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
         }
 
-        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, bool? isActive = null)
+        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take)
         {
             if (skip < 0)
             {
@@ -54,13 +54,10 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Users.AsNoTracking();
 
-            if (isActive.HasValue)
-            {
-                query = query.Where(u => u.IsActive == isActive.Value);
-            }
             var totalCount = await query.CountAsync();
 
             var items = await query
+                .Where(u => u.IsActive)
                 .OrderByDescending(u => u.CreatedDate)
                 .Skip(skip)
                 .Take(take)
@@ -78,7 +75,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
+            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take);
 
             var mappedFaculties = _mapper.Map<List<FaculityInfo>>(pagedFaculties.Items);
             return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
@@ -76,10 +76,6 @@ namespace CMS.Application.Services
             }
 
             faculty.FacultyName = request.Name;
-            if (request.IsActive.HasValue)
-            {
-                faculty.IsActive = request.IsActive.Value;
-            }
             faculty.ModifiedDate = DateTime.UtcNow;
 
             _unitOfWork.Repository<Faculty>().Update(faculty);
@@ -99,10 +95,12 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            _unitOfWork.Repository<Faculty>().Remove(faculty);
+            faculty.IsActive = false;
+            faculty.ModifiedDate = DateTime.UtcNow;
+            _unitOfWork.Repository<Faculty>().Update(faculty);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Faculty deleted: {FacultyId}", faculty.FacultyId);
+            _logger.LogInformation("Faculty soft deleted (IsActive=false): {FacultyId}", faculty.FacultyId);
             return true;
         }
 
@@ -115,6 +113,7 @@ namespace CMS.Application.Services
 
             var faculties = await _unitOfWork.Repository<Faculty>().GetAllAsync();
             return faculties.Any(f =>
+                f.IsActive &&
                 string.Equals(f.FacultyName, facultyName, StringComparison.OrdinalIgnoreCase) &&
                 (excludeFacultyId == null || !string.Equals(f.FacultyId, excludeFacultyId, StringComparison.OrdinalIgnoreCase)));
         }

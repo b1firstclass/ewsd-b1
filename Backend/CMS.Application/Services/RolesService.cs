@@ -30,7 +30,7 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take, paginationRequest.IsActive);
+            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take);
 
             var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
@@ -87,11 +87,6 @@ namespace CMS.Application.Services
                 role.Description = request.Description;
             }
 
-            if (request.IsActive.HasValue)
-            {
-                role.IsActive = request.IsActive.Value;
-            }
-
             if (request.PermissionIds != null)
             {
                 await AssignPermissionsAsync(role, request.PermissionIds);
@@ -116,10 +111,12 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            _unitOfWork.Repository<Role>().Remove(role);
+            role.IsActive = false;
+            role.ModifiedDate = DateTime.UtcNow;
+            _unitOfWork.Repository<Role>().Update(role);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Role deleted: {RoleId}", role.RoleId);
+            _logger.LogInformation("Role soft deleted (IsActive=false): {RoleId}", role.RoleId);
             return true;
         }
 
@@ -132,6 +129,7 @@ namespace CMS.Application.Services
 
             var roles = await _unitOfWork.Repository<Role>().GetAllAsync();
             return roles.Any(r =>
+                r.IsActive &&
                 string.Equals(r.Name, roleName, StringComparison.OrdinalIgnoreCase) &&
                 (excludeRoleId == null || !string.Equals(r.RoleId, excludeRoleId, StringComparison.OrdinalIgnoreCase)));
         }

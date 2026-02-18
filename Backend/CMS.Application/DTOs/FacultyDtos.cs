@@ -12,7 +12,6 @@ namespace CMS.Application.DTOs
         [StringLength(200, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 200 characters")]
         public required string Name { get; set; }
 
-        public bool IsActive { get; set; } = true;
     }
 
     public class FacultyUpdateRequest
@@ -20,8 +19,6 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "Name is required")]
         [StringLength(200, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 200 characters")]
         public required string Name { get; set; }
-
-        public bool? IsActive { get; set; }
     }
     #endregion
 

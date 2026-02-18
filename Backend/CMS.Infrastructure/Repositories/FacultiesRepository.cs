@@ -1,4 +1,4 @@
-﻿using CMS.Application.Common;
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
 using CMS.Infrastructure.Persistence;
@@ -16,7 +16,7 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take, bool? isActive = null)
+        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take)
         {
             if (skip < 0)
             {
@@ -25,13 +25,10 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Faculties.AsNoTracking();
 
-            if (isActive.HasValue)
-            {
-                query = query.Where(f => f.IsActive == isActive.Value);
-            }
             var totalCount = await query.CountAsync();
 
             var items = await query
+                .Where(f => f.IsActive)
                 .OrderBy(f => f.FacultyName)
                 .ThenBy(f => f.FacultyId)
                 .Skip(skip)
