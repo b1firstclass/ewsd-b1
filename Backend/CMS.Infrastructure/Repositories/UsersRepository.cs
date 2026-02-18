@@ -77,5 +77,19 @@ namespace CMS.Infrastructure.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
         }
+
+        public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                return null;
+            }
+
+            return await _context.Users
+                .Include(u => u.Faculties)
+                .Include(u => u.Roles)
+                .ThenInclude(r => r.Permissions)
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.IsActive);
+        }
     }
 }

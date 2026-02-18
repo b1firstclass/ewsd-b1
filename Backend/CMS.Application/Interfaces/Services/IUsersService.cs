@@ -11,5 +11,6 @@ namespace CMS.Application.Interfaces.Services
         Task<UserInfo?> UpdateUserAsync(string userId, UserUpdateRequest request);
         Task<bool> DeleteUserAsync(string userId);
         Task<UserLoginResponse> LoginAsync(UserLoginRequest request);
+        Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request);
     }
 }

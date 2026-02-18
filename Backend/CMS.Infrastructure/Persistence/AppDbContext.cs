@@ -128,6 +128,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasComment("hashed password");
+            entity.Property(e => e.RefreshToken).HasMaxLength(200);
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(

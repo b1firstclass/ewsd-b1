@@ -98,6 +98,32 @@ namespace CMS.Api.Controllers
             }
         }        
 
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                }
+
+                var refreshResponse = await _userService.RefreshTokenAsync(request);
+                return refreshResponse.ToApiResponse("Token refreshed successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Invalid refresh token attempt");
+                return this.ToErrorResponse(ex.Message, 401);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error refreshing token");
+                return this.ToErrorResponse("An error occurred while refreshing the token", 500);
+            }
+        }
+
         [HasPermission(PermissionNames.UsersCreate)]
         [HttpPost]
         public async Task<IActionResult> RegisterUser(UserRegisterRequest request)

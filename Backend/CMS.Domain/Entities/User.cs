@@ -35,6 +35,10 @@ public partial class User
 
     public string? ModifiedBy { get; set; }
 
+    public string? RefreshToken { get; set; }
+
+    public DateTime? RefreshTokenExpiresAt { get; set; }
+
     public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
 
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();

@@ -10,5 +10,6 @@ namespace CMS.Application.Interfaces.Repositories
         Task<User?> GetByUserIdAsync(string userId);
         Task<PagedResult<User>> GetPagedAsync(int skip, int take);
         Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByRefreshTokenAsync(string refreshToken);
     }
 }

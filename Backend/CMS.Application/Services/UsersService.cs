@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using CMS.Application.Common;
@@ -192,6 +193,10 @@ namespace CMS.Application.Services
             }
 
             user.LastLoginDate = DateTime.UtcNow;
+            var (refreshToken, refreshExpiresAt) = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiresAt = refreshExpiresAt;
+
             _unitOfWork.Repository<User>().Update(user);
             await _unitOfWork.SaveChangesAsync();
 
@@ -201,7 +206,47 @@ namespace CMS.Application.Services
             {
                 Token = token,
                 ExpiresAt = expiresAt,
+                RefreshToken = refreshToken,
                 User = _mapper.Map<UserInfo>(user)
+            };
+        }
+
+        public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            {
+                throw new InvalidOperationException("Refresh token is required");
+            }
+
+            var refreshTokenValue = request.RefreshToken.Trim();
+            var user = await _unitOfWork.UsersRepository.GetByRefreshTokenAsync(refreshTokenValue);
+            if (user == null)
+            {
+                _logger.LogWarning("Refresh token failed. Token not found");
+                throw new InvalidOperationException("Invalid refresh token");
+            }
+
+            if (!user.RefreshTokenExpiresAt.HasValue || user.RefreshTokenExpiresAt.Value <= DateTime.UtcNow)
+            {
+                _logger.LogWarning("Refresh token expired for user {UserId}", user.UserId);
+                throw new InvalidOperationException("Refresh token has expired");
+            }
+
+            var (newRefreshToken, refreshExpiresAt) = GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiresAt = refreshExpiresAt;
+            user.ModifiedDate = DateTime.UtcNow;
+
+            _unitOfWork.Repository<User>().Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            var (token, expiresAt) = GenerateJwtToken(user);
+
+            return new RefreshTokenResponse
+            {
+                Token = token,
+                ExpiresAt = expiresAt,
+                RefreshToken = newRefreshToken
             };
         }
 
@@ -297,6 +342,18 @@ namespace CMS.Application.Services
                     _logger.LogWarning("Role not found while assigning to user {UserId}: {RoleId}", user.UserId, roleId);
                 }
             }
+        }
+
+        private (string Token, DateTime ExpiresAt) GenerateRefreshToken()
+        {
+            var randomBytes = RandomNumberGenerator.GetBytes(64);
+            var token = Convert.ToBase64String(randomBytes)
+                .Replace("+", "-")
+                .Replace("/", "_")
+                .TrimEnd('=');
+
+            var expiresAt = DateTime.UtcNow.AddMinutes(_appSettings.JwtSettings.RefreshExpiryMinutes);
+            return (token, expiresAt);
         }
 
         private (string Token, DateTime ExpiresAt) GenerateJwtToken(User user)
