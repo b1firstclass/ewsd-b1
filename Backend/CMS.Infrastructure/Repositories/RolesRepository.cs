@@ -45,7 +45,6 @@ namespace CMS.Infrastructure.Repositories
             }
 
             var query = _context.Roles
-                .Include(r => r.Permissions)
                 .AsNoTracking();
 
             if (isActive.HasValue)

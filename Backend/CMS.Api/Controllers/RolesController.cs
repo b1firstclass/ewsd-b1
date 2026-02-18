@@ -36,6 +36,7 @@ namespace CMS.Api.Controllers
                 paginationRequest ??= new PaginationRequest();
 
                 var roles = await _rolesService.GetAllRolesAsync(paginationRequest);
+
                 return roles.ToApiResponse("Roles retrieved successfully");
             }
             catch (Exception ex)

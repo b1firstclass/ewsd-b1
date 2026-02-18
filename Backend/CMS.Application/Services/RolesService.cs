@@ -27,10 +27,9 @@ namespace CMS.Application.Services
 
         public async Task<PagedResponse<RoleInfo>> GetAllRolesAsync(PaginationRequest paginationRequest)
         {
-            paginationRequest ??= new PaginationRequest();
-
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
+
             var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take, paginationRequest.IsActive);
 
             var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
@@ -39,12 +38,8 @@ namespace CMS.Application.Services
 
         public async Task<RoleInfo?> GetRoleByIdAsync(string roleId)
         {
-            if (string.IsNullOrWhiteSpace(roleId))
-            {
-                return null;
-            }
-
             var role = await _unitOfWork.RolesRepository.GetByIdWithPermissionsAsync(roleId);
+
             return role == null ? null : _mapper.Map<RoleInfo>(role);
         }
 

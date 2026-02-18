@@ -27,10 +27,9 @@ namespace CMS.Application.Services
 
         public async Task<PagedResponse<PermissionInfo>> GetAllPermissionsAsync(PaginationRequest paginationRequest)
         {
-            paginationRequest ??= new PaginationRequest();
-
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
+
             var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
 
             var mappedPermissions = _mapper.Map<List<PermissionInfo>>(pagedPermissions.Items);
@@ -39,11 +38,6 @@ namespace CMS.Application.Services
 
         public async Task<PermissionInfo?> GetPermissionByIdAsync(string permissionId)
         {
-            if (string.IsNullOrWhiteSpace(permissionId))
-            {
-                return null;
-            }
-
             var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             return permission == null ? null : _mapper.Map<PermissionInfo>(permission);
         }

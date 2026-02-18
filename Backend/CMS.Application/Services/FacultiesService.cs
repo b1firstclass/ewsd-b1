@@ -28,10 +28,9 @@ namespace CMS.Application.Services
 
         public async Task<PagedResponse<FaculityInfo>> GetAllFacultiesAsync(PaginationRequest paginationRequest)
         {
-            paginationRequest ??= new PaginationRequest();
-
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
+
             var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take, paginationRequest.IsActive);
 
             var mappedFaculties = _mapper.Map<List<FaculityInfo>>(pagedFaculties.Items);
@@ -40,11 +39,6 @@ namespace CMS.Application.Services
 
         public async Task<FaculityInfo?> GetFacultyByIdAsync(string facultyId)
         {
-            if (string.IsNullOrWhiteSpace(facultyId))
-            {
-                return null;
-            }
-
             var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
             return faculty == null ? null : _mapper.Map<FaculityInfo>(faculty);
         }
