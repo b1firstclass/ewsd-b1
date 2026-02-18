@@ -17,12 +17,14 @@ namespace CMS.Application.Services
         private readonly ILogger<PermissionsService> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public PermissionsService(ILogger<PermissionsService> logger, IMapper mapper, IUnitOfWork unitOfWork)
+        public PermissionsService(ILogger<PermissionsService> logger, IMapper mapper, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedResponse<PermissionInfo>> GetAllPermissionsAsync(PaginationRequest paginationRequest)
@@ -51,6 +53,7 @@ namespace CMS.Application.Services
 
             var permissionEntity = _mapper.Map<Permission>(request);
             permissionEntity.CreatedDate = DateTime.UtcNow;
+            permissionEntity.CreatedBy = _currentUserService.UserId;
 
             await _unitOfWork.Repository<Permission>().AddAsync(permissionEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -95,6 +98,7 @@ namespace CMS.Application.Services
             }
 
             permission.ModifiedDate = DateTime.UtcNow;
+            permission.ModifiedBy = _currentUserService.UserId;
 
             _unitOfWork.Repository<Permission>().Update(permission);
             await _unitOfWork.SaveChangesAsync();
@@ -115,6 +119,7 @@ namespace CMS.Application.Services
 
             permission.IsActive = false;
             permission.ModifiedDate = DateTime.UtcNow;
+            permission.ModifiedBy = _currentUserService.UserId;
             _unitOfWork.Repository<Permission>().Update(permission);
             await _unitOfWork.SaveChangesAsync();
 

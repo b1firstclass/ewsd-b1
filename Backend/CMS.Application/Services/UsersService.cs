@@ -30,14 +30,16 @@ namespace CMS.Application.Services
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AppSettings _appSettings;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
         public UsersService(ILogger<UsersService> logger, IMapper mapper, IPasswordHasher<User> passwordHasher,
-            IOptions<AppSettings> appSettings, IUnitOfWork unitOfWork)
+            IOptions<AppSettings> appSettings, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _appSettings = appSettings.Value;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest)
@@ -74,6 +76,7 @@ namespace CMS.Application.Services
             var userEntity = _mapper.Map<User>(request);
             userEntity.Password = _passwordHasher.HashPassword(userEntity, request.Password);
             userEntity.CreatedDate = DateTime.UtcNow;
+            userEntity.CreatedBy = _currentUserService.UserId;
             userEntity.IsActive = true;
             await AssignFacultiesAsync(userEntity, request.FacultyIds);
             await AssignRolesAsync(userEntity, request.RoleIds);
@@ -138,6 +141,7 @@ namespace CMS.Application.Services
             }
 
             user.ModifiedDate = DateTime.UtcNow;
+            user.ModifiedBy = _currentUserService.UserId;
 
             _unitOfWork.Repository<User>().Update(user);
             await _unitOfWork.SaveChangesAsync();
@@ -158,6 +162,7 @@ namespace CMS.Application.Services
 
             user.IsActive = false;
             user.ModifiedDate = DateTime.UtcNow;
+            user.ModifiedBy = _currentUserService.UserId;
             _unitOfWork.Repository<User>().Update(user);
             await _unitOfWork.SaveChangesAsync();
 

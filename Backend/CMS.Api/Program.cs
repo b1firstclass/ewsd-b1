@@ -1,7 +1,9 @@
 
 using CMS.Api.Security;
+using CMS.Api.Services;
 using CMS.Application;
 using CMS.Application.Common;
+using CMS.Application.Interfaces.Services;
 using CMS.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -48,6 +50,8 @@ namespace CMS.Api
             builder.Services.AddOpenApi();
             builder.Services.AddHealthChecks();
             builder.Services.AddAuthorization();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             builder.Services.AddAutoMapper(c =>
             {

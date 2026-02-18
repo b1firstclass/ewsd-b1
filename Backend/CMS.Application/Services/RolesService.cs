@@ -17,12 +17,14 @@ namespace CMS.Application.Services
         private readonly ILogger<RolesService> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public RolesService(ILogger<RolesService> logger, IMapper mapper, IUnitOfWork unitOfWork)
+        public RolesService(ILogger<RolesService> logger, IMapper mapper, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedResponse<RoleInfo>> GetAllRolesAsync(PaginationRequest paginationRequest)
@@ -52,6 +54,7 @@ namespace CMS.Application.Services
 
             var roleEntity = _mapper.Map<Role>(request);
             roleEntity.CreatedDate = DateTime.UtcNow;
+            roleEntity.CreatedBy = _currentUserService.UserId;
             await AssignPermissionsAsync(roleEntity, request.PermissionIds);
 
             await _unitOfWork.Repository<Role>().AddAsync(roleEntity);
@@ -93,6 +96,7 @@ namespace CMS.Application.Services
             }
 
             role.ModifiedDate = DateTime.UtcNow;
+            role.ModifiedBy = _currentUserService.UserId;
 
             _unitOfWork.Repository<Role>().Update(role);
             await _unitOfWork.SaveChangesAsync();
@@ -113,6 +117,7 @@ namespace CMS.Application.Services
 
             role.IsActive = false;
             role.ModifiedDate = DateTime.UtcNow;
+            role.ModifiedBy = _currentUserService.UserId;
             _unitOfWork.Repository<Role>().Update(role);
             await _unitOfWork.SaveChangesAsync();
 

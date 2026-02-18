@@ -17,13 +17,15 @@ namespace CMS.Application.Services
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
         public FacultiesService(ILogger<FacultiesService> logger, IMapper mapper, IOptions<AppSettings> appSettings,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedResponse<FaculityInfo>> GetAllFacultiesAsync(PaginationRequest paginationRequest)
@@ -52,6 +54,7 @@ namespace CMS.Application.Services
 
             var facultyEntity = _mapper.Map<Faculty>(request);
             facultyEntity.CreatedDate = DateTime.UtcNow;
+            facultyEntity.CreatedBy = _currentUserService.UserId;
 
             await _unitOfWork.Repository<Faculty>().AddAsync(facultyEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -77,6 +80,7 @@ namespace CMS.Application.Services
 
             faculty.FacultyName = request.Name;
             faculty.ModifiedDate = DateTime.UtcNow;
+            faculty.ModifiedBy = _currentUserService.UserId;
 
             _unitOfWork.Repository<Faculty>().Update(faculty);
             await _unitOfWork.SaveChangesAsync();
@@ -97,6 +101,7 @@ namespace CMS.Application.Services
 
             faculty.IsActive = false;
             faculty.ModifiedDate = DateTime.UtcNow;
+            faculty.ModifiedBy = _currentUserService.UserId;
             _unitOfWork.Repository<Faculty>().Update(faculty);
             await _unitOfWork.SaveChangesAsync();
 
