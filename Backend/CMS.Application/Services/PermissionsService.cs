@@ -32,7 +32,7 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(skip, take);
+            var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(skip, take, paginationRequest.SearchKeyword);
 
             var mappedPermissions = _mapper.Map<List<PermissionInfo>>(pagedPermissions.Items);
             return new PagedResponse<PermissionInfo>(mappedPermissions, pagedPermissions.TotalCount);

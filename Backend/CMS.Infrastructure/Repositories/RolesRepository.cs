@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
+using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,7 +38,7 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(r => r.RoleId == roleId && r.IsActive);
         }
 
-        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take)
+        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null)
         {
             if (skip < 0)
             {
@@ -45,12 +46,13 @@ namespace CMS.Infrastructure.Repositories
             }
 
             var query = _context.Roles
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(r => r.IsActive)
+                .ApplySearch(searchKeyword);
 
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .Where(r => r.IsActive)
                 .OrderBy(r => r.Name)
                 .ThenBy(r => r.RoleId)
                 .Skip(skip)

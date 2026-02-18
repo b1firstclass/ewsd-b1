@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace CMS.Domain.Entities;
@@ -9,18 +9,12 @@ public partial class User
 
     public string LoginId { get; set; } = null!;
 
-    /// <summary>
-    /// hashed password
-    /// </summary>
     public string Password { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
 
-    /// <summary>
-    /// If this value is null, then this is the first time login
-    /// </summary>
     public DateTime? LastLoginDate { get; set; }
 
     public string? LastLoginIp { get; set; }

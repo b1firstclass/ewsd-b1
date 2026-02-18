@@ -9,6 +9,6 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<IReadOnlyList<Role>> GetAllWithPermissionsAsync();
         Task<Role?> GetByIdWithPermissionsAsync(string roleId);
-        Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take);
+        Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null);
     }
 }

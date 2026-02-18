@@ -14,6 +14,8 @@ namespace CMS.Application.Common
         [Range(1, MaxPageSize)]
         public int PageSize { get; set; } = DefaultPageSize;
 
+        public string? SearchKeyword { get; set; }
+
         public int GetSkipCount()
         {
             return (PageNumber - 1) * PageSize;

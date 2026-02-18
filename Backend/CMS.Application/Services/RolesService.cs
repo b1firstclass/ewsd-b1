@@ -32,7 +32,7 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take);
+            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take, paginationRequest.SearchKeyword);
 
             var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);

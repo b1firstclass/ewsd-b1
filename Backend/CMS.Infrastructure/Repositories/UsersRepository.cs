@@ -1,6 +1,7 @@
 ﻿using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
+using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -45,19 +46,21 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
         }
 
-        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take)
+        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null)
         {
             if (skip < 0)
             {
                 skip = 0;
             }
 
-            var query = _context.Users.AsNoTracking();
+            var query = _context.Users
+                .AsNoTracking()
+                .Where(u => u.IsActive)
+                .ApplySearch(searchKeyword);
 
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .Where(u => u.IsActive)
                 .OrderByDescending(u => u.CreatedDate)
                 .Skip(skip)
                 .Take(take)

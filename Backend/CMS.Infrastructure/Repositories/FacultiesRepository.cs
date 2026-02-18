@@ -1,6 +1,7 @@
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
+using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -16,19 +17,21 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take)
+        public async Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take, string? searchKeyword = null)
         {
             if (skip < 0)
             {
                 skip = 0;
             }
 
-            var query = _context.Faculties.AsNoTracking();
+            var query = _context.Faculties
+                .AsNoTracking()
+                .Where(f => f.IsActive)
+                .ApplySearch(searchKeyword);
 
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .Where(f => f.IsActive)
                 .OrderBy(f => f.FacultyName)
                 .ThenBy(f => f.FacultyId)
                 .Skip(skip)
