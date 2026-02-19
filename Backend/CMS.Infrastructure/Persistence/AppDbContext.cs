@@ -22,6 +22,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserActivityLog> UserActivityLogs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ContributionWindow>(entity =>
@@ -137,6 +139,24 @@ public partial class AppDbContext : DbContext
                         j.HasKey("UserId", "RoleId").HasName("Users_Roles_pkey");
                         j.ToTable("Users_Roles");
                     });
+        });
+
+        modelBuilder.Entity<UserActivityLog>(entity =>
+        {
+            entity.HasKey(e => e.ActivityId).HasName("UserActivityLogs_pkey");
+
+            entity.Property(e => e.ActivityId).ValueGeneratedNever();
+            entity.Property(e => e.Browser).HasMaxLength(100);
+            entity.Property(e => e.BrowserVersion).HasMaxLength(50);
+            entity.Property(e => e.Device).HasMaxLength(100);
+            entity.Property(e => e.EventType).HasMaxLength(20);
+            entity.Property(e => e.HttpMethod).HasMaxLength(50);
+            entity.Property(e => e.IpAddress).HasMaxLength(100);
+            entity.Property(e => e.OS).HasMaxLength(50);
+            entity.Property(e => e.OsVersion).HasMaxLength(50);
+            entity.Property(e => e.Resource).HasMaxLength(200);
+            entity.Property(e => e.StatusCode).HasMaxLength(10);
+            entity.Property(e => e.UserAgent).HasMaxLength(500);
         });
 
         OnModelCreatingPartial(modelBuilder);

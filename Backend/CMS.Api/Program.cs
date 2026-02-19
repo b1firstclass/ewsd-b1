@@ -1,4 +1,5 @@
 
+using CMS.Api.Middleware;
 using CMS.Api.Security;
 using CMS.Api.Services;
 using CMS.Application;
@@ -7,10 +8,12 @@ using CMS.Application.Interfaces.Services;
 using CMS.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection;
 using System.Text;
+using UAParser.Extensions;
 
 namespace CMS.Api
 {
@@ -48,10 +51,16 @@ namespace CMS.Api
                 });
 
             builder.Services.AddOpenApi();
+            builder.Services.AddUserAgentParser();
+            builder.Services.AddMemoryCache();
             builder.Services.AddHealthChecks();
             builder.Services.AddAuthorization();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            builder.Services.Configure<ForwardedHeadersOptions>(
+                options => { options.ForwardedHeaders = ForwardedHeaders.XForwardedFor; }
+            );
 
             builder.Services.AddAutoMapper(c =>
             {
@@ -111,7 +120,9 @@ namespace CMS.Api
 
             //app.UseHttpsRedirection();
 
+            app.UseForwardedHeaders();
             app.UseAuthentication();
+            app.UseMiddleware<UserActivityLoggingMiddleware>();
             app.UseAuthorization();
 
             app.MapControllers();
