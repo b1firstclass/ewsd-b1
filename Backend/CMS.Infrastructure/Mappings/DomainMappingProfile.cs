@@ -69,6 +69,21 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
+
+            CreateMap<ContributionWindowCreateRequest, ContributionWindow>()
+                .ForMember(dest => dest.ContributionWindowId, opt => opt.MapFrom(_ => Guid.NewGuid()))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(_ => true));
+
+            CreateMap<ContributionWindow, ContributionWindowInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ContributionWindowId))
+                .ForMember(dest => dest.SubmissionOpenDate, opt => opt.MapFrom(src => src.SubmissionOpenDate))
+                .ForMember(dest => dest.SubmissionEndDate, opt => opt.MapFrom(src => src.SubmissionEndDate))
+                .ForMember(dest => dest.ClosureDate, opt => opt.MapFrom(src => src.ClosureDate))
+                .ForMember(dest => dest.AcademicYearStart, opt => opt.MapFrom(src => src.AcademicYearStart))
+                .ForMember(dest => dest.AcademicYearEnd, opt => opt.MapFrom(src => src.AcademicYearEnd))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
         }
     }
 }

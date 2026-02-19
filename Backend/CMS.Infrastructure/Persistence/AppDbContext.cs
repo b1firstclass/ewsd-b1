@@ -12,6 +12,8 @@ public partial class AppDbContext : DbContext
     {
     }
 
+    public virtual DbSet<ContributionWindow> ContributionWindows { get; set; }
+
     public virtual DbSet<Faculty> Faculties { get; set; }
 
     public virtual DbSet<Permission> Permissions { get; set; }
@@ -22,6 +24,16 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ContributionWindow>(entity =>
+        {
+            entity.HasKey(e => e.ContributionWindowId).HasName("ContributionWindows_pkey");
+
+            entity.Property(e => e.ContributionWindowId).ValueGeneratedNever();
+            entity.Property(e => e.CreatedBy).HasMaxLength(36);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
+        });
+
         modelBuilder.Entity<Faculty>(entity =>
         {
             entity.HasKey(e => e.FacultyId).HasName("Faculties_pkey");

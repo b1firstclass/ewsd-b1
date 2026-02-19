@@ -6,6 +6,7 @@
         IRolesRepository RolesRepository { get; }
         IFacultiesRepository FacultiesRepository { get; }
         IPermissionsRepository PermissionsRepository { get; }
+        IContributionWindowsRepository ContributionWindowsRepository { get; }
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
