@@ -73,9 +73,9 @@ namespace CMS.Infrastructure.Mappings
 
             CreateMap<ContributionWindow, ContributionWindowInfo>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ContributionWindowId))
-                .ForMember(dest => dest.SubmissionOpenDate, opt => opt.MapFrom(src => src.SubmissionOpenDate))
-                .ForMember(dest => dest.SubmissionEndDate, opt => opt.MapFrom(src => src.SubmissionEndDate))
-                .ForMember(dest => dest.ClosureDate, opt => opt.MapFrom(src => src.ClosureDate))
+                .ForMember(dest => dest.SubmissionOpenDate, opt => opt.MapFrom(src => src.SubmissionOpenDate.ToUniversalTime()))
+                .ForMember(dest => dest.SubmissionEndDate, opt => opt.MapFrom(src => src.SubmissionEndDate.ToUniversalTime()))
+                .ForMember(dest => dest.ClosureDate, opt => opt.MapFrom(src => src.ClosureDate.ToUniversalTime()))
                 .ForMember(dest => dest.AcademicYearStart, opt => opt.MapFrom(src => src.AcademicYearStart))
                 .ForMember(dest => dest.AcademicYearEnd, opt => opt.MapFrom(src => src.AcademicYearEnd))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))

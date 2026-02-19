@@ -51,7 +51,7 @@ namespace CMS.Application.Services
 
         public async Task<PermissionInfo> CreatePermissionAsync(PermissionCreateRequest request)
         {
-            if (await PermissionExistsAsync(request.Module, request.Name))
+            if (await PermissionExistsAsync(request.Module))
             {
                 throw new InvalidOperationException($"Permission '{request.Module}:{request.Name}' already exists");
             }
@@ -87,9 +87,9 @@ namespace CMS.Application.Services
 
             if ((!string.Equals(permission.Module, moduleToUse, StringComparison.OrdinalIgnoreCase) ||
                 !string.Equals(permission.Name, nameToUse, StringComparison.OrdinalIgnoreCase)) &&
-                await PermissionExistsAsync(moduleToUse, nameToUse, permissionId))
+                await PermissionExistsAsync(nameToUse, permissionId))
             {
-                throw new InvalidOperationException($"Permission '{moduleToUse}:{nameToUse}' already exists");
+                throw new InvalidOperationException($"Permission '{nameToUse}' already exists");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Module))
@@ -142,9 +142,9 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private async Task<bool> PermissionExistsAsync(string module, string name, Guid? excludePermissionId = null)
+        private async Task<bool> PermissionExistsAsync(string name, Guid? excludePermissionId = null)
         {
-            if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 return false;
             }
@@ -152,7 +152,6 @@ namespace CMS.Application.Services
             var permissions = await _unitOfWork.Repository<Permission>().GetAllAsync();
             return permissions.Any(p =>
                 p.IsActive &&
-                string.Equals(p.Module, module, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase) &&
                 (!excludePermissionId.HasValue || p.PermissionId != excludePermissionId.Value));
         }

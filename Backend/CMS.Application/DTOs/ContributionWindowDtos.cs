@@ -35,8 +35,6 @@ namespace CMS.Application.DTOs
 
         [Range(1900, 3000)]
         public int? AcademicYearEnd { get; set; }
-
-        public bool? IsActive { get; set; }
     }
     #endregion
 

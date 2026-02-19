@@ -52,6 +52,9 @@ namespace CMS.Application.Services
             ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
 
             var contributionWindow = _mapper.Map<ContributionWindow>(request);
+            contributionWindow.SubmissionOpenDate = contributionWindow.SubmissionOpenDate.ToUniversalTime();
+            contributionWindow.SubmissionEndDate = contributionWindow.SubmissionEndDate.ToUniversalTime();
+            contributionWindow.ClosureDate = contributionWindow.ClosureDate.ToUniversalTime();
             contributionWindow.CreatedDate = DateTime.UtcNow;
             contributionWindow.CreatedBy = _currentUserService.UserId;
             contributionWindow.IsActive = true;
@@ -85,17 +88,17 @@ namespace CMS.Application.Services
 
             if (request.SubmissionOpenDate.HasValue)
             {
-                contributionWindow.SubmissionOpenDate = request.SubmissionOpenDate;
+                contributionWindow.SubmissionOpenDate = request.SubmissionOpenDate.Value.ToUniversalTime();
             }
 
             if (request.SubmissionEndDate.HasValue)
             {
-                contributionWindow.SubmissionEndDate = request.SubmissionEndDate;
+                contributionWindow.SubmissionEndDate = request.SubmissionEndDate.Value.ToUniversalTime();
             }
 
             if (request.ClosureDate.HasValue)
             {
-                contributionWindow.ClosureDate = request.ClosureDate;
+                contributionWindow.ClosureDate = request.ClosureDate.Value.ToUniversalTime();
             }
 
             if (request.AcademicYearStart.HasValue)
@@ -106,11 +109,6 @@ namespace CMS.Application.Services
             if (request.AcademicYearEnd.HasValue)
             {
                 contributionWindow.AcademicYearEnd = request.AcademicYearEnd.Value;
-            }
-
-            if (request.IsActive.HasValue)
-            {
-                contributionWindow.IsActive = request.IsActive.Value;
             }
 
             contributionWindow.ModifiedDate = DateTime.UtcNow;

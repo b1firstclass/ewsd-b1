@@ -7,11 +7,11 @@ public partial class ContributionWindow
 {
     public Guid ContributionWindowId { get; set; }
 
-    public DateTime? SubmissionOpenDate { get; set; }
+    public DateTime SubmissionOpenDate { get; set; }
 
-    public DateTime? SubmissionEndDate { get; set; }
+    public DateTime SubmissionEndDate { get; set; }
 
-    public DateTime? ClosureDate { get; set; }
+    public DateTime ClosureDate { get; set; }
 
     public int AcademicYearStart { get; set; }
 
