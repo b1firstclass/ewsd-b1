@@ -33,9 +33,7 @@ namespace CMS.Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .OrderBy(p => p.Module)
-                .ThenBy(p => p.Name)
-                .ThenBy(p => p.PermissionId)
+                .OrderByDescending(p => p.CreatedDate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

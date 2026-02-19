@@ -36,11 +36,10 @@ namespace CMS.Application.DTOs
     #region response
     public class PermissionInfo
     {
-        public required string Id { get; set; }
+        public Guid Id { get; set; }
         public required string Module { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }

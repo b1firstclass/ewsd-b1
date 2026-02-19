@@ -38,8 +38,13 @@ namespace CMS.Application.Services
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
         }
 
-        public async Task<RoleInfo?> GetRoleByIdAsync(string roleId)
+        public async Task<RoleInfo?> GetRoleByIdAsync(Guid roleId)
         {
+            if (roleId == Guid.Empty)
+            {
+                return null;
+            }
+
             var role = await _unitOfWork.RolesRepository.GetByIdWithPermissionsAsync(roleId);
 
             return role == null ? null : _mapper.Map<RoleInfo>(role);
@@ -65,8 +70,13 @@ namespace CMS.Application.Services
             return _mapper.Map<RoleInfo>(roleEntity);
         }
 
-        public async Task<RoleInfo?> UpdateRoleAsync(string roleId, RoleUpdateRequest request)
+        public async Task<RoleInfo?> UpdateRoleAsync(Guid roleId, RoleUpdateRequest request)
         {
+            if (roleId == Guid.Empty)
+            {
+                return null;
+            }
+
             var role = await _unitOfWork.RolesRepository.GetByIdWithPermissionsAsync(roleId);
             if (role == null)
             {
@@ -106,8 +116,13 @@ namespace CMS.Application.Services
             return _mapper.Map<RoleInfo>(role);
         }
 
-        public async Task<bool> DeleteRoleAsync(string roleId)
+        public async Task<bool> DeleteRoleAsync(Guid roleId)
         {
+            if (roleId == Guid.Empty)
+            {
+                return false;
+            }
+
             var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
             if (role == null)
             {
@@ -125,7 +140,7 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private async Task<bool> RoleNameExistsAsync(string roleName, string? excludeRoleId = null)
+        private async Task<bool> RoleNameExistsAsync(string roleName, Guid? excludeRoleId = null)
         {
             if (string.IsNullOrWhiteSpace(roleName))
             {
@@ -136,10 +151,10 @@ namespace CMS.Application.Services
             return roles.Any(r =>
                 r.IsActive &&
                 string.Equals(r.Name, roleName, StringComparison.OrdinalIgnoreCase) &&
-                (excludeRoleId == null || !string.Equals(r.RoleId, excludeRoleId, StringComparison.OrdinalIgnoreCase)));
+                (!excludeRoleId.HasValue || r.RoleId != excludeRoleId.Value));
         }
 
-        private async Task AssignPermissionsAsync(Role role, IEnumerable<string>? permissionIds)
+        private async Task AssignPermissionsAsync(Role role, IEnumerable<Guid>? permissionIds)
         {
             if (role.Permissions == null)
             {
@@ -153,9 +168,7 @@ namespace CMS.Application.Services
                 return;
             }
 
-            foreach (var permissionId in permissionIds.Where(id => !string.IsNullOrWhiteSpace(id))
-                         .Select(id => id.Trim())
-                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (var permissionId in permissionIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
                 if (permission != null)

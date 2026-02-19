@@ -1,4 +1,5 @@
-﻿using CMS.Api.Utilities;
+﻿using System;
+using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
@@ -9,7 +10,7 @@ namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FacultiesController : ControllerBase
     {
         private readonly ILogger<FacultiesController> _logger;
@@ -44,12 +45,12 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetFacultyById(string id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetFacultyById(Guid id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id == Guid.Empty)
                 {
                     return this.ToErrorResponse("Faculty id is required", 400);
                 }
@@ -94,12 +95,12 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateFaculty(string id, FacultyUpdateRequest request)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateFaculty(Guid id, FacultyUpdateRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id == Guid.Empty)
                 {
                     return this.ToErrorResponse("Faculty id is required", 400);
                 }
@@ -129,12 +130,12 @@ namespace CMS.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFaculty(string id)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteFaculty(Guid id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (id == Guid.Empty)
                 {
                     return this.ToErrorResponse("Faculty id is required", 400);
                 }

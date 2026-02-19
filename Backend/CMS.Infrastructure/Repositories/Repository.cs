@@ -12,9 +12,9 @@ namespace CMS.Infrastructure.Repositories
             this.context = context;
         }
 
-        public virtual async Task<TEntity?> GetByIdAsync(string id)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (id == Guid.Empty)
             {
                 return null;
             }

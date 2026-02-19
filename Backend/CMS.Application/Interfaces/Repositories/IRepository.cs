@@ -2,7 +2,7 @@
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        Task<TEntity?> GetByIdAsync(string id);
+        Task<TEntity?> GetByIdAsync(Guid id);
         Task<IReadOnlyList<TEntity>> GetAllAsync();
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);

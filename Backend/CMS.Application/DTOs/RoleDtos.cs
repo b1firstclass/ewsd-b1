@@ -14,7 +14,7 @@ namespace CMS.Application.DTOs
         [StringLength(255)]
         public string? Description { get; set; }
 
-        public List<string>? PermissionIds { get; set; }
+        public List<Guid>? PermissionIds { get; set; }
     }
 
     public class RoleUpdateRequest
@@ -25,17 +25,16 @@ namespace CMS.Application.DTOs
         [StringLength(255)]
         public string? Description { get; set; }
 
-        public List<string>? PermissionIds { get; set; }
+        public List<Guid>? PermissionIds { get; set; }
     }
     #endregion
 
     #region response
     public class RoleInfo
     {
-        public required string Id { get; set; }
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public List<PermissionInfo> Permissions { get; set; } = new();

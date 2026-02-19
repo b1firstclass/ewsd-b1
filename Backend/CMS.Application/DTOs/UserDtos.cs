@@ -24,8 +24,8 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public required string Email { get; set; }
-        public List<string>? FacultyIds { get; set; }
-        public List<string>? RoleIds { get; set; }
+        public List<Guid>? FacultyIds { get; set; }
+        public List<Guid>? RoleIds { get; set; }
     }
 
     public class UserUpdateRequest
@@ -42,8 +42,8 @@ namespace CMS.Application.DTOs
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string? Email { get; set; }
 
-        public List<string>? FacultyIds { get; set; }
-        public List<string>? RoleIds { get; set; }
+        public List<Guid>? FacultyIds { get; set; }
+        public List<Guid>? RoleIds { get; set; }
     }
 
     public class UserLoginRequest
@@ -59,11 +59,10 @@ namespace CMS.Application.DTOs
     #region response
     public class UserInfo
     {
-        public required string Id { get; set; }
+        public Guid Id { get; set; }
         public required string LoginId { get; set; }
         public string? Email { get; set; }
         public string? FullName { get; set; }
-        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public List<FaculityInfo> Faculties { get; set; } = new();

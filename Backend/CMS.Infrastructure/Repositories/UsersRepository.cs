@@ -32,9 +32,9 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.LoginId == loginId && u.IsActive);
         }
 
-        public async Task<User?> GetByUserIdAsync(string userId)
+        public async Task<User?> GetByUserIdAsync(Guid userId)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            if (userId == Guid.Empty)
             {
                 return null;
             }

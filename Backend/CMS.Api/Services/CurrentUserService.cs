@@ -14,7 +14,7 @@ namespace CMS.Api.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? UserId
+        public Guid? UserId
         {
             get
             {
@@ -24,8 +24,15 @@ namespace CMS.Api.Services
                     return null;
                 }
 
-                return principal.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
-                       principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                var idString = principal.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
+                               principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (Guid.TryParse(idString, out var guid))
+                {
+                    return guid;
+                }
+
+                return null;
             }
         }
     }

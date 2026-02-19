@@ -39,8 +39,13 @@ namespace CMS.Application.Services
             return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
         }
 
-        public async Task<FaculityInfo?> GetFacultyByIdAsync(string facultyId)
+        public async Task<FaculityInfo?> GetFacultyByIdAsync(Guid facultyId)
         {
+            if (facultyId == Guid.Empty)
+            {
+                return null;
+            }
+
             var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
             return faculty == null ? null : _mapper.Map<FaculityInfo>(faculty);
         }
@@ -64,8 +69,13 @@ namespace CMS.Application.Services
             return _mapper.Map<FaculityInfo>(facultyEntity);
         }
 
-        public async Task<FaculityInfo?> UpdateFacultyAsync(string facultyId, FacultyUpdateRequest request)
+        public async Task<FaculityInfo?> UpdateFacultyAsync(Guid facultyId, FacultyUpdateRequest request)
         {
+            if (facultyId == Guid.Empty)
+            {
+                return null;
+            }
+
             var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
             if (faculty == null)
             {
@@ -90,8 +100,13 @@ namespace CMS.Application.Services
             return _mapper.Map<FaculityInfo>(faculty);
         }
 
-        public async Task<bool> DeleteFacultyAsync(string facultyId)
+        public async Task<bool> DeleteFacultyAsync(Guid facultyId)
         {
+            if (facultyId == Guid.Empty)
+            {
+                return false;
+            }
+
             var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
             if (faculty == null)
             {
@@ -109,7 +124,7 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private async Task<bool> FacultyNameExistsAsync(string facultyName, string? excludeFacultyId = null)
+        private async Task<bool> FacultyNameExistsAsync(string facultyName, Guid? excludeFacultyId = null)
         {
             if (string.IsNullOrWhiteSpace(facultyName))
             {
@@ -120,7 +135,7 @@ namespace CMS.Application.Services
             return faculties.Any(f =>
                 f.IsActive &&
                 string.Equals(f.FacultyName, facultyName, StringComparison.OrdinalIgnoreCase) &&
-                (excludeFacultyId == null || !string.Equals(f.FacultyId, excludeFacultyId, StringComparison.OrdinalIgnoreCase)));
+                (!excludeFacultyId.HasValue || f.FacultyId != excludeFacultyId.Value));
         }
     }
 }

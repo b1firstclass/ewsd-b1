@@ -32,8 +32,7 @@ namespace CMS.Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .OrderBy(f => f.FacultyName)
-                .ThenBy(f => f.FacultyId)
+                .OrderByDescending(f => f.CreatedDate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

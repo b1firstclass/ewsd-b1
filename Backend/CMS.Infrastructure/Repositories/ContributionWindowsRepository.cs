@@ -34,8 +34,7 @@ namespace CMS.Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .OrderByDescending(cw => cw.SubmissionOpenDate ?? DateTime.MaxValue)
-                .ThenBy(cw => cw.AcademicYearStart)
+                .OrderByDescending(w => w.CreatedDate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

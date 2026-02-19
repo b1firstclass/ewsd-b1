@@ -29,9 +29,7 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.ContributionWindowId).HasName("ContributionWindows_pkey");
 
             entity.Property(e => e.ContributionWindowId).ValueGeneratedNever();
-            entity.Property(e => e.CreatedBy).HasMaxLength(36);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
         });
 
         modelBuilder.Entity<Faculty>(entity =>
@@ -40,11 +38,9 @@ public partial class AppDbContext : DbContext
 
             entity.HasIndex(e => e.FacultyName, "Faculties_FacultyName_key").IsUnique();
 
-            entity.Property(e => e.FacultyId).HasMaxLength(36);
-            entity.Property(e => e.CreatedBy).HasMaxLength(36);
+            entity.Property(e => e.FacultyId).ValueGeneratedNever();
             entity.Property(e => e.FacultyName).HasMaxLength(200);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
 
             entity.HasMany(d => d.Users).WithMany(p => p.Faculties)
                 .UsingEntity<Dictionary<string, object>>(
@@ -61,8 +57,6 @@ public partial class AppDbContext : DbContext
                     {
                         j.HasKey("FacultyId", "UserId").HasName("FacultyMemberShip_pkey");
                         j.ToTable("FacultyMemberShip");
-                        j.IndexerProperty<string>("FacultyId").HasMaxLength(36);
-                        j.IndexerProperty<string>("UserId").HasMaxLength(36);
                     });
         });
 
@@ -74,17 +68,11 @@ public partial class AppDbContext : DbContext
 
             entity.HasIndex(e => e.Name, "Permissions_Name_key").IsUnique();
 
-            entity.Property(e => e.PermissionId).HasMaxLength(36);
-            entity.Property(e => e.CreatedBy).HasMaxLength(36);
+            entity.Property(e => e.PermissionId).ValueGeneratedNever();
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.Module)
-                .HasMaxLength(50)
-                .HasComment("user");
-            entity.Property(e => e.Name)
-                .HasMaxLength(100)
-                .HasComment("user.create");
+            entity.Property(e => e.Module).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -93,11 +81,9 @@ public partial class AppDbContext : DbContext
 
             entity.HasIndex(e => e.Name, "Roles_Name_key").IsUnique();
 
-            entity.Property(e => e.RoleId).HasMaxLength(36);
-            entity.Property(e => e.CreatedBy).HasMaxLength(36);
+            entity.Property(e => e.RoleId).ValueGeneratedNever();
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
@@ -115,8 +101,6 @@ public partial class AppDbContext : DbContext
                     {
                         j.HasKey("RoleId", "PermissionId").HasName("Roles_Permissions_pkey");
                         j.ToTable("Roles_Permissions");
-                        j.IndexerProperty<string>("RoleId").HasMaxLength(36);
-                        j.IndexerProperty<string>("PermissionId").HasMaxLength(36);
                     });
         });
 
@@ -128,18 +112,13 @@ public partial class AppDbContext : DbContext
 
             entity.HasIndex(e => e.LoginId, "Users_LoginId_key").IsUnique();
 
-            entity.Property(e => e.UserId).HasMaxLength(36);
-            entity.Property(e => e.CreatedBy).HasMaxLength(36);
+            entity.Property(e => e.UserId).ValueGeneratedNever();
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LastLoginDate).HasComment("If this value is null, then this is the first time login");
             entity.Property(e => e.LastLoginIp).HasMaxLength(50);
             entity.Property(e => e.LoginId).HasMaxLength(50);
-            entity.Property(e => e.ModifiedBy).HasMaxLength(36);
-            entity.Property(e => e.Password)
-                .HasMaxLength(255)
-                .HasComment("hashed password");
+            entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RefreshToken).HasMaxLength(200);
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
@@ -157,8 +136,6 @@ public partial class AppDbContext : DbContext
                     {
                         j.HasKey("UserId", "RoleId").HasName("Users_Roles_pkey");
                         j.ToTable("Users_Roles");
-                        j.IndexerProperty<string>("UserId").HasMaxLength(36);
-                        j.IndexerProperty<string>("RoleId").HasMaxLength(36);
                     });
         });
 

@@ -26,9 +26,9 @@ namespace CMS.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Role?> GetByIdWithPermissionsAsync(string roleId)
+        public async Task<Role?> GetByIdWithPermissionsAsync(Guid roleId)
         {
-            if (string.IsNullOrWhiteSpace(roleId))
+            if (roleId == Guid.Empty)
             {
                 return null;
             }
@@ -53,8 +53,7 @@ namespace CMS.Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .OrderBy(r => r.Name)
-                .ThenBy(r => r.RoleId)
+                .OrderByDescending(r => r.CreatedDate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

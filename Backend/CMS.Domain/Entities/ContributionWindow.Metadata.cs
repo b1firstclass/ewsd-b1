@@ -8,10 +8,6 @@ public partial class ContributionWindow
 {
     private sealed class ContributionWindowMetadata
     {
-        [Searchable]
-        public string? CreatedBy { get; set; }
-
-        [Searchable]
-        public string? ModifiedBy { get; set; }
+        
     }
 }

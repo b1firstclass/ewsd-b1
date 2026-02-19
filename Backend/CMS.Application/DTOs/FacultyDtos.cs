@@ -25,7 +25,7 @@ namespace CMS.Application.DTOs
     #region response
     public class FaculityInfo
     {
-        public required string Id { get; set;  }
+        public Guid Id { get; set;  }
         public required string Name { get; set; }
         public DateTime? CreatedDate { get; set; }
     }

@@ -38,8 +38,13 @@ namespace CMS.Application.Services
             return new PagedResponse<PermissionInfo>(mappedPermissions, pagedPermissions.TotalCount);
         }
 
-        public async Task<PermissionInfo?> GetPermissionByIdAsync(string permissionId)
+        public async Task<PermissionInfo?> GetPermissionByIdAsync(Guid permissionId)
         {
+            if (permissionId == Guid.Empty)
+            {
+                return null;
+            }
+
             var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             return permission == null ? null : _mapper.Map<PermissionInfo>(permission);
         }
@@ -63,8 +68,13 @@ namespace CMS.Application.Services
             return _mapper.Map<PermissionInfo>(permissionEntity);
         }
 
-        public async Task<PermissionInfo?> UpdatePermissionAsync(string permissionId, PermissionUpdateRequest request)
+        public async Task<PermissionInfo?> UpdatePermissionAsync(Guid permissionId, PermissionUpdateRequest request)
         {
+            if (permissionId == Guid.Empty)
+            {
+                return null;
+            }
+
             var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             if (permission == null)
             {
@@ -108,8 +118,13 @@ namespace CMS.Application.Services
             return _mapper.Map<PermissionInfo>(permission);
         }
 
-        public async Task<bool> DeletePermissionAsync(string permissionId)
+        public async Task<bool> DeletePermissionAsync(Guid permissionId)
         {
+            if (permissionId == Guid.Empty)
+            {
+                return false;
+            }
+
             var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             if (permission == null)
             {
@@ -127,7 +142,7 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private async Task<bool> PermissionExistsAsync(string module, string name, string? excludePermissionId = null)
+        private async Task<bool> PermissionExistsAsync(string module, string name, Guid? excludePermissionId = null)
         {
             if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(name))
             {
@@ -139,7 +154,7 @@ namespace CMS.Application.Services
                 p.IsActive &&
                 string.Equals(p.Module, module, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase) &&
-                (excludePermissionId == null || !string.Equals(p.PermissionId, excludePermissionId, StringComparison.OrdinalIgnoreCase)));
+                (!excludePermissionId.HasValue || p.PermissionId != excludePermissionId.Value));
         }
     }
 }

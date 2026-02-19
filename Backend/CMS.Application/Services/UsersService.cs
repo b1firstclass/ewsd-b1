@@ -54,8 +54,13 @@ namespace CMS.Application.Services
             return new PagedResponse<UserInfo>(mappedUsers, pagedUsers.TotalCount);
         }
 
-        public async Task<UserInfo?> GetUserByIdAsync(string userId)
+        public async Task<UserInfo?> GetUserByIdAsync(Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
             var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
 
             return user == null ? null : _mapper.Map<UserInfo>(user);
@@ -89,8 +94,13 @@ namespace CMS.Application.Services
             return _mapper.Map<UserInfo>(userEntity);
         }
 
-        public async Task<UserInfo?> UpdateUserAsync(string userId, UserUpdateRequest request)
+        public async Task<UserInfo?> UpdateUserAsync(Guid userId, UserUpdateRequest request)
         {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
             var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
             if (user == null)
             {
@@ -151,8 +161,13 @@ namespace CMS.Application.Services
             return _mapper.Map<UserInfo>(user);
         }
 
-        public async Task<bool> DeleteUserAsync(string userId)
+        public async Task<bool> DeleteUserAsync(Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return false;
+            }
+
             var user = await _unitOfWork.Repository<User>().GetByIdAsync(userId);
             if (user == null)
             {
@@ -255,7 +270,7 @@ namespace CMS.Application.Services
             };
         }
 
-        private async Task<bool> LoginIdExistsAsync(string loginId, string? excludeUserId = null)
+        private async Task<bool> LoginIdExistsAsync(string loginId, Guid? excludeUserId = null)
         {
             if (string.IsNullOrWhiteSpace(loginId))
             {
@@ -268,11 +283,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            return excludeUserId == null ||
-                   !string.Equals(existingUser.UserId, excludeUserId, StringComparison.OrdinalIgnoreCase);
+            return !excludeUserId.HasValue || existingUser.UserId != excludeUserId.Value;
         }
 
-        private async Task<bool> EmailExistsAsync(string email, string? excludeUserId = null)
+        private async Task<bool> EmailExistsAsync(string email, Guid? excludeUserId = null)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -285,11 +299,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            return excludeUserId == null ||
-                   !string.Equals(existingUser.UserId, excludeUserId, StringComparison.OrdinalIgnoreCase);
+            return !excludeUserId.HasValue || existingUser.UserId != excludeUserId.Value;
         }
 
-        private async Task AssignFacultiesAsync(User user, IEnumerable<string>? facultyIds)
+        private async Task AssignFacultiesAsync(User user, IEnumerable<Guid>? facultyIds)
         {
             if (user.Faculties == null)
             {
@@ -303,9 +316,7 @@ namespace CMS.Application.Services
                 return;
             }
 
-            foreach (var facultyId in facultyIds.Where(id => !string.IsNullOrWhiteSpace(id))
-                         .Select(id => id.Trim())
-                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (var facultyId in facultyIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
                 if (faculty != null)
@@ -319,7 +330,7 @@ namespace CMS.Application.Services
             }
         }
 
-        private async Task AssignRolesAsync(User user, IEnumerable<string>? roleIds)
+        private async Task AssignRolesAsync(User user, IEnumerable<Guid>? roleIds)
         {
             if (user.Roles == null)
             {
@@ -333,9 +344,7 @@ namespace CMS.Application.Services
                 return;
             }
 
-            foreach (var roleId in roleIds.Where(id => !string.IsNullOrWhiteSpace(id))
-                     .Select(id => id.Trim())
-                     .Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (var roleId in roleIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
                 if (role != null)
@@ -368,7 +377,7 @@ namespace CMS.Application.Services
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserId),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.LoginId),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
@@ -405,8 +414,8 @@ namespace CMS.Application.Services
 
             var facultyIds = user.Faculties
                 .Select(f => f.FacultyId)
-                .Where(id => !string.IsNullOrWhiteSpace(id))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(id => id != Guid.Empty)
+                .Distinct()
                 .ToList();
 
             var facultyNames = user.Faculties
@@ -417,7 +426,7 @@ namespace CMS.Application.Services
 
             foreach (var facultyId in facultyIds)
             {
-                claims.Add(new Claim(FacultyIdsClaim, facultyId));
+                claims.Add(new Claim(FacultyIdsClaim, facultyId.ToString()));
             }
 
             foreach (var facultyName in facultyNames)
@@ -435,8 +444,8 @@ namespace CMS.Application.Services
 
             var roleIds = user.Roles
                 .Select(r => r.RoleId)
-                .Where(id => !string.IsNullOrWhiteSpace(id))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(id => id != Guid.Empty)
+                .Distinct()
                 .ToList();
 
             var roleNames = user.Roles
@@ -452,7 +461,7 @@ namespace CMS.Application.Services
 
             foreach (var roleId in roleIds)
             {
-                claims.Add(new Claim(RoleIdsClaim, roleId));
+                claims.Add(new Claim(RoleIdsClaim, roleId.ToString()));
             }
         }
 
