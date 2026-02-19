@@ -1,0 +1,30 @@
+namespace CMS.Application.Common
+{
+    public static class PermissionClaimTypes
+    {
+        public const string Permission = "cms:permissions";
+    }
+
+    public static class PermissionNames
+    {
+        public const string UsersRead = "User.Read";
+        public const string UsersCreate = "User.Create";
+        public const string UsersUpdate = "User.Update";
+        public const string UsersDelete = "User.Delete";
+        public const string PermissionsRead = "Permission.Read";
+        public const string PermissionsCreate = "Permission.Create";
+        public const string PermissionsUpdate = "Permission.Update";
+        public const string PermissionsDelete = "Permission.Delete";
+        public const string RolesRead = "Role.Read";
+        public const string RolesCreate = "Role.Create";
+        public const string RolesUpdate = "Role.Update";
+        public const string RolesDelete = "Role.Delete";
+    }
+
+    public static class PermissionPolicies
+    {
+        public const string Prefix = "Permission:";
+
+        public static string Build(string permission) => string.Concat(Prefix, permission);
+    }
+}

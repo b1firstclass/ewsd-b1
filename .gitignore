@@ -36,7 +36,7 @@ packages/
 ############################################
 # ASP.NET Core
 ############################################
-appsettings.Development.json
+// appsettings.Development.json
 appsettings.Local.json
 secrets.json
 
