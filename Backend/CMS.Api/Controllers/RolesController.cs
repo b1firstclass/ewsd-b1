@@ -11,7 +11,7 @@ namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class RolesController : ControllerBase
     {
         private readonly ILogger<RolesController> _logger;
@@ -31,19 +31,19 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 paginationRequest ??= new PaginationRequest();
 
                 var roles = await _rolesService.GetAllRolesAsync(paginationRequest);
 
-                return roles.ToApiResponse("Roles retrieved successfully");
+                return roles.ToApiResponse(ApiResponseMessages.Retrieved("Roles"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving roles");
-                return this.ToErrorResponse("An error occurred while retrieving roles", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("roles"), 500);
             }
         }
 
@@ -55,21 +55,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Role id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Role"), 400);
                 }
 
                 var role = await _rolesService.GetRoleByIdAsync(id);
                 if (role == null)
                 {
-                    return this.ToErrorResponse("Role not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Role"), 404);
                 }
 
-                return role.ToApiResponse("Role retrieved successfully");
+                return role.ToApiResponse(ApiResponseMessages.Retrieved("Role"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving role {RoleId}", id);
-                return this.ToErrorResponse("An error occurred while retrieving the role", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("role"), 500);
             }
         }
 
@@ -81,11 +81,11 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var createdRole = await _rolesService.CreateRoleAsync(request);
-                return createdRole.ToApiResponse("Role created successfully", 201);
+                return createdRole.ToApiResponse(ApiResponseMessages.Created("Role"), 201);
             }
             catch (InvalidOperationException ex)
             {
@@ -95,7 +95,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating role");
-                return this.ToErrorResponse("An error occurred while creating the role", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorCreating("role"), 500);
             }
         }
 
@@ -107,21 +107,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Role id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Role"), 400);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var updatedRole = await _rolesService.UpdateRoleAsync(id, request);
                 if (updatedRole == null)
                 {
-                    return this.ToErrorResponse("Role not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Role"), 404);
                 }
 
-                return updatedRole.ToApiResponse("Role updated successfully");
+                return updatedRole.ToApiResponse(ApiResponseMessages.Updated("Role"));
             }
             catch (InvalidOperationException ex)
             {
@@ -131,7 +131,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating role {RoleId}", id);
-                return this.ToErrorResponse("An error occurred while updating the role", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("role"), 500);
             }
         }
 
@@ -143,21 +143,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Role id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Role"), 400);
                 }
 
                 var deleted = await _rolesService.DeleteRoleAsync(id);
                 if (!deleted)
                 {
-                    return this.ToErrorResponse("Role not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Role"), 404);
                 }
 
-                return this.ToSuccessResponse("Role deleted successfully");
+                return this.ToSuccessResponse(ApiResponseMessages.Deleted("Role"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting role {RoleId}", id);
-                return this.ToErrorResponse("An error occurred while deleting the role", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("role"), 500);
             }
         }
     }

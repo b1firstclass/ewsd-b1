@@ -31,18 +31,18 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 paginationRequest ??= new PaginationRequest();
 
                 var permissions = await _permissionsService.GetAllPermissionsAsync(paginationRequest);
-                return permissions.ToApiResponse("Permissions retrieved successfully");
+                return permissions.ToApiResponse(ApiResponseMessages.Retrieved("Permissions"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving permissions");
-                return this.ToErrorResponse("An error occurred while retrieving permissions", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("permissions"), 500);
             }
         }
 
@@ -54,21 +54,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Permission id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Permission"), 400);
                 }
 
                 var permission = await _permissionsService.GetPermissionByIdAsync(id);
                 if (permission == null)
                 {
-                    return this.ToErrorResponse("Permission not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Permission"), 404);
                 }
 
-                return permission.ToApiResponse("Permission retrieved successfully");
+                return permission.ToApiResponse(ApiResponseMessages.Retrieved("Permission"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving permission {PermissionId}", id);
-                return this.ToErrorResponse("An error occurred while retrieving the permission", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("permission"), 500);
             }
         }
 
@@ -80,11 +80,11 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var createdPermission = await _permissionsService.CreatePermissionAsync(request);
-                return createdPermission.ToApiResponse("Permission created successfully", 201);
+                return createdPermission.ToApiResponse(ApiResponseMessages.Created("Permission"), 201);
             }
             catch (InvalidOperationException ex)
             {
@@ -94,7 +94,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating permission");
-                return this.ToErrorResponse("An error occurred while creating the permission", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorCreating("permission"), 500);
             }
         }
 
@@ -106,21 +106,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Permission id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Permission"), 400);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var updatedPermission = await _permissionsService.UpdatePermissionAsync(id, request);
                 if (updatedPermission == null)
                 {
-                    return this.ToErrorResponse("Permission not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Permission"), 404);
                 }
 
-                return updatedPermission.ToApiResponse("Permission updated successfully");
+                return updatedPermission.ToApiResponse(ApiResponseMessages.Updated("Permission"));
             }
             catch (InvalidOperationException ex)
             {
@@ -130,7 +130,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating permission {PermissionId}", id);
-                return this.ToErrorResponse("An error occurred while updating the permission", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("permission"), 500);
             }
         }
 
@@ -142,21 +142,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Permission id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Permission"), 400);
                 }
 
                 var deleted = await _permissionsService.DeletePermissionAsync(id);
                 if (!deleted)
                 {
-                    return this.ToErrorResponse("Permission not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Permission"), 404);
                 }
 
-                return this.ToSuccessResponse("Permission deleted successfully");
+                return this.ToSuccessResponse(ApiResponseMessages.Deleted("Permission"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting permission {PermissionId}", id);
-                return this.ToErrorResponse("An error occurred while deleting the permission", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("permission"), 500);
             }
         }
     }

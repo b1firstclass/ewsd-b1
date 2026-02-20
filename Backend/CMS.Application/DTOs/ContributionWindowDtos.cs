@@ -51,5 +51,13 @@ namespace CMS.Application.DTOs
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
+
+    public class ContributionWindowStatusResponse
+    {
+        public DateTime CurrentTimeUtc { get; set; }
+        public bool IsInContributionWindow { get; set; }
+        public bool IsSubmissionAllowed { get; set; }
+        public ContributionWindowInfo? Window { get; set; }
+    }
     #endregion
 }

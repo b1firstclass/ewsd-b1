@@ -1,6 +1,8 @@
 ﻿using CMS.Application.Interfaces.Repositories;
+using CMS.Application.Interfaces.Services;
 using CMS.Infrastructure.Persistence;
 using CMS.Infrastructure.Repositories;
+using CMS.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,7 @@ namespace CMS.Infrastructure
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
+            services.AddTransient<IEmailService, SmtpEmailService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(

@@ -46,15 +46,46 @@ namespace CMS.Application.Services
             return contributionWindow == null ? null : _mapper.Map<ContributionWindowInfo>(contributionWindow);
         }
 
+        public async Task<ContributionWindowStatusResponse> GetCurrentWindowStatusAsync()
+        {
+            var utcNow = DateTime.UtcNow;
+            var window = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(utcNow);
+
+            if (window == null)
+            {
+                return new ContributionWindowStatusResponse
+                {
+                    CurrentTimeUtc = utcNow,
+                    IsInContributionWindow = false,
+                    IsSubmissionAllowed = false,
+                    Window = null
+                };
+            }
+
+            var submissionAllowed = utcNow >= window.SubmissionOpenDate && utcNow <= window.SubmissionEndDate;
+
+            return new ContributionWindowStatusResponse
+            {
+                CurrentTimeUtc = utcNow,
+                IsInContributionWindow = utcNow >= window.SubmissionOpenDate && utcNow <= window.ClosureDate,
+                IsSubmissionAllowed = submissionAllowed,
+                Window = _mapper.Map<ContributionWindowInfo>(window)
+            };
+        }
+
         public async Task<ContributionWindowInfo> CreateContributionWindowAsync(ContributionWindowCreateRequest request)
         {
-            ValidateWindowDates(request.SubmissionOpenDate, request.SubmissionEndDate, request.ClosureDate);
+            var submissionOpenDate = DateTimeHelper.NormalizeToUtc(request.SubmissionOpenDate);
+            var submissionEndDate = DateTimeHelper.NormalizeToUtc(request.SubmissionEndDate);
+            var closureDate = DateTimeHelper.NormalizeToUtc(request.ClosureDate);
+
+            ValidateWindowDates(submissionOpenDate, submissionEndDate, closureDate);
             ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
 
             var contributionWindow = _mapper.Map<ContributionWindow>(request);
-            contributionWindow.SubmissionOpenDate = contributionWindow.SubmissionOpenDate.ToUniversalTime();
-            contributionWindow.SubmissionEndDate = contributionWindow.SubmissionEndDate.ToUniversalTime();
-            contributionWindow.ClosureDate = contributionWindow.ClosureDate.ToUniversalTime();
+            contributionWindow.SubmissionOpenDate = submissionOpenDate;
+            contributionWindow.SubmissionEndDate = submissionEndDate;
+            contributionWindow.ClosureDate = closureDate;
             contributionWindow.CreatedDate = DateTime.UtcNow;
             contributionWindow.CreatedBy = _currentUserService.UserId;
             contributionWindow.IsActive = true;
@@ -76,9 +107,15 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var updatedOpenDate = request.SubmissionOpenDate ?? contributionWindow.SubmissionOpenDate;
-            var updatedEndDate = request.SubmissionEndDate ?? contributionWindow.SubmissionEndDate;
-            var updatedClosureDate = request.ClosureDate ?? contributionWindow.ClosureDate;
+            var updatedOpenDate = request.SubmissionOpenDate.HasValue
+                ? DateTimeHelper.NormalizeToUtc(request.SubmissionOpenDate.Value)
+                : contributionWindow.SubmissionOpenDate;
+            var updatedEndDate = request.SubmissionEndDate.HasValue
+                ? DateTimeHelper.NormalizeToUtc(request.SubmissionEndDate.Value)
+                : contributionWindow.SubmissionEndDate;
+            var updatedClosureDate = request.ClosureDate.HasValue
+                ? DateTimeHelper.NormalizeToUtc(request.ClosureDate.Value)
+                : contributionWindow.ClosureDate;
 
             ValidateWindowDates(updatedOpenDate, updatedEndDate, updatedClosureDate);
 
@@ -88,17 +125,17 @@ namespace CMS.Application.Services
 
             if (request.SubmissionOpenDate.HasValue)
             {
-                contributionWindow.SubmissionOpenDate = request.SubmissionOpenDate.Value.ToUniversalTime();
+                contributionWindow.SubmissionOpenDate = updatedOpenDate;
             }
 
             if (request.SubmissionEndDate.HasValue)
             {
-                contributionWindow.SubmissionEndDate = request.SubmissionEndDate.Value.ToUniversalTime();
+                contributionWindow.SubmissionEndDate = updatedEndDate;
             }
 
             if (request.ClosureDate.HasValue)
             {
-                contributionWindow.ClosureDate = request.ClosureDate.Value.ToUniversalTime();
+                contributionWindow.ClosureDate = updatedClosureDate;
             }
 
             if (request.AcademicYearStart.HasValue)

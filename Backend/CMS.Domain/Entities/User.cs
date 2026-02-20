@@ -33,6 +33,8 @@ public partial class User
 
     public Guid? ModifiedBy { get; set; }
 
+    public virtual ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
+
     public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
 
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
