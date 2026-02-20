@@ -25,6 +25,21 @@ namespace CMS.Api.Controllers
             _contributionWindowsService = contributionWindowsService;
         }
 
+        [HttpGet("status")]
+        public async Task<IActionResult> GetCurrentWindowStatus()
+        {
+            try
+            {
+                var status = await _contributionWindowsService.GetCurrentWindowStatusAsync();
+                return status.ToApiResponse(ApiResponseMessages.Retrieved("Contribution window status"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving contribution window status");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("contribution window status"), 500);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllContributionWindows([FromQuery] PaginationRequest? paginationRequest)
         {

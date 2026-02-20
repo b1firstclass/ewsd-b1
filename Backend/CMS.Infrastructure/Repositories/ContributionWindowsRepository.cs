@@ -53,6 +53,15 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(cw => cw.ContributionWindowId == contributionWindowId && cw.IsActive);
         }
 
+        public async Task<ContributionWindow?> GetCurrentWindowAsync(DateTime utcNow)
+        {
+            return await _context.ContributionWindows
+                .AsNoTracking()
+                .Where(cw => cw.IsActive && cw.SubmissionOpenDate <= utcNow && cw.ClosureDate >= utcNow)
+                .OrderByDescending(cw => cw.SubmissionOpenDate)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task AddAsync(ContributionWindow contributionWindow)
         {
             await _context.ContributionWindows.AddAsync(contributionWindow);

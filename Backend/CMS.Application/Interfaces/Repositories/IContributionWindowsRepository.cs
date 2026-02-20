@@ -9,6 +9,7 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<PagedResult<ContributionWindow>> GetPagedAsync(int skip, int take, string? searchKeyword = null);
         Task<ContributionWindow?> GetByIdAsync(Guid contributionWindowId);
+        Task<ContributionWindow?> GetCurrentWindowAsync(DateTime utcNow);
         Task AddAsync(ContributionWindow contributionWindow);
         void Update(ContributionWindow contributionWindow);
     }

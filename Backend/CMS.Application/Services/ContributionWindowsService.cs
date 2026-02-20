@@ -46,6 +46,33 @@ namespace CMS.Application.Services
             return contributionWindow == null ? null : _mapper.Map<ContributionWindowInfo>(contributionWindow);
         }
 
+        public async Task<ContributionWindowStatusResponse> GetCurrentWindowStatusAsync()
+        {
+            var utcNow = DateTime.UtcNow;
+            var window = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(utcNow);
+
+            if (window == null)
+            {
+                return new ContributionWindowStatusResponse
+                {
+                    CurrentTimeUtc = utcNow,
+                    IsInContributionWindow = false,
+                    IsSubmissionAllowed = false,
+                    Window = null
+                };
+            }
+
+            var submissionAllowed = utcNow >= window.SubmissionOpenDate && utcNow <= window.SubmissionEndDate;
+
+            return new ContributionWindowStatusResponse
+            {
+                CurrentTimeUtc = utcNow,
+                IsInContributionWindow = utcNow >= window.SubmissionOpenDate && utcNow <= window.ClosureDate,
+                IsSubmissionAllowed = submissionAllowed,
+                Window = _mapper.Map<ContributionWindowInfo>(window)
+            };
+        }
+
         public async Task<ContributionWindowInfo> CreateContributionWindowAsync(ContributionWindowCreateRequest request)
         {
             ValidateWindowDates(request.SubmissionOpenDate, request.SubmissionEndDate, request.ClosureDate);
