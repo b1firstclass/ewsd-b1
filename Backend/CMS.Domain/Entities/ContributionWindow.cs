@@ -26,4 +26,6 @@ public partial class ContributionWindow
     public DateTime? ModifiedDate { get; set; }
 
     public Guid? ModifiedBy { get; set; }
+
+    public virtual ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
 }

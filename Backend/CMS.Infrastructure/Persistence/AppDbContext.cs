@@ -12,7 +12,13 @@ public partial class AppDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Comment> Comments { get; set; }
+
+    public virtual DbSet<Contribution> Contributions { get; set; }
+
     public virtual DbSet<ContributionWindow> ContributionWindows { get; set; }
+
+    public virtual DbSet<Document> Documents { get; set; }
 
     public virtual DbSet<Faculty> Faculties { get; set; }
 
@@ -26,12 +32,66 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(e => e.CommentId).HasName("Comments_pkey");
+
+            entity.Property(e => e.CommentId).ValueGeneratedNever();
+            entity.Property(e => e.Comment1)
+                .HasMaxLength(500)
+                .HasColumnName("Comment");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            entity.HasOne(d => d.Contribution).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.ContributionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Comments_ContributionId_fkey");
+        });
+
+        modelBuilder.Entity<Contribution>(entity =>
+        {
+            entity.HasKey(e => e.ContributionId).HasName("Contributions_pkey");
+
+            entity.Property(e => e.ContributionId).ValueGeneratedNever();
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.Subject).HasMaxLength(100);
+
+            entity.HasOne(d => d.ContributionWindow).WithMany(p => p.Contributions)
+                .HasForeignKey(d => d.ContributionWindowId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Contributions_ContributionWindowId_fkey");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Contributions)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Contributions_UserId_fkey");
+        });
+
         modelBuilder.Entity<ContributionWindow>(entity =>
         {
             entity.HasKey(e => e.ContributionWindowId).HasName("ContributionWindows_pkey");
 
             entity.Property(e => e.ContributionWindowId).ValueGeneratedNever();
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+        });
+
+        modelBuilder.Entity<Document>(entity =>
+        {
+            entity.HasKey(e => e.DocumentId).HasName("Documents_pkey");
+
+            entity.HasIndex(e => e.FileName, "Documents_FileName_key").IsUnique();
+
+            entity.Property(e => e.DocumentId).ValueGeneratedNever();
+            entity.Property(e => e.Extension).HasMaxLength(100);
+            entity.Property(e => e.FileName).HasMaxLength(200);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            entity.HasOne(d => d.Contribution).WithMany(p => p.Documents)
+                .HasForeignKey(d => d.ContributionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Documents_ContributionId_fkey");
         });
 
         modelBuilder.Entity<Faculty>(entity =>
