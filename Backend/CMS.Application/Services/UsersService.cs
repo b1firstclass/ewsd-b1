@@ -226,8 +226,7 @@ namespace CMS.Application.Services
             {
                 Token = token,
                 ExpiresAt = expiresAt,
-                RefreshToken = refreshToken,
-                User = _mapper.Map<UserInfo>(user)
+                RefreshToken = refreshToken
             };
         }
 

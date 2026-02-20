@@ -16,11 +16,13 @@ namespace CMS.Api.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IUsersService _userService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UsersController(ILogger<UsersController> logger, IUsersService usersService)
+        public UsersController(ILogger<UsersController> logger, IUsersService usersService, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _userService = usersService;
+            _currentUserService = currentUserService;
         }
 
         //[HasPermission(PermissionNames.UsersRead)]
@@ -97,7 +99,33 @@ namespace CMS.Api.Controllers
                 _logger.LogError(ex, "Error logging in user {LoginId}", request.LoginId);
                 return this.ToErrorResponse("An error occurred while logging in", 500);
             }
-        }        
+        }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            try
+            {
+                var userId = _currentUserService.UserId;
+                if (!userId.HasValue)
+                {
+                    return this.ToErrorResponse("Unauthorized", 401);
+                }
+
+                var user = await _userService.GetUserByIdAsync(userId.Value);
+                if (user == null)
+                {
+                    return this.ToErrorResponse("User not found", 404);
+                }
+
+                return user.ToApiResponse("Profile retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving profile");
+                return this.ToErrorResponse("An error occurred while retrieving the profile", 500);
+            }
+        }
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
