@@ -11,7 +11,7 @@ namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ContributionWindowsController : ControllerBase
     {
         private readonly ILogger<ContributionWindowsController> _logger;

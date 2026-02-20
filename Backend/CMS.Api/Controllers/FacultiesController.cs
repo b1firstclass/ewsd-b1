@@ -10,7 +10,7 @@ namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class FacultiesController : ControllerBase
     {
         private readonly ILogger<FacultiesController> _logger;

@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using UAParser.Extensions;
 
 namespace CMS.Api
@@ -90,6 +91,19 @@ namespace CMS.Api
                         ValidIssuer = appSettings.JwtSettings.Issuer,
                         ValidAudience = appSettings.JwtSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JwtSettings.Key))
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+                            var response = ApiResponse.ErrorResponse("Unauthorized");
+                            var payload = JsonSerializer.Serialize(response);
+                            return context.Response.WriteAsync(payload);
+                        }
                     };
                 });
 

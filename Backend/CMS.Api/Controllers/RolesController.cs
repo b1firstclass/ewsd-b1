@@ -11,7 +11,7 @@ namespace CMS.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class RolesController : ControllerBase
     {
         private readonly ILogger<RolesController> _logger;
