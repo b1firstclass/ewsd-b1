@@ -4,6 +4,7 @@ namespace CMS.Api.Utilities
     {
         public const string ValidationFailed = "Validation failed";
         public const string Unauthorized = "Unauthorized";
+        public const string Forbidden = "Forbidden";
 
         public static string Retrieved(string resource) => $"{resource} retrieved successfully";
         public static string Created(string resource) => $"{resource} created successfully";
