@@ -33,19 +33,19 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 paginationRequest ??= new PaginationRequest();
 
                 var users = await _userService.GetAllUsersAsync(paginationRequest);
 
-                return users.ToApiResponse("Users retrieved successfully");
+                return users.ToApiResponse(ApiResponseMessages.Retrieved("Users"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving users");
-                return this.ToErrorResponse("An error occurred while retrieving users", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("users"), 500);
             }
         }
 
@@ -57,21 +57,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("User id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("User"), 400);
                 }
 
                 var user = await _userService.GetUserByIdAsync(id);
                 if (user == null)
                 {
-                    return this.ToErrorResponse("User not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("User"), 404);
                 }
 
-                return user.ToApiResponse("User retrieved successfully");
+                return user.ToApiResponse(ApiResponseMessages.Retrieved("User"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user {UserId}", id);
-                return this.ToErrorResponse("An error occurred while retrieving the user", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("user"), 500);
             }
         }
 
@@ -83,7 +83,7 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var loginResponse = await _userService.LoginAsync(request);
@@ -109,21 +109,21 @@ namespace CMS.Api.Controllers
                 var userId = _currentUserService.UserId;
                 if (!userId.HasValue)
                 {
-                    return this.ToErrorResponse("Unauthorized", 401);
+                    return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
                 }
 
                 var user = await _userService.GetUserByIdAsync(userId.Value);
                 if (user == null)
                 {
-                    return this.ToErrorResponse("User not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("User"), 404);
                 }
 
-                return user.ToApiResponse("Profile retrieved successfully");
+                return user.ToApiResponse(ApiResponseMessages.Retrieved("Profile"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving profile");
-                return this.ToErrorResponse("An error occurred while retrieving the profile", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("profile"), 500);
             }
         }
 
@@ -135,7 +135,7 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var refreshResponse = await _userService.RefreshTokenAsync(request);
@@ -161,12 +161,12 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var userEntity = await _userService.CreateUserAsync(request);
 
-                return userEntity.ToApiResponse("User created successfully", 201);
+                return userEntity.ToApiResponse(ApiResponseMessages.Created("User"), 201);
             }
             catch (InvalidOperationException ex)
             {
@@ -176,7 +176,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error registering a new user");
-                return this.ToErrorResponse("An error occurred while registering the user", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorCreating("user"), 500);
             }
         }
 
@@ -188,21 +188,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("User id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("User"), 400);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var updatedUser = await _userService.UpdateUserAsync(id, request);
                 if (updatedUser == null)
                 {
-                    return this.ToErrorResponse("User not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("User"), 404);
                 }
 
-                return updatedUser.ToApiResponse("User updated successfully");
+                return updatedUser.ToApiResponse(ApiResponseMessages.Updated("User"));
             }
             catch (InvalidOperationException ex)
             {
@@ -212,7 +212,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating user {UserId}", id);
-                return this.ToErrorResponse("An error occurred while updating the user", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("user"), 500);
             }
         }
 
@@ -224,21 +224,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("User id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("User"), 400);
                 }
 
                 var deleted = await _userService.DeleteUserAsync(id);
                 if (!deleted)
                 {
-                    return this.ToErrorResponse("User not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("User"), 404);
                 }
 
-                return this.ToSuccessResponse("User deleted successfully");
+                return this.ToSuccessResponse(ApiResponseMessages.Deleted("User"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting user {UserId}", id);
-                return this.ToErrorResponse("An error occurred while deleting the user", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("user"), 500);
             }
         }
     }

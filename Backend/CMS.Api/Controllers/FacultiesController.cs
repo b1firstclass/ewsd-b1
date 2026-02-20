@@ -29,19 +29,19 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 paginationRequest ??= new PaginationRequest();
 
                 var faculties = await _facultyService.GetAllFacultiesAsync(paginationRequest);
 
-                return faculties.ToApiResponse("Faculties retrieved successfully");
+                return faculties.ToApiResponse(ApiResponseMessages.Retrieved("Faculties"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving faculties");
-                return this.ToErrorResponse("An error occurred while retrieving faculties", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculties"), 500);
             }
         }
 
@@ -52,21 +52,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Faculty id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
                 }
 
                 var faculty = await _facultyService.GetFacultyByIdAsync(id);
                 if (faculty == null)
                 {
-                    return this.ToErrorResponse("Faculty not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Faculty"), 404);
                 }
 
-                return faculty.ToApiResponse("Faculty retrieved successfully");
+                return faculty.ToApiResponse(ApiResponseMessages.Retrieved("Faculty"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving faculty {FacultyId}", id);
-                return this.ToErrorResponse("An error occurred while retrieving the faculty", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculty"), 500);
             }
         }
 
@@ -77,11 +77,11 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var createdFaculty = await _facultyService.CreateFacultyAsync(request);
-                return createdFaculty.ToApiResponse("Faculty created successfully", 201);
+                return createdFaculty.ToApiResponse(ApiResponseMessages.Created("Faculty"), 201);
             }
             catch (InvalidOperationException ex)
             {
@@ -91,7 +91,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating faculty");
-                return this.ToErrorResponse("An error occurred while creating the faculty", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorCreating("faculty"), 500);
             }
         }
 
@@ -102,21 +102,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Faculty id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return this.ToErrorResponse("Validation failed", 400, ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var updatedFaculty = await _facultyService.UpdateFacultyAsync(id, request);
                 if (updatedFaculty == null)
                 {
-                    return this.ToErrorResponse("Faculty not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Faculty"), 404);
                 }
 
-                return updatedFaculty.ToApiResponse("Faculty updated successfully");
+                return updatedFaculty.ToApiResponse(ApiResponseMessages.Updated("Faculty"));
             }
             catch (InvalidOperationException ex)
             {
@@ -126,7 +126,7 @@ namespace CMS.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating faculty {FacultyId}", id);
-                return this.ToErrorResponse("An error occurred while updating the faculty", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("faculty"), 500);
             }
         }
 
@@ -137,21 +137,21 @@ namespace CMS.Api.Controllers
             {
                 if (id == Guid.Empty)
                 {
-                    return this.ToErrorResponse("Faculty id is required", 400);
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
                 }
 
                 var deleted = await _facultyService.DeleteFacultyAsync(id);
                 if (!deleted)
                 {
-                    return this.ToErrorResponse("Faculty not found", 404);
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Faculty"), 404);
                 }
 
-                return this.ToSuccessResponse("Faculty deleted successfully");
+                return this.ToSuccessResponse(ApiResponseMessages.Deleted("Faculty"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting faculty {FacultyId}", id);
-                return this.ToErrorResponse("An error occurred while deleting the faculty", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("faculty"), 500);
             }
         }
     }

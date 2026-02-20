@@ -45,7 +45,7 @@ namespace CMS.Api.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
                 var clientInfo = _parser.ClientInfo;
@@ -65,12 +65,12 @@ namespace CMS.Api.Controllers
                 await _activityLogService.LogFrontendRouteAsync(request, userAgentInfo);
 
                 _logger.LogInformation($"Frontend route logged: {request.Route}");
-                return this.ToSuccessResponse("Activitylog saved successfully");
+                return this.ToSuccessResponse(ApiResponseMessages.Saved("Activity log"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error logging activity");
-                return this.ToErrorResponse("An error occurred while saving the activity log", 500);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorSaving("activity log"), 500);
             }
         }
     }
