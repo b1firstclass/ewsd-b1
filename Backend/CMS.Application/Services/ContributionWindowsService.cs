@@ -6,6 +6,7 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -83,8 +84,8 @@ namespace CMS.Application.Services
             var submissionEndDate = DateTimeHelper.NormalizeToUtc(request.SubmissionEndDate);
             var closureDate = DateTimeHelper.NormalizeToUtc(request.ClosureDate);
 
-            ValidateWindowDates(submissionOpenDate, submissionEndDate, closureDate);
-            ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
+            ContributionWindowValidator.ValidateWindowDates(submissionOpenDate, submissionEndDate, closureDate);
+            ContributionWindowValidator.ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
 
             var contributionWindow = _mapper.Map<ContributionWindow>(request);
             contributionWindow.SubmissionOpenDate = submissionOpenDate;
@@ -121,11 +122,11 @@ namespace CMS.Application.Services
                 ? DateTimeHelper.NormalizeToUtc(request.ClosureDate.Value)
                 : contributionWindow.ClosureDate;
 
-            ValidateWindowDates(updatedOpenDate, updatedEndDate, updatedClosureDate);
+            ContributionWindowValidator.ValidateWindowDates(updatedOpenDate, updatedEndDate, updatedClosureDate);
 
             var updatedAcademicYearStart = request.AcademicYearStart ?? contributionWindow.AcademicYearStart;
             var updatedAcademicYearEnd = request.AcademicYearEnd ?? contributionWindow.AcademicYearEnd;
-            ValidateAcademicYears(updatedAcademicYearStart, updatedAcademicYearEnd);
+            ContributionWindowValidator.ValidateAcademicYears(updatedAcademicYearStart, updatedAcademicYearEnd);
 
             if (request.SubmissionOpenDate.HasValue)
             {
@@ -185,25 +186,6 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private static void ValidateWindowDates(DateTime? submissionOpenDate, DateTime? submissionEndDate, DateTime? closureDate)
-        {
-            if (submissionOpenDate.HasValue && submissionEndDate.HasValue && submissionOpenDate.Value > submissionEndDate.Value)
-            {
-                throw new InvalidOperationException("Submission end date must be after the submission open date.");
-            }
-
-            if (submissionEndDate.HasValue && closureDate.HasValue && submissionEndDate.Value > closureDate.Value)
-            {
-                throw new InvalidOperationException("Closure date must be after the submission end date.");
-            }
-        }
-
-        private static void ValidateAcademicYears(int academicYearStart, int academicYearEnd)
-        {
-            if (academicYearEnd < academicYearStart)
-            {
-                throw new InvalidOperationException("AcademicYearEnd cannot be earlier than AcademicYearStart.");
-            }
-        }
+        
     }
 }

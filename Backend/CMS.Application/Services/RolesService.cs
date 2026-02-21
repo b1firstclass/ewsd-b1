@@ -7,6 +7,7 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -56,10 +57,7 @@ namespace CMS.Application.Services
 
         public async Task<RoleInfo> CreateRoleAsync(RoleCreateRequest request)
         {
-            if (await RoleNameExistsAsync(request.Name))
-            {
-                throw new InvalidOperationException($"Role with name '{request.Name}' already exists");
-            }
+            RoleValidator.EnsureRoleNameAvailable(request.Name, await RoleNameExistsAsync(request.Name));
 
             var roleEntity = _mapper.Map<Role>(request);
             roleEntity.CreatedDate = DateTime.UtcNow;
@@ -91,10 +89,7 @@ namespace CMS.Application.Services
             if (!string.IsNullOrWhiteSpace(request.Name) &&
                 !string.Equals(role.Name, request.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (await RoleNameExistsAsync(request.Name, roleId))
-                {
-                    throw new InvalidOperationException($"Role with name '{request.Name}' already exists");
-                }
+                RoleValidator.EnsureRoleNameAvailable(request.Name, await RoleNameExistsAsync(request.Name, roleId));
 
                 role.Name = request.Name;
             }

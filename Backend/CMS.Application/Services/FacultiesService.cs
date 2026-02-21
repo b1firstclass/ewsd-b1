@@ -5,6 +5,7 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -56,10 +57,7 @@ namespace CMS.Application.Services
 
         public async Task<FaculityInfo> CreateFacultyAsync(FacultyCreateRequest request)
         {
-            if (await FacultyNameExistsAsync(request.Name))
-            {
-                throw new InvalidOperationException($"Faculty with name '{request.Name}' already exists");
-            }
+            FacultyValidator.EnsureFacultyNameAvailable(request.Name, await FacultyNameExistsAsync(request.Name));
 
             var facultyEntity = _mapper.Map<Faculty>(request);
             facultyEntity.CreatedDate = DateTime.UtcNow;
@@ -87,10 +85,7 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            if (await FacultyNameExistsAsync(request.Name, facultyId))
-            {
-                throw new InvalidOperationException($"Faculty with name '{request.Name}' already exists");
-            }
+            FacultyValidator.EnsureFacultyNameAvailable(request.Name, await FacultyNameExistsAsync(request.Name, facultyId));
 
             faculty.FacultyName = request.Name;
 

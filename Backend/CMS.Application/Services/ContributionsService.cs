@@ -1,6 +1,7 @@
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.IO;
@@ -52,11 +53,11 @@ namespace CMS.Application.Services
                 throw new InvalidOperationException("Contribution window not found");
             }
 
-            ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
+            ContributionFileValidator.ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
 
             if (request.ImageFile != null)
             {
-                ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
+                ContributionFileValidator.ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
             }
 
             var now = DateTime.UtcNow;
@@ -227,14 +228,14 @@ namespace CMS.Application.Services
 
             if (request.DocumentFile != null)
             {
-                ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
+                ContributionFileValidator.ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
                 DisableDocuments(contribution, AllowedDocumentExtensions, currentUserId);
                 contribution.Documents.Add(CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
             }
 
             if (request.ImageFile != null)
             {
-                ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
+                ContributionFileValidator.ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
                 DisableDocuments(contribution, AllowedImageExtensions, currentUserId);
                 contribution.Documents.Add(CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
             }
@@ -248,26 +249,6 @@ namespace CMS.Application.Services
             _logger.LogInformation("Contribution updated: {ContributionId}", contribution.ContributionId);
 
             return MapContributionInfo(contribution);
-        }
-
-        private static void ValidateFile(ContributionFileRequest file, HashSet<string> allowedExtensions, long maxSizeBytes, string label)
-        {
-            if (file.Data.Length <= 0 || file.Size <= 0)
-            {
-                throw new ArgumentException($"{label} file is empty");
-            }
-
-            if (file.Size > maxSizeBytes)
-            {
-                var maxSizeMb = maxSizeBytes / (1024 * 1024);
-                throw new ArgumentException($"{label} file exceeds the maximum size of {maxSizeMb} MB");
-            }
-
-            var extension = Path.GetExtension(file.FileName);
-            if (string.IsNullOrWhiteSpace(extension) || !allowedExtensions.Contains(extension))
-            {
-                throw new ArgumentException($"{label} file extension is not allowed");
-            }
         }
 
         private static void DisableDocuments(Contribution contribution, HashSet<string> extensions, Guid currentUserId)
