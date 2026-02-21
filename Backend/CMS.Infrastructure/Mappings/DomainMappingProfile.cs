@@ -29,6 +29,18 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles));
 
+            CreateMap<User, UserProfile>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.LoginId, opt => opt.MapFrom(src => src.LoginId))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
+                .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles))
+                .ForMember(dest => dest.LastLoginDate, opt => opt.MapFrom(src => src.LastLoginDate))
+                .ForMember(dest => dest.FirstTimeLogin, opt => opt.MapFrom(src => !src.LastLoginDate.HasValue));
+
             CreateMap<FacultyCreateRequest, Faculty>()
                 .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(_ => Guid.NewGuid().ToString()))
                 .ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.Name))

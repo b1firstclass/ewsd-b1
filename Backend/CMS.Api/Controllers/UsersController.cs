@@ -112,7 +112,7 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
                 }
 
-                var user = await _userService.GetUserByIdAsync(userId.Value);
+                var user = await _userService.GetUserProfileById(userId.Value);
                 if (user == null)
                 {
                     return this.ToErrorResponse(ApiResponseMessages.NotFound("User"), 404);

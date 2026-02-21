@@ -66,6 +66,18 @@ namespace CMS.Application.Services
             return user == null ? null : _mapper.Map<UserInfo>(user);
         }
 
+        public async Task<UserProfile?> GetUserProfileById(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
+
+            return user == null ? null : _mapper.Map<UserProfile>(user);
+        }
+
         public async Task<UserInfo> CreateUserAsync(UserRegisterRequest request)
         {
             if (await LoginIdExistsAsync(request.LoginId))

@@ -69,6 +69,12 @@ namespace CMS.Application.DTOs
         public List<RoleInfo> Roles { get; set; } = new();
     }
 
+    public class UserProfile : UserInfo
+    {
+        public DateTime LastLoginDate { get; set; }
+        public bool FirstTimeLogin { get; set; }
+    }
+
     public class UserLoginResponse
     {
         public required string Token { get; set; }
