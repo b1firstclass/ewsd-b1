@@ -1,4 +1,5 @@
 ﻿using System;
+using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
@@ -22,6 +23,8 @@ namespace CMS.Api.Controllers
             _facultyService = facultyService;
         }
 
+
+        [HasPermission(PermissionNames.FacultyRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllFaculties([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -45,6 +48,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.FacultyRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFacultyById(Guid id)
         {
@@ -70,6 +74,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.FacultyCreate)]
         [HttpPost]
         public async Task<IActionResult> CreateFaculty(FacultyCreateRequest request)
         {
@@ -95,6 +100,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.FacultyUpdate)]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateFaculty(Guid id, FacultyUpdateRequest request)
         {
@@ -130,6 +136,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.FacultyDelete)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteFaculty(Guid id)
         {

@@ -25,7 +25,7 @@ namespace CMS.Api.Controllers
             _currentUserService = currentUserService;
         }
 
-        //[HasPermission(PermissionNames.UsersRead)]
+        [HasPermission(PermissionNames.UsersRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -49,7 +49,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.UsersRead)]
+        [HasPermission(PermissionNames.UsersRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
@@ -153,7 +153,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.UsersCreate)]
+        [HasPermission(PermissionNames.UsersCreate)]
         [HttpPost]
         public async Task<IActionResult> RegisterUser(UserRegisterRequest request)
         {
@@ -180,7 +180,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.UsersUpdate)]
+        [HasPermission(PermissionNames.UsersUpdate)]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser(Guid id, UserUpdateRequest request)
         {
@@ -216,7 +216,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.UsersDelete)]
+        [HasPermission(PermissionNames.UsersDelete)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

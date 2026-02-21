@@ -61,10 +61,6 @@ namespace CMS.Infrastructure.Repositories
             {
                 query = query.Where(u => u.IsActive == isActive.Value);
             }
-            else
-            {
-                query = query.Where(u => u.IsActive);
-            }
 
             var totalCount = await query.CountAsync();
 

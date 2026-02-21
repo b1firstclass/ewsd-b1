@@ -19,6 +19,10 @@ namespace CMS.Application.Common
         public const string RolesCreate = "Role.Create";
         public const string RolesUpdate = "Role.Update";
         public const string RolesDelete = "Role.Delete";
+        public const string FacultyCreate = "Faculty.Create";
+        public const string FacultyRead = "Faculty.Read";
+        public const string FacultyUpdate = "Faculty.Update";
+        public const string FacultyDelete = "Faculty.Delete";
     }
 
     public static class PermissionPolicies
