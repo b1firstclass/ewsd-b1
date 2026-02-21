@@ -18,6 +18,7 @@ namespace CMS.Application
             services.AddScoped<IContributionWindowsService, ContributionWindowsService>();
             services.AddScoped<IContributionsService, ContributionsService>();
             services.AddScoped<IActivityLogService, ActivityLogService>();
+            services.AddScoped<ICommentsService, CommentsService>();
 
             return services;
         }
