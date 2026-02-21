@@ -53,6 +53,17 @@ namespace CMS.Application.Services
             return comment == null ? null : MapCommentInfo(comment);
         }
 
+        public async Task<IReadOnlyList<CommentInfo>> GetCommentsByContributionIdAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return Array.Empty<CommentInfo>();
+            }
+
+            var comments = await _unitOfWork.CommentsRepository.GetByContributionIdAsync(contributionId);
+            return comments.Select(MapCommentInfo).ToList();
+        }
+
         public async Task<CommentInfo> CreateCommentAsync(CommentCreateRequest request)
         {
             var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");

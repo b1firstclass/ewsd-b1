@@ -74,6 +74,26 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HttpGet("contribution/{contributionId:guid}")]
+        public async Task<IActionResult> GetCommentsByContributionId(Guid contributionId)
+        {
+            try
+            {
+                if (contributionId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var comments = await _commentsService.GetCommentsByContributionIdAsync(contributionId);
+                return comments.ToApiResponse(ApiResponseMessages.Retrieved("Comments"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving comments for contribution {ContributionId}", contributionId);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("comments"), 500);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateComment(CommentCreateRequest request)
         {

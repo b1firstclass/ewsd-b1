@@ -30,6 +30,20 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(comment => comment.CommentId == commentId && comment.IsActive);
         }
 
+        public async Task<IReadOnlyList<Comment>> GetByContributionIdAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return Array.Empty<Comment>();
+            }
+
+            return await _context.Comments
+                .AsNoTracking()
+                .Where(comment => comment.ContributionId == contributionId && comment.IsActive)
+                .OrderByDescending(comment => comment.CreatedDate)
+                .ToListAsync();
+        }
+
         public async Task<PagedResult<Comment>> GetPagedAsync(int skip, int take, Guid? contributionId = null, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)
