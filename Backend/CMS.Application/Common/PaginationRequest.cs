@@ -8,11 +8,14 @@ namespace CMS.Application.Common
         private const int DefaultPageSize = 20;
         private const int MaxPageSize = 100;
 
+
         [Range(1, int.MaxValue)]
         public int PageNumber { get; set; } = DefaultPageNumber;
 
         [Range(1, MaxPageSize)]
         public int PageSize { get; set; } = DefaultPageSize;
+
+        public bool? IsActive { get; set; }
 
         public string? SearchKeyword { get; set; }
 

@@ -57,6 +57,13 @@ namespace CMS.Api
             builder.Services.AddMemoryCache();
             builder.Services.AddHealthChecks();
             builder.Services.AddAuthorization();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                    policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -144,6 +151,7 @@ namespace CMS.Api
             //app.UseHttpsRedirection();
 
             app.UseForwardedHeaders();
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseMiddleware<UserActivityLoggingMiddleware>();
             app.UseAuthorization();

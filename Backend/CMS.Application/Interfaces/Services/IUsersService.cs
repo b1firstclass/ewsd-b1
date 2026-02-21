@@ -8,6 +8,7 @@ namespace CMS.Application.Interfaces.Services
     {
         Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest);
         Task<UserInfo?> GetUserByIdAsync(Guid userId);
+        Task<UserProfile?> GetUserProfileById(Guid userId);
         Task<UserInfo> CreateUserAsync(UserRegisterRequest request);
         Task<UserInfo?> UpdateUserAsync(Guid userId, UserUpdateRequest request);
         Task<bool> DeleteUserAsync(Guid userId);

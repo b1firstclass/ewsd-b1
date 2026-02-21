@@ -46,7 +46,7 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
         }
 
-        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null)
+        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)
             {
@@ -55,8 +55,16 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Users
                 .AsNoTracking()
-                .Where(u => u.IsActive)
                 .ApplySearch(searchKeyword);
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(u => u.IsActive == isActive.Value);
+            }
+            else
+            {
+                query = query.Where(u => u.IsActive);
+            }
 
             var totalCount = await query.CountAsync();
 

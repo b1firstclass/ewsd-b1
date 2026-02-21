@@ -42,6 +42,8 @@ namespace CMS.Application.DTOs
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string? Email { get; set; }
 
+        public bool? IsActive { get; set; }
+
         public List<Guid>? FacultyIds { get; set; }
         public List<Guid>? RoleIds { get; set; }
     }
@@ -63,10 +65,17 @@ namespace CMS.Application.DTOs
         public required string LoginId { get; set; }
         public string? Email { get; set; }
         public string? FullName { get; set; }
+        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public List<FaculityInfo> Faculties { get; set; } = new();
         public List<RoleInfo> Roles { get; set; } = new();
+    }
+
+    public class UserProfile : UserInfo
+    {
+        public DateTime LastLoginDate { get; set; }
+        public bool FirstTimeLogin { get; set; }
     }
 
     public class UserLoginResponse

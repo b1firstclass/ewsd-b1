@@ -25,16 +25,16 @@ namespace CMS.Infrastructure.Repositories
                 return null;
             }
 
-            var isActiveProperty = typeof(TEntity).GetProperty("IsActive");
-            if (isActiveProperty != null && isActiveProperty.PropertyType == typeof(bool))
-            {
-                var isActiveValue = (bool)(isActiveProperty.GetValue(entity) ?? false);
-                if (!isActiveValue)
-                {
-                    context.Entry(entity).State = EntityState.Detached;
-                    return null;
-                }
-            }
+            //var isActiveProperty = typeof(TEntity).GetProperty("IsActive");
+            //if (isActiveProperty != null && isActiveProperty.PropertyType == typeof(bool))
+            //{
+            //    var isActiveValue = (bool)(isActiveProperty.GetValue(entity) ?? false);
+            //    if (!isActiveValue)
+            //    {
+            //        context.Entry(entity).State = EntityState.Detached;
+            //        return null;
+            //    }
+            //}
 
             return entity;
         }

@@ -32,7 +32,11 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(skip, take, paginationRequest.SearchKeyword);
+            var pagedPermissions = await _unitOfWork.PermissionsRepository.GetPagedAsync(
+                skip,
+                take,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
 
             var mappedPermissions = _mapper.Map<List<PermissionInfo>>(pagedPermissions.Items);
             return new PagedResponse<PermissionInfo>(mappedPermissions, pagedPermissions.TotalCount);
@@ -107,6 +111,11 @@ namespace CMS.Application.Services
                 permission.Description = request.Description;
             }
 
+            if (request.IsActive.HasValue)
+            {
+                permission.IsActive = request.IsActive.Value;
+            }
+
             permission.ModifiedDate = DateTime.UtcNow;
             permission.ModifiedBy = _currentUserService.UserId;
 
@@ -132,13 +141,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            permission.IsActive = false;
-            permission.ModifiedDate = DateTime.UtcNow;
-            permission.ModifiedBy = _currentUserService.UserId;
-            _unitOfWork.Repository<Permission>().Update(permission);
+            _unitOfWork.Repository<Permission>().Remove(permission);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Permission soft deleted (IsActive=false): {PermissionId}", permission.PermissionId);
+            _logger.LogInformation("Permission deleted: {PermissionId}", permission.PermissionId);
             return true;
         }
 
@@ -151,7 +157,6 @@ namespace CMS.Application.Services
 
             var permissions = await _unitOfWork.Repository<Permission>().GetAllAsync();
             return permissions.Any(p =>
-                p.IsActive &&
                 string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase) &&
                 (!excludePermissionId.HasValue || p.PermissionId != excludePermissionId.Value));
         }

@@ -18,7 +18,7 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<Permission>> GetPagedAsync(int skip, int take, string? searchKeyword = null)
+        public async Task<PagedResult<Permission>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)
             {
@@ -27,8 +27,16 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Permissions
                 .AsNoTracking()
-                .Where(p => p.IsActive)
                 .ApplySearch(searchKeyword);
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(p => p.IsActive == isActive.Value);
+            }
+            else
+            {
+                query = query.Where(p => p.IsActive);
+            }
 
             var totalCount = await query.CountAsync();
 
