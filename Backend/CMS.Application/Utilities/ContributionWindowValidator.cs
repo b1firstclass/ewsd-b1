@@ -24,5 +24,14 @@ namespace CMS.Application.Utilities
                 throw new InvalidOperationException("AcademicYearEnd cannot be earlier than AcademicYearStart.");
             }
         }
+
+        public static void EnsureAcademicYearAvailable(int academicYearStart, int academicYearEnd, bool exists)
+        {
+            if (exists)
+            {
+                throw new InvalidOperationException(
+                    $"A contribution window already exists for academic year {academicYearStart}-{academicYearEnd}.");
+            }
+        }
     }
 }
