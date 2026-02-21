@@ -34,6 +34,12 @@ namespace CMS.Application.DTOs
         public ContributionFileRequest? ImageFile { get; set; }
     }
 
+    public class ContributionStatusUpdateRequest
+    {
+        [Required]
+        public string Status { get; set; } = string.Empty;
+    }
+
     public class ContributionUpdateRequest
     {
         [MaxLength(100)]
