@@ -14,6 +14,8 @@ namespace CMS.Application.DTOs
         [StringLength(255)]
         public string? Description { get; set; }
 
+        public bool? IsActive { get; set; }
+
         public List<Guid>? PermissionIds { get; set; }
     }
 
@@ -35,6 +37,7 @@ namespace CMS.Application.DTOs
         public Guid Id { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
+        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public List<PermissionInfo> Permissions { get; set; } = new();

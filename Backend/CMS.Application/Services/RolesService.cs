@@ -32,7 +32,11 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(skip, take, paginationRequest.SearchKeyword);
+            var pagedRoles = await _unitOfWork.RolesRepository.GetPagedWithPermissionsAsync(
+                skip,
+                take,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
 
             var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
@@ -105,6 +109,11 @@ namespace CMS.Application.Services
                 await AssignPermissionsAsync(role, request.PermissionIds);
             }
 
+            if (request.IsActive.HasValue)
+            {
+                role.IsActive = request.IsActive.Value;
+            }
+
             role.ModifiedDate = DateTime.UtcNow;
             role.ModifiedBy = _currentUserService.UserId;
 
@@ -130,13 +139,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            role.IsActive = false;
-            role.ModifiedDate = DateTime.UtcNow;
-            role.ModifiedBy = _currentUserService.UserId;
-            _unitOfWork.Repository<Role>().Update(role);
+            _unitOfWork.Repository<Role>().Remove(role);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Role soft deleted (IsActive=false): {RoleId}", role.RoleId);
+            _logger.LogInformation("Role deleted: {RoleId}", role.RoleId);
             return true;
         }
 
@@ -149,7 +155,6 @@ namespace CMS.Application.Services
 
             var roles = await _unitOfWork.Repository<Role>().GetAllAsync();
             return roles.Any(r =>
-                r.IsActive &&
                 string.Equals(r.Name, roleName, StringComparison.OrdinalIgnoreCase) &&
                 (!excludeRoleId.HasValue || r.RoleId != excludeRoleId.Value));
         }
@@ -171,7 +176,7 @@ namespace CMS.Application.Services
             foreach (var permissionId in permissionIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var permission = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
-                if (permission != null)
+                if (permission != null && permission.IsActive)
                 {
                     role.Permissions.Add(permission);
                 }

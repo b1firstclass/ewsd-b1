@@ -33,7 +33,11 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(skip, take, paginationRequest.SearchKeyword);
+            var pagedFaculties = await _unitOfWork.FacultiesRepository.GetPagedAsync(
+                skip,
+                take,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
 
             var mappedFaculties = _mapper.Map<List<FaculityInfo>>(pagedFaculties.Items);
             return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
@@ -89,6 +93,12 @@ namespace CMS.Application.Services
             }
 
             faculty.FacultyName = request.Name;
+
+            if (request.IsActive.HasValue)
+            {
+                faculty.IsActive = request.IsActive.Value;
+            }
+
             faculty.ModifiedDate = DateTime.UtcNow;
             faculty.ModifiedBy = _currentUserService.UserId;
 
@@ -114,13 +124,11 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            faculty.IsActive = false;
-            faculty.ModifiedDate = DateTime.UtcNow;
-            faculty.ModifiedBy = _currentUserService.UserId;
-            _unitOfWork.Repository<Faculty>().Update(faculty);
+           
+            _unitOfWork.Repository<Faculty>().Remove(faculty);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Faculty soft deleted (IsActive=false): {FacultyId}", faculty.FacultyId);
+            _logger.LogInformation("Faculty deleted: {FacultyId}", faculty.FacultyId);
             return true;
         }
 
@@ -133,7 +141,6 @@ namespace CMS.Application.Services
 
             var faculties = await _unitOfWork.Repository<Faculty>().GetAllAsync();
             return faculties.Any(f =>
-                f.IsActive &&
                 string.Equals(f.FacultyName, facultyName, StringComparison.OrdinalIgnoreCase) &&
                 (!excludeFacultyId.HasValue || f.FacultyId != excludeFacultyId.Value));
         }

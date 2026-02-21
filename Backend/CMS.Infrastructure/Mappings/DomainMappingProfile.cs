@@ -24,6 +24,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.LoginId, opt => opt.MapFrom(src => src.LoginId))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
@@ -34,6 +35,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.LoginId, opt => opt.MapFrom(src => src.LoginId))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
@@ -49,6 +51,7 @@ namespace CMS.Infrastructure.Mappings
             CreateMap<Faculty, FaculityInfo>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FacultyName))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FacultyId))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)));
 
             CreateMap<RoleCreateRequest, Role>()
@@ -61,6 +64,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.Permissions));
@@ -77,6 +81,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Module, opt => opt.MapFrom(src => src.Module))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)));
 

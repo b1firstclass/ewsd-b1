@@ -47,7 +47,11 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(skip, take, paginationRequest.SearchKeyword);
+            var pagedUsers = await _unitOfWork.UsersRepository.GetPagedAsync(
+                skip,
+                take,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
 
@@ -162,6 +166,11 @@ namespace CMS.Application.Services
                 await AssignRolesAsync(user, request.RoleIds);
             }
 
+            if (request.IsActive.HasValue)
+            {
+                user.IsActive = request.IsActive.Value;
+            }
+
             user.ModifiedDate = DateTime.UtcNow;
             user.ModifiedBy = _currentUserService.UserId;
 
@@ -187,10 +196,7 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            user.IsActive = false;
-            user.ModifiedDate = DateTime.UtcNow;
-            user.ModifiedBy = _currentUserService.UserId;
-            _unitOfWork.Repository<User>().Update(user);
+            _unitOfWork.Repository<User>().Remove(user);
             await _unitOfWork.SaveChangesAsync();
 
             _logger.LogInformation("User soft deleted (IsActive=false): {UserId}", user.UserId);
@@ -330,7 +336,7 @@ namespace CMS.Application.Services
             foreach (var facultyId in facultyIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
-                if (faculty != null)
+                if (faculty != null && faculty.IsActive)
                 {
                     user.Faculties.Add(faculty);
                 }
@@ -358,7 +364,7 @@ namespace CMS.Application.Services
             foreach (var roleId in roleIds.Where(id => id != Guid.Empty).Distinct())
             {
                 var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
-                if (role != null)
+                if (role != null && role.IsActive)
                 {
                     user.Roles.Add(role);
                 }

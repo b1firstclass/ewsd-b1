@@ -19,6 +19,8 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "Name is required")]
         [StringLength(200, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 200 characters")]
         public required string Name { get; set; }
+
+        public bool? IsActive { get; set; }
     }
     #endregion
 
@@ -27,6 +29,7 @@ namespace CMS.Application.DTOs
     {
         public Guid Id { get; set;  }
         public required string Name { get; set; }
+        public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
     

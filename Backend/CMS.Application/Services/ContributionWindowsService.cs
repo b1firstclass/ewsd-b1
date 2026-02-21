@@ -35,7 +35,11 @@ namespace CMS.Application.Services
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
 
-            var pagedWindows = await _unitOfWork.ContributionWindowsRepository.GetPagedAsync(skip, take, paginationRequest.SearchKeyword);
+            var pagedWindows = await _unitOfWork.ContributionWindowsRepository.GetPagedAsync(
+                skip,
+                take,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
             var mapped = _mapper.Map<List<ContributionWindowInfo>>(pagedWindows.Items);
             return new PagedResponse<ContributionWindowInfo>(mapped, pagedWindows.TotalCount);
         }
@@ -148,6 +152,11 @@ namespace CMS.Application.Services
                 contributionWindow.AcademicYearEnd = request.AcademicYearEnd.Value;
             }
 
+            if (request.IsActive.HasValue)
+            {
+                contributionWindow.IsActive = request.IsActive.Value;
+            }
+
             contributionWindow.ModifiedDate = DateTime.UtcNow;
             contributionWindow.ModifiedBy = _currentUserService.UserId;
 
@@ -168,14 +177,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            contributionWindow.IsActive = false;
-            contributionWindow.ModifiedDate = DateTime.UtcNow;
-            contributionWindow.ModifiedBy = _currentUserService.UserId;
-
-            _unitOfWork.ContributionWindowsRepository.Update(contributionWindow);
+            _unitOfWork.Repository<ContributionWindow>().Remove(contributionWindow);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Contribution window soft deleted: {ContributionWindowId}", contributionWindow.ContributionWindowId);
+            _logger.LogInformation("Contribution window deleted: {ContributionWindowId}", contributionWindow.ContributionWindowId);
 
             return true;
         }

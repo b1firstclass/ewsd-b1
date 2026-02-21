@@ -38,7 +38,7 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(r => r.RoleId == roleId && r.IsActive);
         }
 
-        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null)
+        public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)
             {
@@ -47,8 +47,16 @@ namespace CMS.Infrastructure.Repositories
 
             var query = _context.Roles
                 .AsNoTracking()
-                .Where(r => r.IsActive)
                 .ApplySearch(searchKeyword);
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(r => r.IsActive == isActive.Value);
+            }
+            else
+            {
+                query = query.Where(r => r.IsActive);
+            }
 
             var totalCount = await query.CountAsync();
 

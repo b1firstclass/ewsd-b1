@@ -19,17 +19,26 @@ namespace CMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<PagedResult<ContributionWindow>> GetPagedAsync(int skip, int take, string? searchKeyword = null)
+        public async Task<PagedResult<ContributionWindow>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)
             {
                 skip = 0;
             }
 
+
             var query = _context.ContributionWindows
                 .AsNoTracking()
-                .Where(cw => cw.IsActive)
                 .ApplySearch(searchKeyword);
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(cw => cw.IsActive == isActive.Value);
+            }
+            else
+            {
+                query = query.Where(cw => cw.IsActive);
+            }
 
             var totalCount = await query.CountAsync();
 
