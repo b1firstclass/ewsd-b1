@@ -6,6 +6,7 @@ namespace CMS.Application.Utilities
     public class PasswordValidationAttribute : ValidationAttribute
     {
         private const int MinimumLength = 8;
+        private const int MaximumLength = 50;
         private const string UppercasePattern = @"[A-Z]";
         private const string LowercasePattern = @"[a-z]";
         private const string DigitPattern = @"[0-9]";
@@ -15,7 +16,7 @@ namespace CMS.Application.Utilities
 
         public PasswordValidationAttribute()
         {
-            ErrorMessage = "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#^()_+-=[]{}|;:,.<>)";
+            ErrorMessage = "Password must be at between 8 - 50 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#^()_+-=[]{}|;:,.<>)";
         }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
@@ -30,6 +31,11 @@ namespace CMS.Application.Utilities
             if (password.Length < MinimumLength)
             {
                 return new ValidationResult($"Password must be at least {MinimumLength} characters long");
+            }
+
+            if (password.Length > MaximumLength)
+            {
+                return new ValidationResult($"Password must be no more than {MaximumLength} characters long");
             }
 
             if (!Regex.IsMatch(password, UppercasePattern))

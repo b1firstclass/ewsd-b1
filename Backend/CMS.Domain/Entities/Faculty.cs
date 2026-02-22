@@ -19,5 +19,7 @@ public partial class Faculty
 
     public Guid? ModifiedBy { get; set; }
 
+    public virtual ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
+
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

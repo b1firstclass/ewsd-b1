@@ -13,9 +13,6 @@ namespace CMS.Application.DTOs
 
         [StringLength(255)]
         public string? Description { get; set; }
-
-        public bool? IsActive { get; set; }
-
         public List<Guid>? PermissionIds { get; set; }
     }
 

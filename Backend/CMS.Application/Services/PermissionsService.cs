@@ -59,7 +59,7 @@ namespace CMS.Application.Services
             PermissionValidator.EnsurePermissionAvailable(
                 request.Module,
                 request.Name,
-                await PermissionExistsAsync(request.Module));
+                await PermissionExistsAsync(request.Name));
 
             var permissionEntity = _mapper.Map<Permission>(request);
             permissionEntity.CreatedDate = DateTime.UtcNow;

@@ -38,6 +38,7 @@ namespace CMS.Api.Controllers
                 var createRequest = new ContributionCreateRequest
                 {
                     ContributionWindowId = request.ContributionWindowId,
+                    FacultyId = request.FacultyId,
                     Subject = request.Subject,
                     Description = request.Description,
                     DocumentFile = await MapFileAsync(request.DocumentFile, cancellationToken),

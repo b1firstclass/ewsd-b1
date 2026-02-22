@@ -44,7 +44,6 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Contribution).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ContributionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Comments_ContributionId_fkey");
         });
 
@@ -60,12 +59,14 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.ContributionWindow).WithMany(p => p.Contributions)
                 .HasForeignKey(d => d.ContributionWindowId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Contributions_ContributionWindowId_fkey");
+
+            entity.HasOne(d => d.Faculty).WithMany(p => p.Contributions)
+                .HasForeignKey(d => d.FacultyId)
+                .HasConstraintName("Contributions_FacultyId_fkey");
 
             entity.HasOne(d => d.User).WithMany(p => p.Contributions)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Contributions_UserId_fkey");
         });
 
@@ -90,7 +91,6 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Contribution).WithMany(p => p.Documents)
                 .HasForeignKey(d => d.ContributionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Documents_ContributionId_fkey");
         });
 
@@ -109,11 +109,9 @@ public partial class AppDbContext : DbContext
                     "FacultyMemberShip",
                     r => r.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FacultyMemberShip_UserId_fkey"),
                     l => l.HasOne<Faculty>().WithMany()
                         .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FacultyMemberShip_FacultyId_fkey"),
                     j =>
                     {
@@ -153,11 +151,9 @@ public partial class AppDbContext : DbContext
                     "Roles_Permission",
                     r => r.HasOne<Permission>().WithMany()
                         .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("Roles_Permissions_PermissionId_fkey"),
                     l => l.HasOne<Role>().WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("Roles_Permissions_RoleId_fkey"),
                     j =>
                     {
@@ -188,11 +184,9 @@ public partial class AppDbContext : DbContext
                     "Users_Role",
                     r => r.HasOne<Role>().WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("Users_Roles_RoleId_fkey"),
                     l => l.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("Users_Roles_UserId_fkey"),
                     j =>
                     {
@@ -217,6 +211,11 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Resource).HasMaxLength(200);
             entity.Property(e => e.StatusCode).HasMaxLength(10);
             entity.Property(e => e.UserAgent).HasMaxLength(500);
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserActivityLogs)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("UserActivityLogs_UserId_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

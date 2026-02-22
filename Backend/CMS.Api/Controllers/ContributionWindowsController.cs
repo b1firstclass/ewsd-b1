@@ -1,4 +1,5 @@
 using System;
+using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
@@ -26,6 +27,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet("status")]
+        [Authorize(Roles = "Student, Coordinator, Manager")]
         public async Task<IActionResult> GetCurrentWindowStatus()
         {
             try
@@ -41,6 +43,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet]
+        [HasPermission(PermissionNames.ContributionWindowRead)]
         public async Task<IActionResult> GetAllContributionWindows([FromQuery] PaginationRequest? paginationRequest)
         {
             try
@@ -63,6 +66,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [HasPermission(PermissionNames.ContributionWindowRead)]
         public async Task<IActionResult> GetContributionWindowById(Guid id)
         {
             try
@@ -88,6 +92,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPost]
+        [HasPermission(PermissionNames.ContributionWindowCreate)]
         public async Task<IActionResult> CreateContributionWindow(ContributionWindowCreateRequest request)
         {
             try
@@ -113,6 +118,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [HasPermission(PermissionNames.ContributionWindowUpdate)]
         public async Task<IActionResult> UpdateContributionWindow(Guid id, ContributionWindowUpdateRequest request)
         {
             try
@@ -148,6 +154,7 @@ namespace CMS.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [HasPermission(PermissionNames.ContributionWindowDelete)]
         public async Task<IActionResult> DeleteContributionWindow(Guid id)
         {
             try

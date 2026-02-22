@@ -5,14 +5,21 @@ namespace CMS.Application.Common
 {
     public static class ContributionConstants
     {
+        
         public const long MaxDocumentFileSizeBytes = 10 * 1024 * 1024;
         public const long MaxImageFileSizeBytes = 5 * 1024 * 1024;
+
         public const string StatusDraft = "Draft";
         public const string StatusSubmitted = "Submitted";
         public const string StatusApproved = "Approved";
         public const string StatusRejected = "Rejected";
+
+
         public const string RoleStudent = "Student";
         public const string RoleCoordinator = "Coordinator";
+        public const string RoleGuest = "Guest";
+        public const string RoleManager = "Manager";
+        public const string RoleAdmin = "Admin";
 
         public static readonly Dictionary<string, string> StatusMap = new(StringComparer.OrdinalIgnoreCase)
         {

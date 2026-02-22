@@ -46,6 +46,12 @@ namespace CMS.Application.Services
                 throw new InvalidOperationException("Contribution window not found");
             }
 
+            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(request.FacultyId);
+            if(faculty == null)
+            {
+                throw new InvalidOperationException("Faculty not found");
+            }
+
             ContributionFileValidator.ValidateFile(
                 request.DocumentFile,
                 ContributionConstants.AllowedDocumentExtensions,
@@ -66,6 +72,7 @@ namespace CMS.Application.Services
             {
                 ContributionId = Guid.NewGuid(),
                 ContributionWindowId = request.ContributionWindowId,
+                FacultyId = request.FacultyId,
                 UserId = currentUserId,
                 Subject = request.Subject.Trim(),
                 Description = request.Description.Trim(),
