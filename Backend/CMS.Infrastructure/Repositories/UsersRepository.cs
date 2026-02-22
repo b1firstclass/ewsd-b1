@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace CMS.Infrastructure.Repositories
 {
@@ -61,10 +62,6 @@ namespace CMS.Infrastructure.Repositories
             {
                 query = query.Where(u => u.IsActive == isActive.Value);
             }
-            else
-            {
-                query = query.Where(u => u.IsActive);
-            }
 
             var totalCount = await query.CountAsync();
 
@@ -101,6 +98,28 @@ namespace CMS.Infrastructure.Repositories
                 .Include(u => u.Roles)
                 .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.IsActive);
+        }
+
+        public async Task<bool> ExistsUserInRoleWithFacultiesAsync(string roleName, IReadOnlyCollection<Guid> facultyIds, Guid? excludeUserId = null)
+        {
+            if (string.IsNullOrWhiteSpace(roleName) || facultyIds.Count == 0)
+            {
+                return false;
+            }
+
+            var normalizedRoleName = roleName.Trim().ToLowerInvariant();
+            var query = _context.Users
+                .AsNoTracking()
+                .Where(user => user.IsActive)
+                .Where(user => user.Roles.Any(role => role.Name.ToLower() == normalizedRoleName))
+                .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
+
+            if (excludeUserId.HasValue)
+            {
+                query = query.Where(user => user.UserId != excludeUserId.Value);
+            }
+
+            return await query.AnyAsync();
         }
     }
 }

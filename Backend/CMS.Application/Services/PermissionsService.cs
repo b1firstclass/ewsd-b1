@@ -7,6 +7,7 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -55,10 +56,10 @@ namespace CMS.Application.Services
 
         public async Task<PermissionInfo> CreatePermissionAsync(PermissionCreateRequest request)
         {
-            if (await PermissionExistsAsync(request.Module))
-            {
-                throw new InvalidOperationException($"Permission '{request.Module}:{request.Name}' already exists");
-            }
+            PermissionValidator.EnsurePermissionAvailable(
+                request.Module,
+                request.Name,
+                await PermissionExistsAsync(request.Name));
 
             var permissionEntity = _mapper.Map<Permission>(request);
             permissionEntity.CreatedDate = DateTime.UtcNow;
@@ -89,11 +90,12 @@ namespace CMS.Application.Services
             var moduleToUse = request.Module ?? permission.Module;
             var nameToUse = request.Name ?? permission.Name;
 
-            if ((!string.Equals(permission.Module, moduleToUse, StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(permission.Name, nameToUse, StringComparison.OrdinalIgnoreCase)) &&
-                await PermissionExistsAsync(nameToUse, permissionId))
+            if (!string.Equals(permission.Module, moduleToUse, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(permission.Name, nameToUse, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidOperationException($"Permission '{nameToUse}' already exists");
+                PermissionValidator.EnsurePermissionNameAvailable(
+                    nameToUse,
+                    await PermissionExistsAsync(nameToUse, permissionId));
             }
 
             if (!string.IsNullOrWhiteSpace(request.Module))

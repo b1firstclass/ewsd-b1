@@ -10,6 +10,7 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -84,14 +85,11 @@ namespace CMS.Application.Services
 
         public async Task<UserInfo> CreateUserAsync(UserRegisterRequest request)
         {
-            if (await LoginIdExistsAsync(request.LoginId))
-            {
-                throw new InvalidOperationException($"LoginId '{request.LoginId}' already exists");
-            }
+            UserValidator.EnsureLoginIdAvailable(request.LoginId, await LoginIdExistsAsync(request.LoginId));
 
-            if (!string.IsNullOrWhiteSpace(request.Email) && await EmailExistsAsync(request.Email))
+            if (!string.IsNullOrWhiteSpace(request.Email))
             {
-                throw new InvalidOperationException($"Email '{request.Email}' already exists");
+                UserValidator.EnsureEmailAvailable(request.Email, await EmailExistsAsync(request.Email));
             }
 
             var userEntity = _mapper.Map<User>(request);
@@ -127,10 +125,7 @@ namespace CMS.Application.Services
             if (!string.IsNullOrWhiteSpace(request.LoginId) &&
                 !string.Equals(user.LoginId, request.LoginId, StringComparison.OrdinalIgnoreCase))
             {
-                if (await LoginIdExistsAsync(request.LoginId, userId))
-                {
-                    throw new InvalidOperationException($"LoginId '{request.LoginId}' already exists");
-                }
+                UserValidator.EnsureLoginIdAvailable(request.LoginId, await LoginIdExistsAsync(request.LoginId, userId));
 
                 user.LoginId = request.LoginId;
             }
@@ -142,10 +137,9 @@ namespace CMS.Application.Services
 
             if (!string.IsNullOrWhiteSpace(request.Email))
             {
-                if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase) &&
-                    await EmailExistsAsync(request.Email, userId))
+                if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new InvalidOperationException($"Email '{request.Email}' already exists");
+                    UserValidator.EnsureEmailAvailable(request.Email, await EmailExistsAsync(request.Email, userId));
                 }
 
                 user.Email = request.Email;

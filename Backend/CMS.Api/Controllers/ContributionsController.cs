@@ -38,6 +38,7 @@ namespace CMS.Api.Controllers
                 var createRequest = new ContributionCreateRequest
                 {
                     ContributionWindowId = request.ContributionWindowId,
+                    FacultyId = request.FacultyId,
                     Subject = request.Subject,
                     Description = request.Description,
                     DocumentFile = await MapFileAsync(request.DocumentFile, cancellationToken),
@@ -120,6 +121,51 @@ namespace CMS.Api.Controllers
             {
                 _logger.LogError(ex, "Error updating contribution {ContributionId}", id);
                 return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution"), 500);
+            }
+        }
+
+        [HttpPut("{id:guid}/status")]
+        public async Task<IActionResult> UpdateContributionStatus(Guid id, ContributionStatusUpdateRequest request)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var updated = await _contributionsService.UpdateContributionStatusAsync(id, request);
+                if (updated == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution"), 404);
+                }
+
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution status"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution status validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution status update failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating contribution status {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution status"), 500);
             }
         }
 

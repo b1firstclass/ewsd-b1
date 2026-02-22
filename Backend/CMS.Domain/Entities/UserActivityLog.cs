@@ -34,4 +34,6 @@ public partial class UserActivityLog
     public string? OS { get; set; }
 
     public string? OsVersion { get; set; }
+
+    public virtual User? User { get; set; }
 }

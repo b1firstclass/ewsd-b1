@@ -1,6 +1,8 @@
+using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.IO;
@@ -10,24 +12,6 @@ namespace CMS.Application.Services
 {
     public class ContributionsService : IContributionsService
     {
-        private const long MaxDocumentFileSizeBytes = 10 * 1024 * 1024;
-        private const long MaxImageFileSizeBytes = 5 * 1024 * 1024;
-
-        private static readonly HashSet<string> AllowedDocumentExtensions = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".doc",
-            ".docx"
-        };
-
-        private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".gif",
-            ".webp"
-        };
-
         private readonly ILogger<ContributionsService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
@@ -45,6 +29,16 @@ namespace CMS.Application.Services
         public async Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request)
         {
             var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var currentUser = await _unitOfWork.UsersRepository.GetByUserIdAsync(currentUserId);
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("Unauthorized");
+            }
+
+            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
 
             var contributionWindow = await _unitOfWork.ContributionWindowsRepository.GetByIdAsync(request.ContributionWindowId);
             if (contributionWindow == null)
@@ -52,11 +46,25 @@ namespace CMS.Application.Services
                 throw new InvalidOperationException("Contribution window not found");
             }
 
-            ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
+            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(request.FacultyId);
+            if(faculty == null)
+            {
+                throw new InvalidOperationException("Faculty not found");
+            }
+
+            ContributionFileValidator.ValidateFile(
+                request.DocumentFile,
+                ContributionConstants.AllowedDocumentExtensions,
+                ContributionConstants.MaxDocumentFileSizeBytes,
+                "Document");
 
             if (request.ImageFile != null)
             {
-                ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
+                ContributionFileValidator.ValidateFile(
+                    request.ImageFile,
+                    ContributionConstants.AllowedImageExtensions,
+                    ContributionConstants.MaxImageFileSizeBytes,
+                    "Image");
             }
 
             var now = DateTime.UtcNow;
@@ -64,11 +72,12 @@ namespace CMS.Application.Services
             {
                 ContributionId = Guid.NewGuid(),
                 ContributionWindowId = request.ContributionWindowId,
+                FacultyId = request.FacultyId,
                 UserId = currentUserId,
                 Subject = request.Subject.Trim(),
                 Description = request.Description.Trim(),
                 Rating = 0,
-                Status = "Draft",
+                Status = ContributionConstants.StatusDraft,
                 IsActive = true,
                 CreatedDate = now,
                 CreatedBy = currentUserId
@@ -139,9 +148,14 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            if (contribution.CreatedBy != currentUserId)
+            if (contribution.UserId != currentUserId)
             {
                 throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only draft contributions can be updated.");
             }
 
             var activeDocuments = contribution.Documents
@@ -227,15 +241,23 @@ namespace CMS.Application.Services
 
             if (request.DocumentFile != null)
             {
-                ValidateFile(request.DocumentFile, AllowedDocumentExtensions, MaxDocumentFileSizeBytes, "Document");
-                DisableDocuments(contribution, AllowedDocumentExtensions, currentUserId);
+                ContributionFileValidator.ValidateFile(
+                    request.DocumentFile,
+                    ContributionConstants.AllowedDocumentExtensions,
+                    ContributionConstants.MaxDocumentFileSizeBytes,
+                    "Document");
+                DisableDocuments(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
                 contribution.Documents.Add(CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
             }
 
             if (request.ImageFile != null)
             {
-                ValidateFile(request.ImageFile, AllowedImageExtensions, MaxImageFileSizeBytes, "Image");
-                DisableDocuments(contribution, AllowedImageExtensions, currentUserId);
+                ContributionFileValidator.ValidateFile(
+                    request.ImageFile,
+                    ContributionConstants.AllowedImageExtensions,
+                    ContributionConstants.MaxImageFileSizeBytes,
+                    "Image");
+                DisableDocuments(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
                 contribution.Documents.Add(CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
             }
 
@@ -250,24 +272,65 @@ namespace CMS.Application.Services
             return MapContributionInfo(contribution);
         }
 
-        private static void ValidateFile(ContributionFileRequest file, HashSet<string> allowedExtensions, long maxSizeBytes, string label)
+        public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, ContributionStatusUpdateRequest request)
         {
-            if (file.Data.Length <= 0 || file.Size <= 0)
+            if (contributionId == Guid.Empty)
             {
-                throw new ArgumentException($"{label} file is empty");
+                return null;
             }
 
-            if (file.Size > maxSizeBytes)
+            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
             {
-                var maxSizeMb = maxSizeBytes / (1024 * 1024);
-                throw new ArgumentException($"{label} file exceeds the maximum size of {maxSizeMb} MB");
+                _logger.LogWarning("Contribution not found for status update: {ContributionId}", contributionId);
+                return null;
             }
 
-            var extension = Path.GetExtension(file.FileName);
-            if (string.IsNullOrWhiteSpace(extension) || !allowedExtensions.Contains(extension))
+            var targetStatus = NormalizeStatus(request.Status);
+            if (string.Equals(targetStatus, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
             {
-                throw new ArgumentException($"{label} file extension is not allowed");
+                throw new InvalidOperationException("Status change to Draft is not supported.");
             }
+
+            var currentUser = await _unitOfWork.UsersRepository.GetByUserIdAsync(currentUserId);
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("Unauthorized");
+            }
+
+            if (string.Equals(targetStatus, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
+            {
+                await ValidateStudentSubmissionAsync(contribution, currentUser);
+            }
+            else
+            {
+                await ValidateCoordinatorReviewAsync(contribution, currentUser, targetStatus);
+            }
+
+            var now = DateTime.UtcNow;
+            contribution.Status = targetStatus;
+            contribution.ModifiedDate = now;
+            contribution.ModifiedBy = currentUserId;
+
+            if (string.Equals(targetStatus, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
+            {
+                contribution.SubmittedDate = now;
+                contribution.SubmittedBy = currentUserId;
+            }
+            else if (string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
+            {
+                contribution.ReviewedDate = now;
+                contribution.ReviewedBy = currentUserId;
+            }
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution status updated: {ContributionId} -> {Status}", contributionId, targetStatus);
+
+            return MapContributionInfo(contribution);
         }
 
         private static void DisableDocuments(Contribution contribution, HashSet<string> extensions, Guid currentUserId)
@@ -315,6 +378,90 @@ namespace CMS.Application.Services
                 CreatedDate = contribution.CreatedDate,
                 ModifiedDate = contribution.ModifiedDate
             };
+        }
+
+        private static string NormalizeStatus(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+            {
+                throw new ArgumentException("Status is required");
+            }
+
+            if (!ContributionConstants.StatusMap.TryGetValue(status.Trim(), out var normalized))
+            {
+                throw new InvalidOperationException($"Status '{status}' is not supported.");
+            }
+
+            return normalized;
+        }
+
+        private async Task ValidateStudentSubmissionAsync(Contribution contribution, User currentUser)
+        {
+            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (contribution.UserId != currentUser.UserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only draft contributions can be submitted.");
+            }
+
+            var facultyIds = currentUser.Faculties.Select(faculty => faculty.FacultyId).ToList();
+            if (facultyIds.Count == 0)
+            {
+                throw new InvalidOperationException("User is not assigned to a faculty.");
+            }
+
+            var coordinatorExists = await _unitOfWork.UsersRepository.ExistsUserInRoleWithFacultiesAsync(
+                ContributionConstants.RoleCoordinator,
+                facultyIds,
+                currentUser.UserId);
+            if (!coordinatorExists)
+            {
+                throw new InvalidOperationException("No coordinator found for the user's faculty.");
+            }
+        }
+
+        private async Task ValidateCoordinatorReviewAsync(Contribution contribution, User currentUser, string targetStatus)
+        {
+            if (!IsInRole(currentUser, ContributionConstants.RoleCoordinator))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only submitted contributions can be reviewed.");
+            }
+
+            if (!string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only Approved or Rejected statuses are allowed for review.");
+            }
+
+            var owner = await _unitOfWork.UsersRepository.GetByUserIdAsync(contribution.UserId);
+            if (owner == null)
+            {
+                throw new InvalidOperationException("Contribution owner not found.");
+            }
+
+            var sharesFaculty = currentUser.Faculties.Any(faculty => owner.Faculties.Any(ownerFaculty => ownerFaculty.FacultyId == faculty.FacultyId));
+            if (!sharesFaculty)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+        }
+
+        private static bool IsInRole(User user, string roleName)
+        {
+            return user.Roles.Any(role => string.Equals(role.Name, roleName, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

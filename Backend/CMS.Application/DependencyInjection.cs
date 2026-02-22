@@ -1,5 +1,6 @@
 using CMS.Application.Interfaces.Services;
 using CMS.Application.Services;
+using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ namespace CMS.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IPasswordHasher<User>, Argon2PasswordHasher<User>>();
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IFacultiesService, FacultiesService>();
             services.AddScoped<IRolesService, RolesService>();
@@ -18,6 +19,7 @@ namespace CMS.Application
             services.AddScoped<IContributionWindowsService, ContributionWindowsService>();
             services.AddScoped<IContributionsService, ContributionsService>();
             services.AddScoped<IActivityLogService, ActivityLogService>();
+            services.AddScoped<ICommentsService, CommentsService>();
 
             return services;
         }

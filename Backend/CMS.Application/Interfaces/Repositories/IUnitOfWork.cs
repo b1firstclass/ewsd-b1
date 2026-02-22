@@ -8,6 +8,7 @@
         IPermissionsRepository PermissionsRepository { get; }
         IContributionWindowsRepository ContributionWindowsRepository { get; }
         IContributionsRepository ContributionsRepository { get; }
+        ICommentsRepository CommentsRepository { get; }
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

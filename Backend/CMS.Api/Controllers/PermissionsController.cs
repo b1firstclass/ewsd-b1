@@ -23,7 +23,7 @@ namespace CMS.Api.Controllers
             _permissionsService = permissionsService;
         }
 
-        //[HasPermission(PermissionNames.PermissionsRead)]
+        [HasPermission(PermissionNames.PermissionsRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllPermissions([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -46,7 +46,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.PermissionsRead)]
+        [HasPermission(PermissionNames.PermissionsRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetPermissionById(Guid id)
         {
@@ -72,7 +72,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.PermissionsCreate)]
+        [HasPermission(PermissionNames.PermissionsCreate)]
         [HttpPost]
         public async Task<IActionResult> CreatePermission(PermissionCreateRequest request)
         {
@@ -98,7 +98,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.PermissionsUpdate)]
+        [HasPermission(PermissionNames.PermissionsUpdate)]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdatePermission(Guid id, PermissionUpdateRequest request)
         {
@@ -134,7 +134,7 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[HasPermission(PermissionNames.PermissionsDelete)]
+        [HasPermission(PermissionNames.PermissionsDelete)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeletePermission(Guid id)
         {

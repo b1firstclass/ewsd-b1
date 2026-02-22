@@ -21,6 +21,9 @@ namespace CMS.Application.DTOs
         public Guid ContributionWindowId { get; set; }
 
         [Required]
+        public Guid FacultyId { get; set; }
+
+        [Required]
         [MaxLength(100)]
         public string Subject { get; set; } = string.Empty;
 
@@ -32,6 +35,12 @@ namespace CMS.Application.DTOs
         public ContributionFileRequest DocumentFile { get; set; } = new();
 
         public ContributionFileRequest? ImageFile { get; set; }
+    }
+
+    public class ContributionStatusUpdateRequest
+    {
+        [Required]
+        public string Status { get; set; } = string.Empty;
     }
 
     public class ContributionUpdateRequest

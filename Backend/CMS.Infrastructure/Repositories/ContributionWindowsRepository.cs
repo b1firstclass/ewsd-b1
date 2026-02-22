@@ -35,10 +35,6 @@ namespace CMS.Infrastructure.Repositories
             {
                 query = query.Where(cw => cw.IsActive == isActive.Value);
             }
-            else
-            {
-                query = query.Where(cw => cw.IsActive);
-            }
 
             var totalCount = await query.CountAsync();
 
@@ -69,6 +65,19 @@ namespace CMS.Infrastructure.Repositories
                 .Where(cw => cw.IsActive && cw.SubmissionOpenDate <= utcNow && cw.ClosureDate >= utcNow)
                 .OrderByDescending(cw => cw.SubmissionOpenDate)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> ExistsForAcademicYearAsync(int academicYearStart, int academicYearEnd, Guid? excludeContributionWindowId = null)
+        {
+            var query = _context.ContributionWindows.AsNoTracking()
+                .Where(cw => cw.AcademicYearStart == academicYearStart && cw.AcademicYearEnd == academicYearEnd);
+
+            if (excludeContributionWindowId.HasValue)
+            {
+                query = query.Where(cw => cw.ContributionWindowId != excludeContributionWindowId.Value);
+            }
+
+            return await query.AnyAsync();
         }
 
         public async Task AddAsync(ContributionWindow contributionWindow)

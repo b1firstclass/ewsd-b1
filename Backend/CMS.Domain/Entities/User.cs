@@ -35,6 +35,8 @@ public partial class User
 
     public virtual ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
 
+    public virtual ICollection<UserActivityLog> UserActivityLogs { get; set; } = new List<UserActivityLog>();
+
     public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
 
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();

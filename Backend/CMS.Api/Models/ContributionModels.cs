@@ -9,6 +9,9 @@ namespace CMS.Api.Models
         public Guid ContributionWindowId { get; set; }
 
         [Required]
+        public Guid FacultyId { get; set; }
+
+        [Required]
         [MaxLength(100)]
         public string Subject { get; set; } = string.Empty;
 
