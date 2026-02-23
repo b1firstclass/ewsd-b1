@@ -2,11 +2,12 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
-using CMS.Application.Utilities;
+using CMS.Application.Services.AuthorizationHelpers;
+using CMS.Application.Services.ContributionHelpers;
+using CMS.Application.Services.FileHelpers;
+using CMS.Application.Services.MappingHelpers;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using System.IO;
-using System.IO.Compression;
 
 namespace CMS.Application.Services
 {
@@ -15,60 +16,86 @@ namespace CMS.Application.Services
         private readonly ILogger<ContributionsService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IContributionAuthorizationService _authorizationService;
+        private readonly IContributionFileService _fileService;
+        private readonly IContributionStatusService _statusService;
+        private readonly IContributionMapper _mapper;
 
         public ContributionsService(
             ILogger<ContributionsService> logger,
             IUnitOfWork unitOfWork,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IContributionAuthorizationService authorizationService,
+            IContributionFileService fileService,
+            IContributionStatusService statusService,
+            IContributionMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _authorizationService = authorizationService;
+            _fileService = fileService;
+            _statusService = statusService;
+            _mapper = mapper;
         }
 
         public async Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request)
         {
+            var currentUser = await GetAuthenticatedUserAsync();
+            await _authorizationService.ValidateStudentCanCreateContributionAsync(currentUser);
+
+            await ValidateContributionWindowExistsAsync(request.ContributionWindowId);
+            await ValidateFacultyExistsAsync(request.FacultyId);
+
+            _fileService.ValidateDocumentFile(request.DocumentFile);
+            _fileService.ValidateImageFile(request.ImageFile);
+
+            var contribution = CreateNewContribution(request, currentUser.UserId);
+            AddDocumentsToContribution(contribution, request, currentUser.UserId);
+
+            await _unitOfWork.ContributionsRepository.AddAsync(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution created: {ContributionId}", contribution.ContributionId);
+
+            return _mapper.MapToInfo(contribution);
+        }
+
+        private async Task<User> GetAuthenticatedUserAsync()
+        {
             var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
             var currentUser = await _unitOfWork.UsersRepository.GetByUserIdAsync(currentUserId);
+
             if (currentUser == null)
             {
                 throw new UnauthorizedAccessException("Unauthorized");
             }
 
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
+            return currentUser;
+        }
 
-            var contributionWindow = await _unitOfWork.ContributionWindowsRepository.GetByIdAsync(request.ContributionWindowId);
+        private async Task ValidateContributionWindowExistsAsync(Guid contributionWindowId)
+        {
+            var contributionWindow = await _unitOfWork.ContributionWindowsRepository.GetByIdAsync(contributionWindowId);
             if (contributionWindow == null)
             {
                 throw new InvalidOperationException("Contribution window not found");
             }
+        }
 
-            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(request.FacultyId);
-            if(faculty == null)
+        private async Task ValidateFacultyExistsAsync(Guid facultyId)
+        {
+            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(facultyId);
+            if (faculty == null)
             {
                 throw new InvalidOperationException("Faculty not found");
             }
+        }
 
-            ContributionFileValidator.ValidateFile(
-                request.DocumentFile,
-                ContributionConstants.AllowedDocumentExtensions,
-                ContributionConstants.MaxDocumentFileSizeBytes,
-                "Document");
-
-            if (request.ImageFile != null)
-            {
-                ContributionFileValidator.ValidateFile(
-                    request.ImageFile,
-                    ContributionConstants.AllowedImageExtensions,
-                    ContributionConstants.MaxImageFileSizeBytes,
-                    "Image");
-            }
-
+        private static Contribution CreateNewContribution(ContributionCreateRequest request, Guid currentUserId)
+        {
             var now = DateTime.UtcNow;
-            var contribution = new Contribution
+            return new Contribution
             {
                 ContributionId = Guid.NewGuid(),
                 ContributionWindowId = request.ContributionWindowId,
@@ -82,20 +109,16 @@ namespace CMS.Application.Services
                 CreatedDate = now,
                 CreatedBy = currentUserId
             };
+        }
 
-            contribution.Documents.Add(CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId, now));
+        private void AddDocumentsToContribution(Contribution contribution, ContributionCreateRequest request, Guid currentUserId)
+        {
+            contribution.Documents.Add(_fileService.CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId));
 
             if (request.ImageFile != null)
             {
-                contribution.Documents.Add(CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId, now));
+                contribution.Documents.Add(_fileService.CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId));
             }
-
-            await _unitOfWork.ContributionsRepository.AddAsync(contribution);
-            await _unitOfWork.SaveChangesAsync();
-
-            _logger.LogInformation("Contribution created: {ContributionId}", contribution.ContributionId);
-
-            return MapContributionInfo(contribution);
         }
 
         public async Task<ContributionFilesDownload?> DownloadAllContributionFilesAsync()
@@ -109,28 +132,13 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            using var stream = new MemoryStream();
-            using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
-            {
-                foreach (var contribution in contributions)
-                {
-                    AddContributionDocumentsToArchive(archive, contribution);
-                }
-            }
-
-            var data = stream.ToArray();
-            if (data.Length == 0)
+            var download = _fileService.CreateZipArchive(contributions);
+            if (download == null)
             {
                 _logger.LogWarning("No active contribution files found for download");
-                return null;
             }
 
-            return new ContributionFilesDownload
-            {
-                Data = data,
-                FileName = "contributions-files.zip",
-                ContentType = "application/zip"
-            };
+            return download;
         }
 
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
@@ -148,64 +156,20 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            if (contribution.UserId != currentUserId)
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
+            await _authorizationService.ValidateUserOwnsContributionAsync(contribution, currentUserId);
 
-            if (!string.Equals(contribution.Status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
+            if (!_statusService.IsStatusDraft(contribution.Status))
             {
                 throw new InvalidOperationException("Only draft contributions can be updated.");
             }
 
-            var activeDocuments = contribution.Documents
-                .Where(document => document.IsActive && document.Data != null && document.Data.Length > 0)
-                .ToList();
-
-            if (activeDocuments.Count == 0)
+            var download = _fileService.CreateZipArchiveForSingleContribution(contribution);
+            if (download == null)
             {
                 _logger.LogWarning("No active files found for contribution {ContributionId}", contributionId);
-                return null;
             }
 
-            using var stream = new MemoryStream();
-            using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
-            {
-                foreach (var document in activeDocuments)
-                {
-                    var entryName = string.IsNullOrWhiteSpace(document.FileName)
-                        ? $"{document.DocumentId}{document.Extension}"
-                        : document.FileName;
-                    var entry = archive.CreateEntry(entryName, CompressionLevel.Fastest);
-                    using var entryStream = entry.Open();
-                    entryStream.Write(document.Data!);
-                }
-            }
-
-            return new ContributionFilesDownload
-            {
-                Data = stream.ToArray(),
-                FileName = $"contribution-{contributionId}-files.zip",
-                ContentType = "application/zip"
-            };
-        }
-
-        private static void AddContributionDocumentsToArchive(ZipArchive archive, Contribution contribution)
-        {
-            var folderName = $"contribution-{contribution.ContributionId}";
-            var documents = contribution.Documents
-                .Where(document => document.IsActive && document.Data != null && document.Data.Length > 0)
-                .ToList();
-
-            foreach (var document in documents)
-            {
-                var entryName = string.IsNullOrWhiteSpace(document.FileName)
-                    ? $"{document.DocumentId}{document.Extension}"
-                    : document.FileName;
-                var entry = archive.CreateEntry($"{folderName}/{entryName}", CompressionLevel.Fastest);
-                using var entryStream = entry.Open();
-                entryStream.Write(document.Data!);
-            }
+            return download;
         }
 
         public async Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request)
@@ -241,24 +205,16 @@ namespace CMS.Application.Services
 
             if (request.DocumentFile != null)
             {
-                ContributionFileValidator.ValidateFile(
-                    request.DocumentFile,
-                    ContributionConstants.AllowedDocumentExtensions,
-                    ContributionConstants.MaxDocumentFileSizeBytes,
-                    "Document");
-                DisableDocuments(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
-                contribution.Documents.Add(CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
+                _fileService.ValidateDocumentFile(request.DocumentFile);
+                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
+                contribution.Documents.Add(_fileService.CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId));
             }
 
             if (request.ImageFile != null)
             {
-                ContributionFileValidator.ValidateFile(
-                    request.ImageFile,
-                    ContributionConstants.AllowedImageExtensions,
-                    ContributionConstants.MaxImageFileSizeBytes,
-                    "Image");
-                DisableDocuments(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
-                contribution.Documents.Add(CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId, DateTime.UtcNow));
+                _fileService.ValidateImageFile(request.ImageFile);
+                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
+                contribution.Documents.Add(_fileService.CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId));
             }
 
             contribution.ModifiedDate = DateTime.UtcNow;
@@ -269,7 +225,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Contribution updated: {ContributionId}", contribution.ContributionId);
 
-            return MapContributionInfo(contribution);
+            return _mapper.MapToInfo(contribution);
         }
 
         public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, ContributionStatusUpdateRequest request)
@@ -279,7 +235,7 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var currentUser = await GetAuthenticatedUserAsync();
             var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
             if (contribution == null)
             {
@@ -287,181 +243,25 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var targetStatus = NormalizeStatus(request.Status);
-            if (string.Equals(targetStatus, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Status change to Draft is not supported.");
-            }
+            var targetStatus = _statusService.NormalizeStatus(request.Status);
 
-            var currentUser = await _unitOfWork.UsersRepository.GetByUserIdAsync(currentUserId);
-            if (currentUser == null)
+            if (_statusService.IsStatusSubmitted(targetStatus))
             {
-                throw new UnauthorizedAccessException("Unauthorized");
-            }
-
-            if (string.Equals(targetStatus, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
-            {
-                await ValidateStudentSubmissionAsync(contribution, currentUser);
+                await _authorizationService.ValidateStudentCanSubmitContributionAsync(contribution, currentUser);
             }
             else
             {
-                await ValidateCoordinatorReviewAsync(contribution, currentUser, targetStatus);
+                await _authorizationService.ValidateCoordinatorCanReviewContributionAsync(contribution, currentUser, targetStatus);
             }
 
-            var now = DateTime.UtcNow;
-            contribution.Status = targetStatus;
-            contribution.ModifiedDate = now;
-            contribution.ModifiedBy = currentUserId;
-
-            if (string.Equals(targetStatus, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
-            {
-                contribution.SubmittedDate = now;
-                contribution.SubmittedBy = currentUserId;
-            }
-            else if (string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
-            {
-                contribution.ReviewedDate = now;
-                contribution.ReviewedBy = currentUserId;
-            }
+            _statusService.UpdateContributionStatus(contribution, targetStatus, currentUser.UserId);
 
             _unitOfWork.ContributionsRepository.Update(contribution);
             await _unitOfWork.SaveChangesAsync();
 
             _logger.LogInformation("Contribution status updated: {ContributionId} -> {Status}", contributionId, targetStatus);
 
-            return MapContributionInfo(contribution);
-        }
-
-        private static void DisableDocuments(Contribution contribution, HashSet<string> extensions, Guid currentUserId)
-        {
-            var documentsToDisable = contribution.Documents
-                .Where(document => document.IsActive && extensions.Contains(document.Extension))
-                .ToList();
-
-            foreach (var document in documentsToDisable)
-            {
-                document.IsActive = false;
-                document.ModifiedDate = DateTime.UtcNow;
-                document.ModifiedBy = currentUserId;
-            }
-        }
-
-        private static Document CreateDocument(ContributionFileRequest file, Guid contributionId, Guid currentUserId, DateTime now)
-        {
-            var extension = Path.GetExtension(file.FileName);
-            var storedFileName = $"{Guid.NewGuid()}{extension}";
-
-            return new Document
-            {
-                DocumentId = Guid.NewGuid(),
-                ContributionId = contributionId,
-                FileName = storedFileName,
-                Extension = extension,
-                Size = Convert.ToInt32(file.Size),
-                Data = file.Data,
-                IsActive = true,
-                CreatedDate = now,
-                CreatedBy = currentUserId
-            };
-        }
-
-        private static ContributionInfo MapContributionInfo(Contribution contribution)
-        {
-            return new ContributionInfo
-            {
-                Id = contribution.ContributionId,
-                ContributionWindowId = contribution.ContributionWindowId,
-                Subject = contribution.Subject,
-                Description = contribution.Description,
-                Status = contribution.Status,
-                CreatedDate = contribution.CreatedDate,
-                ModifiedDate = contribution.ModifiedDate
-            };
-        }
-
-        private static string NormalizeStatus(string status)
-        {
-            if (string.IsNullOrWhiteSpace(status))
-            {
-                throw new ArgumentException("Status is required");
-            }
-
-            if (!ContributionConstants.StatusMap.TryGetValue(status.Trim(), out var normalized))
-            {
-                throw new InvalidOperationException($"Status '{status}' is not supported.");
-            }
-
-            return normalized;
-        }
-
-        private async Task ValidateStudentSubmissionAsync(Contribution contribution, User currentUser)
-        {
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            if (contribution.UserId != currentUser.UserId)
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            if (!string.Equals(contribution.Status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Only draft contributions can be submitted.");
-            }
-
-            var facultyIds = currentUser.Faculties.Select(faculty => faculty.FacultyId).ToList();
-            if (facultyIds.Count == 0)
-            {
-                throw new InvalidOperationException("User is not assigned to a faculty.");
-            }
-
-            var coordinatorExists = await _unitOfWork.UsersRepository.ExistsUserInRoleWithFacultiesAsync(
-                ContributionConstants.RoleCoordinator,
-                facultyIds,
-                currentUser.UserId);
-            if (!coordinatorExists)
-            {
-                throw new InvalidOperationException("No coordinator found for the user's faculty.");
-            }
-        }
-
-        private async Task ValidateCoordinatorReviewAsync(Contribution contribution, User currentUser, string targetStatus)
-        {
-            if (!IsInRole(currentUser, ContributionConstants.RoleCoordinator))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            if (!string.Equals(contribution.Status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Only submitted contributions can be reviewed.");
-            }
-
-            if (!string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Only Approved or Rejected statuses are allowed for review.");
-            }
-
-            var owner = await _unitOfWork.UsersRepository.GetByUserIdAsync(contribution.UserId);
-            if (owner == null)
-            {
-                throw new InvalidOperationException("Contribution owner not found.");
-            }
-
-            var sharesFaculty = currentUser.Faculties.Any(faculty => owner.Faculties.Any(ownerFaculty => ownerFaculty.FacultyId == faculty.FacultyId));
-            if (!sharesFaculty)
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-        }
-
-        private static bool IsInRole(User user, string roleName)
-        {
-            return user.Roles.Any(role => string.Equals(role.Name, roleName, StringComparison.OrdinalIgnoreCase));
+            return _mapper.MapToInfo(contribution);
         }
     }
 }

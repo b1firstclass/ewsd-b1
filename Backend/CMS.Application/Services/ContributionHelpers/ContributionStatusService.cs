@@ -1,0 +1,71 @@
+using CMS.Application.Common;
+using CMS.Domain.Entities;
+
+namespace CMS.Application.Services.ContributionHelpers
+{
+    public interface IContributionStatusService
+    {
+        string NormalizeStatus(string status);
+        void UpdateContributionStatus(Contribution contribution, string status, Guid currentUserId);
+        bool IsStatusDraft(string status);
+        bool IsStatusSubmitted(string status);
+    }
+
+    public class ContributionStatusService : IContributionStatusService
+    {
+        public string NormalizeStatus(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+            {
+                throw new ArgumentException("Status is required");
+            }
+
+            if (!ContributionConstants.StatusMap.TryGetValue(status.Trim(), out var normalized))
+            {
+                throw new InvalidOperationException($"Status '{status}' is not supported.");
+            }
+
+            return normalized;
+        }
+
+        public void UpdateContributionStatus(Contribution contribution, string status, Guid currentUserId)
+        {
+            if (string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Status change to Draft is not supported.");
+            }
+
+            var now = DateTime.UtcNow;
+            contribution.Status = status;
+            contribution.ModifiedDate = now;
+            contribution.ModifiedBy = currentUserId;
+
+            if (IsStatusSubmitted(status))
+            {
+                contribution.SubmittedDate = now;
+                contribution.SubmittedBy = currentUserId;
+            }
+            else if (IsStatusApprovedOrRejected(status))
+            {
+                contribution.ReviewedDate = now;
+                contribution.ReviewedBy = currentUserId;
+            }
+        }
+
+        public bool IsStatusDraft(string status)
+        {
+            return string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool IsStatusSubmitted(string status)
+        {
+            return string.Equals(status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsStatusApprovedOrRejected(string status)
+        {
+            return string.Equals(status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(status, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+}
