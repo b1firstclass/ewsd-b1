@@ -31,6 +31,19 @@ namespace CMS.Application.Common
         public const string ContributionWindowRead = "ContributionWindow.Read";
         public const string ContributionWindowUpdate = "ContributionWindow.Update";
         public const string ContributionWindowDelete = "ContributionWindow.Delete";
+
+        public const string ContributionCreate = "Contribution.Create";
+        public const string ContributionRead = "Contribution.Read";
+        public const string ContributionUpdate = "Contribution.Update";
+        public const string ContributionDelete = "Contribution.Delete";
+
+        public const string CommentCreate = "Comment.Create";
+        public const string CommentRead = "Comment.Read";
+        public const string CommentUpdate = "Comment.Update";
+        public const string CommentDelete = "Comment.Delete";
+
+        public const string ActivityLogCreate = "ActivityLog.Create";
+        public const string ActivityLogRead = "ActivityLog.Read";
     }
 
     public static class PermissionPolicies

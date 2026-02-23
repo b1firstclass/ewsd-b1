@@ -1,5 +1,7 @@
 using CMS.Api.Models;
+using CMS.Api.Security;
 using CMS.Api.Utilities;
+using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +26,7 @@ namespace CMS.Api.Controllers
             _contributionsService = contributionsService;
         }
 
+        [HasPermission(PermissionNames.ContributionCreate)]
         [HttpPost]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateContribution([FromForm] ContributionCreateForm request, CancellationToken cancellationToken)
@@ -70,6 +73,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateContribution(Guid id, [FromForm] ContributionUpdateForm request, CancellationToken cancellationToken)
@@ -124,6 +128,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/status")]
         public async Task<IActionResult> UpdateContributionStatus(Guid id, ContributionStatusUpdateRequest request)
         {
@@ -169,6 +174,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet("files")]
         public async Task<IActionResult> DownloadAllContributionFiles()
         {
@@ -194,6 +200,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet("{id:guid}/files")]
         public async Task<IActionResult> DownloadContributionFiles(Guid id)
         {
