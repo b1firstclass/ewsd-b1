@@ -1,20 +1,12 @@
 using CMS.Application.Common;
 using CMS.Application.DTOs;
+using CMS.Application.Interfaces.Services;
 using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using System.IO.Compression;
 
-namespace CMS.Application.Services.FileHelpers
+namespace CMS.Application.Services
 {
-    public interface IContributionFileService
-    {
-        void ValidateDocumentFile(ContributionFileRequest file);
-        void ValidateImageFile(ContributionFileRequest? file);
-        Document CreateDocument(ContributionFileRequest file, Guid contributionId, Guid currentUserId);
-        void DisableDocumentsOfType(Contribution contribution, HashSet<string> extensions, Guid currentUserId);
-        ContributionFilesDownload? CreateZipArchive(IReadOnlyList<Contribution> contributions);
-        ContributionFilesDownload? CreateZipArchiveForSingleContribution(Contribution contribution);
-    }
 
     public class ContributionFileService : IContributionFileService
     {

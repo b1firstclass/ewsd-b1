@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace CMS.Application.Common
 {
     public class PagedResult<T>

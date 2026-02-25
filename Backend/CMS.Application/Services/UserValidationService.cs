@@ -1,13 +1,8 @@
 using CMS.Application.Interfaces.Repositories;
-using CMS.Domain.Entities;
+using CMS.Application.Interfaces.Services;
 
-namespace CMS.Application.Services.UserHelpers
+namespace CMS.Application.Services
 {
-    public interface IUserValidationService
-    {
-        Task ValidateLoginIdAvailabilityAsync(string loginId, Guid? excludeUserId = null);
-        Task ValidateEmailAvailabilityAsync(string? email, Guid? excludeUserId = null);
-    }
 
     public class UserValidationService : IUserValidationService
     {

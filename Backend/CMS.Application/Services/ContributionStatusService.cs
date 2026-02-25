@@ -1,15 +1,9 @@
 using CMS.Application.Common;
+using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
 
-namespace CMS.Application.Services.ContributionHelpers
+namespace CMS.Application.Services
 {
-    public interface IContributionStatusService
-    {
-        string NormalizeStatus(string status);
-        void UpdateContributionStatus(Contribution contribution, string status, Guid currentUserId);
-        bool IsStatusDraft(string status);
-        bool IsStatusSubmitted(string status);
-    }
 
     public class ContributionStatusService : IContributionStatusService
     {

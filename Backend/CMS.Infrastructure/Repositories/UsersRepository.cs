@@ -4,10 +4,6 @@ using CMS.Domain.Entities;
 using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 
 namespace CMS.Infrastructure.Repositories
 {
@@ -30,7 +26,7 @@ namespace CMS.Infrastructure.Repositories
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
                 .ThenInclude(r => r.Permissions)
-                .FirstOrDefaultAsync(u => u.LoginId == loginId && u.IsActive);
+                .FirstOrDefaultAsync(u => u.LoginId == loginId);
         }
 
         public async Task<User?> GetByUserIdAsync(Guid userId)
@@ -44,7 +40,7 @@ namespace CMS.Infrastructure.Repositories
                 .Include(u => u.Faculties)
                 .Include(u => u.Roles)
                 .ThenInclude(r => r.Permissions)
-                .FirstOrDefaultAsync(u => u.UserId == userId && u.IsActive);
+                .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
@@ -83,7 +79,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User?> GetByRefreshTokenAsync(string refreshToken)

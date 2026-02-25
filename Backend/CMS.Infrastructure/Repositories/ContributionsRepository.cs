@@ -22,7 +22,7 @@ namespace CMS.Infrastructure.Repositories
             }
 
             return await _context.Contributions
-                .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId && contribution.IsActive);
+                .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
         }
 
         public async Task<Contribution?> GetByIdWithDocumentsAsync(Guid contributionId)
@@ -34,14 +34,13 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Contributions
                 .Include(contribution => contribution.Documents)
-                .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId && contribution.IsActive);
+                .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
         }
 
         public async Task<IReadOnlyList<Contribution>> GetAllWithDocumentsAsync()
         {
             return await _context.Contributions
                 .Include(contribution => contribution.Documents)
-                .Where(contribution => contribution.IsActive)
                 .ToListAsync();
         }
 

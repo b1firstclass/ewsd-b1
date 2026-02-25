@@ -4,11 +4,6 @@ using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Threading.Tasks;
-using UAParser;
 using UAParser.Interfaces;
 
 namespace CMS.Api.Controllers
@@ -19,7 +14,7 @@ namespace CMS.Api.Controllers
     public class ActivityLogController : ControllerBase
     {
         private readonly ILogger<ActivityLogController> _logger;
-        private readonly IActivityLogService _activityLogService;        
+        private readonly IActivityLogService _activityLogService;
         private readonly IUserAgentParser _parser;
         private readonly ICurrentUserService _currentUserService;
         private readonly IHttpContextAccessor _httpContextAccessor;

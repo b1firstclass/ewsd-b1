@@ -1,4 +1,3 @@
-using System;
 using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
@@ -6,7 +5,6 @@ using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CMS.Api.Controllers
 {

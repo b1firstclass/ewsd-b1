@@ -1,7 +1,6 @@
+using CMS.Application.Interfaces.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using CMS.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace CMS.Api.Services
 {

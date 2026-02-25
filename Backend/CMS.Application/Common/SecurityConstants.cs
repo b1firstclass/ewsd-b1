@@ -3,6 +3,9 @@ namespace CMS.Application.Common
     public static class PermissionClaimTypes
     {
         public const string Permission = "cms:permissions";
+        public const string Faculty = "cms:faculty_ids";
+        public const string FacultyName = "cms:faculty_names";
+        public const string Role = "cms:role_ids";
     }
 
     public static class PermissionNames

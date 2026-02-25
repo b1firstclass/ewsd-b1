@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Application.DTOs
 {
@@ -27,11 +24,11 @@ namespace CMS.Application.DTOs
     #region response
     public class FaculityInfo
     {
-        public Guid Id { get; set;  }
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
-    
+
     #endregion
 }

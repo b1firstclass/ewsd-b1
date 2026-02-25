@@ -1,13 +1,11 @@
-using System;
+using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
 using System.Text;
-using Konscious.Security.Cryptography;
-using CMS.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Identity;
 
 namespace CMS.Application.Utilities
 {
-    public class Argon2PasswordHasher<T> : IPasswordHasher<T>  where T : class
+    public class Argon2PasswordHasher<T> : IPasswordHasher<T> where T : class
     {
         private const int SaltSize = 16; // 128-bit
         private const int Iterations = 3;

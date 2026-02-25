@@ -1,14 +1,10 @@
 using CMS.Application.Interfaces.Repositories;
+using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace CMS.Application.Services.UserHelpers
+namespace CMS.Application.Services
 {
-    public interface IUserAssignmentService
-    {
-        Task AssignFacultiesToUserAsync(User user, IEnumerable<Guid>? facultyIds);
-        Task AssignRolesToUserAsync(User user, IEnumerable<Guid>? roleIds);
-    }
 
     public class UserAssignmentService : IUserAssignmentService
     {

@@ -1,10 +1,8 @@
-using System.Threading.Tasks;
+using CMS.Application.Common;
+using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
-using CMS.Application.DTOs;
 using CMS.Domain.Entities;
-using System;
-using CMS.Application.Common;
 
 namespace CMS.Application.Services
 {

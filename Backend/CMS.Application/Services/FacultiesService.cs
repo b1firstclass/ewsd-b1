@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
@@ -119,7 +117,7 @@ namespace CMS.Application.Services
                 return false;
             }
 
-           
+
             _unitOfWork.Repository<Faculty>().Remove(faculty);
             await _unitOfWork.SaveChangesAsync();
 

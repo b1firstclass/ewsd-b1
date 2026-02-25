@@ -1,16 +1,10 @@
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
+using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
 
-namespace CMS.Application.Services.AuthorizationHelpers
+namespace CMS.Application.Services
 {
-    public interface IContributionAuthorizationService
-    {
-        Task ValidateStudentCanCreateContributionAsync(User currentUser);
-        Task ValidateStudentCanSubmitContributionAsync(Contribution contribution, User currentUser);
-        Task ValidateCoordinatorCanReviewContributionAsync(Contribution contribution, User currentUser, string targetStatus);
-        Task ValidateUserOwnsContributionAsync(Contribution contribution, Guid userId);
-    }
 
     public class ContributionAuthorizationService : IContributionAuthorizationService
     {

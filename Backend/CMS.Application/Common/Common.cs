@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CMS.Application.Common
+﻿namespace CMS.Application.Common
 {
     public class PagedResponse<T>
     {
@@ -14,5 +10,11 @@ namespace CMS.Application.Common
             Items = items;
             Count = count;
         }
+    }
+
+    public class TokenInfo
+    {
+        public required string Token { get; set; }
+        public required DateTime ExpireAt { get; set; }
     }
 }

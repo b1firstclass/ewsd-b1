@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace CMS.Application.Common
 {
     public static class ContributionConstants
     {
-        
+
         public const long MaxDocumentFileSizeBytes = 10 * 1024 * 1024;
         public const long MaxImageFileSizeBytes = 5 * 1024 * 1024;
 

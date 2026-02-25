@@ -4,8 +4,6 @@ using CMS.Domain.Entities;
 using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CMS.Infrastructure.Repositories
 {

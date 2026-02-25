@@ -1,4 +1,5 @@
 using CMS.Application.Common;
+using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -6,19 +7,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CMS.Application.Services.TokenHelpers
+namespace CMS.Application.Services
 {
-    public interface ITokenService
-    {
-        (string Token, DateTime ExpiresAt) GenerateAccessToken(User user);
-        (string RefreshToken, DateTime ExpiresAt) GenerateRefreshToken();
-    }
-
     public class TokenService : ITokenService
     {
-        private const string FacultyIdsClaim = "cms:faculty_ids";
-        private const string FacultyNamesClaim = "cms:faculty_names";
-        private const string RoleIdsClaim = "cms:role_ids";
+        private const string FacultyIdsClaim = PermissionClaimTypes.Faculty;
+        private const string FacultyNamesClaim = PermissionClaimTypes.FacultyName;
+        private const string RoleIdsClaim = PermissionClaimTypes.Role;
         private const string PermissionClaim = PermissionClaimTypes.Permission;
 
         private readonly JwtSettings _jwtSettings;
@@ -28,17 +23,23 @@ namespace CMS.Application.Services.TokenHelpers
             _jwtSettings = jwtSettings;
         }
 
-        public (string Token, DateTime ExpiresAt) GenerateAccessToken(User user)
+        public TokenInfo GenerateAccessToken(User user)
         {
             var expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
             var claims = BuildClaims(user);
             var token = CreateJwtSecurityToken(claims, expiresAt);
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            return (tokenHandler.WriteToken(token), token.ValidTo);
+            var tokenInfo = new TokenInfo
+            {
+                Token = tokenHandler.WriteToken(token),
+                ExpireAt = token.ValidTo,
+            };
+
+            return tokenInfo;
         }
 
-        public (string RefreshToken, DateTime ExpiresAt) GenerateRefreshToken()
+        public TokenInfo GenerateRefreshToken()
         {
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             var token = Convert.ToBase64String(randomBytes)
@@ -47,7 +48,14 @@ namespace CMS.Application.Services.TokenHelpers
                 .TrimEnd('=');
 
             var expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.RefreshExpiryMinutes);
-            return (token, expiresAt);
+
+            var refreshTokenInfo = new TokenInfo
+            {
+                Token = token,
+                ExpireAt = expiresAt
+            };
+
+            return refreshTokenInfo;
         }
 
         private JwtSecurityToken CreateJwtSecurityToken(List<Claim> claims, DateTime expiresAt)

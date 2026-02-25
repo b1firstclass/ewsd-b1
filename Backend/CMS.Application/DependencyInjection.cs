@@ -1,12 +1,6 @@
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Services;
 using CMS.Application.Services;
-using CMS.Application.Services.AuthorizationHelpers;
-using CMS.Application.Services.ContributionHelpers;
-using CMS.Application.Services.FileHelpers;
-using CMS.Application.Services.MappingHelpers;
-using CMS.Application.Services.TokenHelpers;
-using CMS.Application.Services.UserHelpers;
 using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -49,10 +43,6 @@ namespace CMS.Application
             // User Helpers
             services.AddScoped<IUserValidationService, UserValidationService>();
             services.AddScoped<IUserAssignmentService, UserAssignmentService>();
-
-            // Mappers
-            services.AddScoped<IContributionMapper, ContributionMapper>();
-            services.AddScoped<ICommentMapper, CommentMapper>();
 
             return services;
         }

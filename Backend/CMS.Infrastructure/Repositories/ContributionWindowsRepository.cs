@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
@@ -55,7 +52,7 @@ namespace CMS.Infrastructure.Repositories
             }
 
             return await _context.ContributionWindows
-                .FirstOrDefaultAsync(cw => cw.ContributionWindowId == contributionWindowId && cw.IsActive);
+                .FirstOrDefaultAsync(cw => cw.ContributionWindowId == contributionWindowId);
         }
 
         public async Task<ContributionWindow?> GetCurrentWindowAsync(DateTime utcNow)

@@ -1,0 +1,10 @@
+using CMS.Domain.Entities;
+
+namespace CMS.Application.Interfaces.Services
+{
+    public interface IUserAssignmentService
+    {
+        Task AssignFacultiesToUserAsync(User user, IEnumerable<Guid>? facultyIds);
+        Task AssignRolesToUserAsync(User user, IEnumerable<Guid>? roleIds);
+    }
+}

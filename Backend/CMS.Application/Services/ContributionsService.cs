@@ -1,11 +1,8 @@
+using AutoMapper;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
-using CMS.Application.Services.AuthorizationHelpers;
-using CMS.Application.Services.ContributionHelpers;
-using CMS.Application.Services.FileHelpers;
-using CMS.Application.Services.MappingHelpers;
 using CMS.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +16,7 @@ namespace CMS.Application.Services
         private readonly IContributionAuthorizationService _authorizationService;
         private readonly IContributionFileService _fileService;
         private readonly IContributionStatusService _statusService;
-        private readonly IContributionMapper _mapper;
+        private readonly IMapper _mapper;
 
         public ContributionsService(
             ILogger<ContributionsService> logger,
@@ -28,7 +25,7 @@ namespace CMS.Application.Services
             IContributionAuthorizationService authorizationService,
             IContributionFileService fileService,
             IContributionStatusService statusService,
-            IContributionMapper mapper)
+            IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -58,7 +55,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Contribution created: {ContributionId}", contribution.ContributionId);
 
-            return _mapper.MapToInfo(contribution);
+            return _mapper.Map<ContributionInfo>(contribution);
         }
 
         private async Task<User> GetAuthenticatedUserAsync()
@@ -225,7 +222,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Contribution updated: {ContributionId}", contribution.ContributionId);
 
-            return _mapper.MapToInfo(contribution);
+            return _mapper.Map<ContributionInfo>(contribution);
         }
 
         public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, ContributionStatusUpdateRequest request)
@@ -261,7 +258,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Contribution status updated: {ContributionId} -> {Status}", contributionId, targetStatus);
 
-            return _mapper.MapToInfo(contribution);
+            return _mapper.Map<ContributionInfo>(contribution);
         }
     }
 }

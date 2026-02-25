@@ -1,5 +1,3 @@
-using System;
-
 namespace CMS.Domain.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
