@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
 using CMS.Infrastructure.Persistence;

@@ -2,9 +2,6 @@
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CMS.Infrastructure.Mappings
 {
@@ -99,6 +96,25 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)));
+
+            CreateMap<Contribution, ContributionInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ContributionId))
+                .ForMember(dest => dest.ContributionWindowId, opt => opt.MapFrom(src => src.ContributionWindowId))
+                .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Subject))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)));
+
+            CreateMap<Comment, CommentInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CommentId))
+                .ForMember(dest => dest.ContributionId, opt => opt.MapFrom(src => src.ContributionId))
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment1))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
+                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.ModifiedBy));
         }
     }
 }

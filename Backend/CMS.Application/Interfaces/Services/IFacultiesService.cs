@@ -1,5 +1,4 @@
-﻿using System;
-using CMS.Application.Common;
+﻿using CMS.Application.Common;
 using CMS.Application.DTOs;
 
 namespace CMS.Application.Interfaces.Services

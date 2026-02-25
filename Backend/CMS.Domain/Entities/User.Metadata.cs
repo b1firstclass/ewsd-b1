@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using CMS.Domain.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Domain.Entities;
 

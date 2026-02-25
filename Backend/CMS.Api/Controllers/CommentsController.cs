@@ -1,4 +1,4 @@
-using System;
+using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
@@ -22,6 +22,7 @@ namespace CMS.Api.Controllers
             _commentsService = commentsService;
         }
 
+        [HasPermission(PermissionNames.CommentRead)]
         [HttpGet]
         public async Task<IActionResult> GetAllComments([FromQuery] PaginationRequest? paginationRequest, [FromQuery] Guid? contributionId)
         {
@@ -49,6 +50,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.CommentRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetCommentById(Guid id)
         {
@@ -74,6 +76,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.CommentRead)]
         [HttpGet("contribution/{contributionId:guid}")]
         public async Task<IActionResult> GetCommentsByContributionId(Guid contributionId)
         {
@@ -94,6 +97,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.CommentCreate)]
         [HttpPost]
         public async Task<IActionResult> CreateComment(CommentCreateRequest request)
         {
@@ -129,6 +133,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.CommentUpdate)]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateComment(Guid id, CommentUpdateRequest request)
         {
@@ -169,6 +174,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.CommentDelete)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteComment(Guid id)
         {

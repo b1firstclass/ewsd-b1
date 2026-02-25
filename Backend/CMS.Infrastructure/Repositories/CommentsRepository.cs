@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
@@ -27,7 +24,7 @@ namespace CMS.Infrastructure.Repositories
             }
 
             return await _context.Comments
-                .FirstOrDefaultAsync(comment => comment.CommentId == commentId && comment.IsActive);
+                .FirstOrDefaultAsync(comment => comment.CommentId == commentId);
         }
 
         public async Task<IReadOnlyList<Comment>> GetByContributionIdAsync(Guid contributionId)

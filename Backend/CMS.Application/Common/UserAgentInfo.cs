@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CMS.Application.Common
+﻿namespace CMS.Application.Common
 {
     public class UserAgentInfo
     {

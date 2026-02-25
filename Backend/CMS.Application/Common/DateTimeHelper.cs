@@ -1,5 +1,3 @@
-using System;
-
 namespace CMS.Application.Common
 {
     public static class DateTimeHelper

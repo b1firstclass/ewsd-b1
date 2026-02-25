@@ -1,5 +1,3 @@
-using System;
-
 namespace CMS.Application.Interfaces.Services
 {
     public interface IPasswordHasherV2<T>

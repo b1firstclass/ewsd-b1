@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using CMS.Application.DTOs;
 
 namespace CMS.Application.Utilities

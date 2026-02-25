@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
@@ -35,7 +32,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Roles
                 .Include(r => r.Permissions)
-                .FirstOrDefaultAsync(r => r.RoleId == roleId && r.IsActive);
+                .FirstOrDefaultAsync(r => r.RoleId == roleId);
         }
 
         public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)

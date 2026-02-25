@@ -1,7 +1,5 @@
 using CMS.Application.Common;
 using CMS.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CMS.Application.Interfaces.Repositories
 {

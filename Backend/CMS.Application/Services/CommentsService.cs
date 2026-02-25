@@ -1,6 +1,4 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
@@ -15,15 +13,18 @@ namespace CMS.Application.Services
         private readonly ILogger<CommentsService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IMapper _mapper;
 
         public CommentsService(
             ILogger<CommentsService> logger,
             IUnitOfWork unitOfWork,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _mapper = mapper;
         }
 
         public async Task<PagedResponse<CommentInfo>> GetAllCommentsAsync(PaginationRequest paginationRequest, Guid? contributionId = null)
@@ -38,7 +39,7 @@ namespace CMS.Application.Services
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 
-            var mapped = pagedComments.Items.Select(MapCommentInfo).ToList();
+            var mapped = _mapper.Map<List<CommentInfo>>(pagedComments.Items);
             return new PagedResponse<CommentInfo>(mapped, pagedComments.TotalCount);
         }
 
@@ -50,7 +51,7 @@ namespace CMS.Application.Services
             }
 
             var comment = await _unitOfWork.CommentsRepository.GetByIdAsync(commentId);
-            return comment == null ? null : MapCommentInfo(comment);
+            return comment == null ? null : _mapper.Map<CommentInfo>(comment);
         }
 
         public async Task<IReadOnlyList<CommentInfo>> GetCommentsByContributionIdAsync(Guid contributionId)
@@ -61,7 +62,7 @@ namespace CMS.Application.Services
             }
 
             var comments = await _unitOfWork.CommentsRepository.GetByContributionIdAsync(contributionId);
-            return comments.Select(MapCommentInfo).ToList();
+            return _mapper.Map<IReadOnlyList<CommentInfo>>(comments);
         }
 
         public async Task<CommentInfo> CreateCommentAsync(CommentCreateRequest request)
@@ -100,7 +101,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Comment created: {CommentId}", comment.CommentId);
 
-            return MapCommentInfo(comment);
+            return _mapper.Map<CommentInfo>(comment);
         }
 
         public async Task<CommentInfo?> UpdateCommentAsync(Guid commentId, CommentUpdateRequest request)
@@ -147,7 +148,7 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Comment updated: {CommentId}", comment.CommentId);
 
-            return MapCommentInfo(comment);
+            return _mapper.Map<CommentInfo>(comment);
         }
 
         public async Task<bool> DeleteCommentAsync(Guid commentId)
@@ -178,19 +179,5 @@ namespace CMS.Application.Services
             return true;
         }
 
-        private static CommentInfo MapCommentInfo(Comment comment)
-        {
-            return new CommentInfo
-            {
-                Id = comment.CommentId,
-                ContributionId = comment.ContributionId,
-                Comment = comment.Comment1,
-                IsActive = comment.IsActive,
-                CreatedBy = comment.CreatedBy,
-                ModifiedBy = comment.ModifiedBy,
-                CreatedDate = DateTimeHelper.NormalizeToUtc(comment.CreatedDate),
-                ModifiedDate = DateTimeHelper.NormalizeToUtc(comment.ModifiedDate)
-            };
-        }
     }
 }

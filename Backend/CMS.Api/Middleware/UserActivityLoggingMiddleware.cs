@@ -1,8 +1,6 @@
 using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
 using CMS.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using UAParser.Interfaces;
 

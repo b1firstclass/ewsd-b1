@@ -1,5 +1,3 @@
-using System;
-
 namespace CMS.Application.Utilities
 {
     public static class PermissionValidator

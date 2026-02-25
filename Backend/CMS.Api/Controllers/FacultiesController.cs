@@ -1,5 +1,4 @@
-﻿using System;
-using CMS.Api.Security;
+﻿using CMS.Api.Security;
 using CMS.Api.Utilities;
 using CMS.Application.Common;
 using CMS.Application.DTOs;

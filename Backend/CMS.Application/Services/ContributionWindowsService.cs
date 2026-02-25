@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using CMS.Application.Common;
 using CMS.Application.DTOs;
@@ -201,6 +198,6 @@ namespace CMS.Application.Services
             return true;
         }
 
-        
+
     }
 }
