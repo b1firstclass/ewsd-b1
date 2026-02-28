@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Resend;
 
 namespace CMS.Infrastructure.Services
 {
@@ -16,47 +17,27 @@ namespace CMS.Infrastructure.Services
             _settings = options.Value.EmailSettings;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = true, CancellationToken cancellationToken = default)
+       
+        public async Task SendEmailAsync(string toEmail, string subject, string body, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(_settings.Host))
+
+            try
             {
-                throw new InvalidOperationException("Email settings are not configured.");
+                IResend resend = ResendClient.Create(_settings.ApiKey);
+
+                var resp = await resend.EmailSendAsync(new EmailMessage()
+                {
+                    From = _settings.FromName + " " + _settings.FromEmail,
+                    To = toEmail,
+                    Subject = subject,
+                    HtmlBody = body
+                }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                var test = ex;
             }
 
-            var message = new MimeMessage();
-            var fromName = string.IsNullOrWhiteSpace(_settings.FromName) ? _settings.FromEmail : _settings.FromName;
-            message.From.Add(new MailboxAddress(fromName, _settings.FromEmail));
-            message.To.Add(MailboxAddress.Parse(toEmail));
-            message.Subject = subject;
-
-            var builder = new BodyBuilder();
-            if (isHtml)
-            {
-                builder.HtmlBody = body;
-            }
-            else
-            {
-                builder.TextBody = body;
-            }
-
-            message.Body = builder.ToMessageBody();
-
-            using var client = new SmtpClient();
-            var secureOption = _settings.UseSsl
-                ? SecureSocketOptions.SslOnConnect
-                : _settings.UseStartTls
-                    ? SecureSocketOptions.StartTls
-                    : SecureSocketOptions.Auto;
-
-            await client.ConnectAsync(_settings.Host, _settings.Port, secureOption, cancellationToken);
-
-            if (!string.IsNullOrWhiteSpace(_settings.Username))
-            {
-                await client.AuthenticateAsync(_settings.Username, _settings.Password, cancellationToken);
-            }
-
-            await client.SendAsync(message, cancellationToken);
-            await client.DisconnectAsync(true, cancellationToken);
         }
     }
 }
