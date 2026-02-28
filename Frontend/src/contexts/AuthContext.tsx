@@ -16,29 +16,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [accessToken, setToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const storedToken = storage.getToken();
+        const storedRefreshToken = storage.getRefreshToken();
         const storedUser = storage.getUser();
 
-        if (storedToken && storedUser) {
+        if (storedToken) {
             setToken(storedToken);
-            setUser(storedUser);
+            setRefreshToken(storedRefreshToken);
+            //setUser(storedUser);
             setIsAuthenticated(true);
         }
+        setIsLoading(false);
     }, []);
 
-    const login = (userData: User | null, authToken: string, refreshToken: string) => {
+    const login = (userData: User | null, authToken: string, newRefreshToken: string) => {
         setUser(userData);
         setToken(authToken);
+        setRefreshToken(newRefreshToken);
         setIsAuthenticated(true);
         storage.setToken(authToken);
+        storage.setRefreshToken(newRefreshToken);
         storage.setUser(userData);
     };
 
     const logout = () => {
         setUser(null);
         setToken(null);
+        setRefreshToken(null);
         setIsAuthenticated(false);
         storage.clear();
     };
@@ -55,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 accessToken,
                 refreshToken,
                 isAuthenticated,
+                isLoading,
                 login,
                 logout,
                 updateUser
@@ -67,8 +75,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 }

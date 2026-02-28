@@ -1,4 +1,3 @@
-import { PageUrl } from "@/types/constantPageUrl";
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
 
