@@ -28,6 +28,7 @@ interface SidebarBodyProps {
   brandDescription?: string;
   navItems: SidebarNavItem[];
   footer?: ReactNode;
+  isDesktopCollapsed: boolean;
   onClose: () => void;
 }
 
@@ -43,32 +44,44 @@ const SidebarBody = ({
   brandDescription,
   navItems,
   footer,
+  isDesktopCollapsed,
   onClose,
 }: SidebarBodyProps) => {
-  const brandInitials = brandName
-    .split(" ")
+  const normalizedBrandName = brandName.trim();
+  const computedInitials = normalizedBrandName
+    .split(/\s+/)
     .map((part) => part.charAt(0))
     .join("")
     .slice(0, 2)
     .toUpperCase();
+  const brandInitials = computedInitials || "AP";
 
   return (
     <>
       <SidebarHeader className="space-y-1">
-        <div className="space-y-1 md:flex md:items-center md:justify-center md:space-y-0 lg:block lg:space-y-1">
-          <p className="font-display text-lg font-semibold leading-none md:hidden lg:block">{brandName}</p>
-          <p className="hidden font-display text-lg font-semibold leading-none md:block lg:hidden">
+        <div
+          className={cn(
+            "flex-1 space-y-1",
+            isDesktopCollapsed && "md:flex md:items-center md:justify-center md:space-y-0",
+          )}
+        >
+          <p className={cn("font-display text-lg font-semibold leading-none", isDesktopCollapsed && "md:hidden")}>
+            {brandName}
+          </p>
+          <p className={cn("hidden font-display text-lg font-semibold leading-none", isDesktopCollapsed && "md:block")}>
             {brandInitials}
           </p>
           {brandDescription ? (
-            <p className="text-xs text-sidebar-foreground/70 md:hidden lg:block">{brandDescription}</p>
+              <p className={cn("text-xs text-sidebar-foreground/70", isDesktopCollapsed && "md:hidden")}>
+                {brandDescription}
+              </p>
           ) : null}
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="md:hidden lg:block">Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className={cn(isDesktopCollapsed && "md:hidden")}>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -85,12 +98,12 @@ const SidebarBody = ({
                       className={({ isActive }) =>
                         cn(
                           sidebarMenuButtonVariants({ isActive }),
-                          "justify-start md:justify-center md:px-0 lg:justify-start lg:px-3",
+                          isDesktopCollapsed ? "md:justify-center md:px-0" : "md:justify-start md:px-3",
                         )
                       }
                     >
                       <Icon />
-                      <span className="md:hidden lg:inline">{item.label}</span>
+                      <span className={cn(isDesktopCollapsed && "md:hidden")}>{item.label}</span>
                     </NavLink>
                   </SidebarMenuItem>
                 );
@@ -100,7 +113,7 @@ const SidebarBody = ({
         </SidebarGroup>
       </SidebarContent>
 
-      {footer ? <SidebarFooter className="md:hidden lg:block">{footer}</SidebarFooter> : null}
+      {footer ? <SidebarFooter className={cn(isDesktopCollapsed && "md:hidden")}>{footer}</SidebarFooter> : null}
     </>
   );
 };
@@ -111,7 +124,7 @@ export const AppSidebar = ({
   navItems,
   footer,
 }: AppSidebarProps) => {
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, isDesktopCollapsed } = useSidebar();
 
   return (
     <Sidebar className={cn("max-w-[85vw] md:max-w-none")}>
@@ -120,6 +133,7 @@ export const AppSidebar = ({
         brandDescription={brandDescription}
         navItems={navItems}
         footer={footer}
+        isDesktopCollapsed={isDesktopCollapsed}
         onClose={() => setOpenMobile(false)}
       />
     </Sidebar>

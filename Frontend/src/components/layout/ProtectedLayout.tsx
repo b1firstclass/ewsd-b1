@@ -43,8 +43,7 @@ export const ProtectedLayout = () => {
     <AppShell
       title="Dashboard"
       subtitle="Overview and management workspace"
-      brandName="EWSD Portal"
-      brandDescription="Base Theme Layout"
+      brandName="EchoPress"
       navItems={navItems}
       sidebarFooter={
         <div className="space-y-1">

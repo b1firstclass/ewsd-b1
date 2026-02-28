@@ -7,11 +7,15 @@ import { cn } from "@/lib/utils";
 
 const SIDEBAR_WIDTH = "18rem";
 const SIDEBAR_WIDTH_ICON = "4rem";
+const SIDEBAR_COLLAPSED_KEY = "sidebar_collapsed_md_up";
+const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";
 
 interface SidebarContextValue {
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   toggleSidebar: () => void;
+  isDesktopCollapsed: boolean;
+  toggleDesktopCollapsed: () => void;
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | null>(null);
@@ -28,21 +32,79 @@ interface SidebarProviderProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultOpenMobile?: boolean;
 }
 
+const getStoredDesktopCollapsedPreference = (): boolean | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const storedValue = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+  if (storedValue === "true") return true;
+  if (storedValue === "false") return false;
+  return null;
+};
+
+const getDesktopViewportMatch = (): boolean => {
+  if (typeof window === "undefined") {
+    return true;
+  }
+
+  return window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
+};
+
 const SidebarProvider = React.forwardRef<HTMLDivElement, SidebarProviderProps>(
   ({ className, style, defaultOpenMobile = false, children, ...props }, ref) => {
     const [openMobile, setOpenMobile] = React.useState(defaultOpenMobile);
+    const [desktopCollapsedPreference, setDesktopCollapsedPreference] = React.useState<boolean | null>(
+      () => getStoredDesktopCollapsedPreference(),
+    );
+    const [isDesktopViewport, setIsDesktopViewport] = React.useState<boolean>(() =>
+      getDesktopViewportMatch(),
+    );
 
     const toggleSidebar = React.useCallback(() => {
       setOpenMobile((prev) => !prev);
     }, []);
+
+    React.useEffect(() => {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      const mediaQueryList = window.matchMedia(DESKTOP_MEDIA_QUERY);
+      setIsDesktopViewport(mediaQueryList.matches);
+
+      const handleChange = (event: MediaQueryListEvent) => {
+        setIsDesktopViewport(event.matches);
+      };
+
+      mediaQueryList.addEventListener("change", handleChange);
+      return () => mediaQueryList.removeEventListener("change", handleChange);
+    }, []);
+
+    const isDesktopCollapsed = desktopCollapsedPreference ?? !isDesktopViewport;
+
+    const toggleDesktopCollapsed = React.useCallback(() => {
+      setDesktopCollapsedPreference((previousValue) => {
+        const currentValue = previousValue ?? !isDesktopViewport;
+        const nextValue = !currentValue;
+
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(nextValue));
+        }
+
+        return nextValue;
+      });
+    }, [isDesktopViewport]);
 
     const value = React.useMemo(
       () => ({
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        isDesktopCollapsed,
+        toggleDesktopCollapsed,
       }),
-      [openMobile, toggleSidebar],
+      [openMobile, toggleSidebar, isDesktopCollapsed, toggleDesktopCollapsed],
     );
 
     return (
@@ -69,7 +131,7 @@ SidebarProvider.displayName = "SidebarProvider";
 
 const Sidebar = React.forwardRef<HTMLElement, React.ComponentPropsWithoutRef<"aside">>(
   ({ className, children, ...props }, ref) => {
-    const { openMobile, setOpenMobile } = useSidebar();
+    const { openMobile, setOpenMobile, isDesktopCollapsed } = useSidebar();
 
     return (
       <>
@@ -85,7 +147,10 @@ const Sidebar = React.forwardRef<HTMLElement, React.ComponentPropsWithoutRef<"as
         <aside
           ref={ref}
           className={cn(
-            "fixed inset-y-0 left-0 z-50 flex h-screen w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-xl transition-[transform,width] duration-200 md:static md:z-auto md:flex md:min-h-screen md:flex-col md:w-[var(--sidebar-width-icon)] md:translate-x-0 md:shadow-none lg:w-[var(--sidebar-width)]",
+            "fixed inset-y-0 left-0 z-50 flex h-screen w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-xl transition-[transform,width] duration-200 md:static md:z-auto md:flex md:min-h-screen md:flex-col md:translate-x-0 md:shadow-none",
+            isDesktopCollapsed
+              ? "md:w-[var(--sidebar-width-icon)] lg:w-[var(--sidebar-width-icon)]"
+              : "md:w-[var(--sidebar-width)] lg:w-[var(--sidebar-width)]",
             openMobile ? "translate-x-0" : "-translate-x-full md:translate-x-0",
             className,
           )}
