@@ -24,7 +24,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Users
                 .Include(u => u.Faculties)
-                .Include(u => u.Roles)
+                .Include(u => u.Role)
                 .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.LoginId == loginId);
         }
@@ -38,7 +38,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Users
                 .Include(u => u.Faculties)
-                .Include(u => u.Roles)
+                .Include(u => u.Role)
                 .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
@@ -91,7 +91,7 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Users
                 .Include(u => u.Faculties)
-                .Include(u => u.Roles)
+                .Include(u => u.Role)
                 .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken && u.IsActive);
         }
@@ -107,7 +107,7 @@ namespace CMS.Infrastructure.Repositories
             var query = _context.Users
                 .AsNoTracking()
                 .Where(user => user.IsActive)
-                .Where(user => user.Roles.Any(role => role.Name.ToLower() == normalizedRoleName))
+                .Where(user => user.Role.Name.ToLower() == normalizedRoleName)
                 .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
 
             if (excludeUserId.HasValue)
@@ -129,7 +129,7 @@ namespace CMS.Infrastructure.Repositories
             var query = _context.Users
                 .AsNoTracking()
                 .Where(user => user.IsActive)
-                .Where(user => user.Roles.Any(role => role.Name.ToLower() == normalizedRoleName))
+                .Where(user => user.Role.Name.ToLower() == normalizedRoleName)
                 .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
 
             return await query.ToListAsync();

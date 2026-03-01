@@ -1,11 +1,7 @@
 using CMS.Application.Common;
 using CMS.Application.Interfaces.Services;
-using CMS.Application.Services;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MimeKit;
 using Resend;
 using System.Net;
 
@@ -68,7 +64,7 @@ namespace CMS.Infrastructure.Services
                     """;
         }
 
-       
+
         public async Task SendEmailAsync(string toEmail, string subject, string body, CancellationToken cancellationToken = default)
         {
 

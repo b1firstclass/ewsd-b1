@@ -25,7 +25,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles));
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
 
             CreateMap<User, UserProfile>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
@@ -36,7 +36,7 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.Faculties, opt => opt.MapFrom(src => src.Faculties))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
                 .ForMember(dest => dest.LastLoginDate, opt => opt.MapFrom(src => src.LastLoginDate))
                 .ForMember(dest => dest.FirstTimeLogin, opt => opt.MapFrom(src => !src.LastLoginDate.HasValue));
 

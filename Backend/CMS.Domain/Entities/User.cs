@@ -22,6 +22,8 @@ public partial class User
 
     public DateTime? RefreshTokenExpiresAt { get; set; }
 
+    public Guid RoleId { get; set; }
+
     public DateTime? CreatedDate { get; set; }
 
     public Guid? CreatedBy { get; set; }
@@ -32,9 +34,9 @@ public partial class User
 
     public virtual ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
 
+    public virtual Role Role { get; set; } = null!;
+
     public virtual ICollection<UserActivityLog> UserActivityLogs { get; set; } = new List<UserActivityLog>();
 
     public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
-
-    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

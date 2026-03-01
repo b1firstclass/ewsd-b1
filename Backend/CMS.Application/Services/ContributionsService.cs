@@ -17,6 +17,7 @@ namespace CMS.Application.Services
         private readonly IContributionFileService _fileService;
         private readonly IContributionStatusService _statusService;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
         public ContributionsService(
             ILogger<ContributionsService> logger,
@@ -25,7 +26,8 @@ namespace CMS.Application.Services
             IContributionAuthorizationService authorizationService,
             IContributionFileService fileService,
             IContributionStatusService statusService,
-            IMapper mapper)
+            IMapper mapper,
+            IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -34,6 +36,7 @@ namespace CMS.Application.Services
             _fileService = fileService;
             _statusService = statusService;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         public async Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request)
@@ -52,6 +55,14 @@ namespace CMS.Application.Services
 
             await _unitOfWork.ContributionsRepository.AddAsync(contribution);
             await _unitOfWork.SaveChangesAsync();
+
+            var facultyCoordintors = await _unitOfWork.UsersRepository.GetUsersByFacultyIdAsync(new List<Guid> { request.FacultyId }, RoleNames.Coordinator);
+
+            foreach (var coordinator in facultyCoordintors)
+            {
+                var body = _emailService.GenerateEmailBody("New Contribution Created", coordinator.FullName, "A new contribution is submitted under your faculty.");
+                await _emailService.SendEmailAsync(coordinator.Email, "New Contribution Created", body);
+            }
 
             _logger.LogInformation("Contribution created: {ContributionId}", contribution.ContributionId);
 

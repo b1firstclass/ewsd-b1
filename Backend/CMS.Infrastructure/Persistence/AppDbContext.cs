@@ -177,20 +177,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.RefreshToken).HasMaxLength(200);
 
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Users_Role",
-                    r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .HasConstraintName("Users_Roles_RoleId_fkey"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("Users_Roles_UserId_fkey"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId").HasName("Users_Roles_pkey");
-                        j.ToTable("Users_Roles");
-                    });
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("Users_RoleId_fkey");
         });
 
         modelBuilder.Entity<UserActivityLog>(entity =>

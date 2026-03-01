@@ -5,6 +5,6 @@ namespace CMS.Application.Interfaces.Services
     public interface IUserAssignmentService
     {
         Task AssignFacultiesToUserAsync(User user, IEnumerable<Guid>? facultyIds);
-        Task AssignRolesToUserAsync(User user, IEnumerable<Guid>? roleIds);
+        Task AssignRoleToUserAsync(User user, Guid? roleIds);
     }
 }
