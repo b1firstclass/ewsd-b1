@@ -117,5 +117,22 @@ namespace CMS.Infrastructure.Repositories
 
             return await query.AnyAsync();
         }
+
+        public async Task<List<User>> GetUsersByFacultyIdAsync(List<Guid> facultyIds, string roleName)
+        {
+            if (facultyIds == null || facultyIds.Count == 0 || string.IsNullOrWhiteSpace(roleName))
+            {
+                return new List<User>();
+            }
+
+            var normalizedRoleName = roleName.Trim().ToLowerInvariant();
+            var query = _context.Users
+                .AsNoTracking()
+                .Where(user => user.IsActive)
+                .Where(user => user.Roles.Any(role => role.Name.ToLower() == normalizedRoleName))
+                .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
+
+            return await query.ToListAsync();
+        }
     }
 }

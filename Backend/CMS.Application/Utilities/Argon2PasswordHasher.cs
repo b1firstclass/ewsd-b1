@@ -45,7 +45,7 @@ namespace CMS.Application.Utilities
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
             {
                 Salt = salt,
-                DegreeOfParallelism = Environment.ProcessorCount,
+                DegreeOfParallelism = 2,
                 Iterations = Iterations,
                 MemorySize = MemorySize
             };
