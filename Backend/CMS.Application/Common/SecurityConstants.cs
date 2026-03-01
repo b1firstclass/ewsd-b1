@@ -49,6 +49,15 @@ namespace CMS.Application.Common
         public const string ActivityLogRead = "ActivityLog.Read";
     }
 
+    public static class RoleNames
+    {
+        public const string Admin = "Admin";
+        public const string Guest = "Guest";
+        public const string Student = "Student";
+        public const string Coordinator = "Coordinator";
+        public const string Manager = "Manager";
+    }
+
     public static class PermissionPolicies
     {
         public const string Prefix = "Permission:";

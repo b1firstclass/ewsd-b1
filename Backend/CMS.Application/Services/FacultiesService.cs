@@ -42,6 +42,12 @@ namespace CMS.Application.Services
             return new PagedResponse<FaculityInfo>(mappedFaculties, pagedFaculties.TotalCount);
         }
 
+        public async Task<List<FaculityInfo>> GetAllActiveFacultiesAsync()
+        {
+            var faculties = await _unitOfWork.FacultiesRepository.GetAllActiveFacultiesAsync();
+            return _mapper.Map<List<FaculityInfo>>(faculties);
+        }
+
         public async Task<FaculityInfo?> GetFacultyByIdAsync(Guid facultyId)
         {
             if (facultyId == Guid.Empty)

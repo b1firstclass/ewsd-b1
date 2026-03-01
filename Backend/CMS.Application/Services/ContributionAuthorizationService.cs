@@ -120,7 +120,7 @@ namespace CMS.Application.Services
 
         private static bool IsInRole(User user, string roleName)
         {
-            return user.Roles.Any(role => string.Equals(role.Name, roleName, StringComparison.OrdinalIgnoreCase));
+            return user.Role != null && string.Equals(user.Role.Name, roleName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -50,6 +50,12 @@ namespace CMS.Application.Services
             return permission == null ? null : _mapper.Map<PermissionInfo>(permission);
         }
 
+        public async Task<List<PermissionInfo>> GetAllActivePermissionsAsync()
+        {
+            var activePermissions = await _unitOfWork.PermissionsRepository.GetAllActivePermissionsAsync();
+            return _mapper.Map<List<PermissionInfo>>(activePermissions);
+        }
+
         public async Task<PermissionInfo> CreatePermissionAsync(PermissionCreateRequest request)
         {
             PermissionValidator.EnsurePermissionAvailable(

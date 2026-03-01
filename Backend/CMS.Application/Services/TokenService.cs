@@ -122,45 +122,31 @@ namespace CMS.Application.Services
 
         private static void AddRoleClaims(User user, ICollection<Claim> claims)
         {
-            if (user.Roles == null || user.Roles.Count == 0)
+            if (user.Role == null)
             {
                 return;
             }
 
-            var roleIds = user.Roles
-                .Select(r => r.RoleId)
-                .Where(id => id != Guid.Empty)
-                .Distinct();
+            var roleId = user.Role.RoleId;
+            var roleName = user.Role.Name;
 
-            var roleNames = user.Roles
-                .Select(r => r.Name)
-                .Where(name => !string.IsNullOrWhiteSpace(name))
-                .Distinct(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var roleName in roleNames)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, roleName));
-            }
-
-            foreach (var roleId in roleIds)
-            {
-                claims.Add(new Claim(RoleIdsClaim, roleId.ToString()));
-            }
+            claims.Add(new Claim(ClaimTypes.Role, roleName));
+            claims.Add(new Claim(RoleIdsClaim, roleId.ToString()));
         }
 
         private static void AddPermissionClaims(User user, ICollection<Claim> claims)
         {
-            if (user.Roles == null || user.Roles.Count == 0)
+            if (user.Role == null)
             {
                 return;
             }
 
-            var permissionNames = user.Roles
-                .Where(r => r.Permissions != null && r.Permissions.Count > 0)
-                .SelectMany(r => r.Permissions)
-                .Where(p => p.IsActive && !string.IsNullOrWhiteSpace(p.Name))
-                .Select(p => p.Name.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase);
+            var permissionNames = user.Role.Permissions != null && user.Role.Permissions.Count > 0
+                ? user.Role.Permissions
+                    .Where(p => p.IsActive && !string.IsNullOrWhiteSpace(p.Name))
+                    .Select(p => p.Name.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                : Enumerable.Empty<string>();
 
             foreach (var permission in permissionNames)
             {

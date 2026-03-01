@@ -1,3 +1,4 @@
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
@@ -29,6 +30,16 @@ namespace CMS.Application.Services
 
             var validFacultyIds = facultyIds.Where(id => id != Guid.Empty).Distinct();
 
+            if (validFacultyIds.Count() > 0 && user.Role.Name == RoleNames.Admin)
+            {
+                throw new InvalidOperationException($"Admin users cannot be assigned to specific faculties.");
+            }
+
+            if (validFacultyIds.Count() > 1 && user.Role.Name == RoleNames.Manager)
+            {
+                throw new InvalidOperationException($"Only manager users can be assigned to more than one faculty.");
+            }
+
             foreach (var facultyId in validFacultyIds)
             {
                 var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
@@ -44,30 +55,22 @@ namespace CMS.Application.Services
             }
         }
 
-        public async Task AssignRolesToUserAsync(User user, IEnumerable<Guid>? roleIds)
+        public async Task AssignRoleToUserAsync(User user, Guid? roleId)
         {
-            user.Roles ??= new List<Role>();
-            user.Roles.Clear();
-
-            if (roleIds == null)
+            if (roleId is null)
             {
                 return;
             }
 
-            var validRoleIds = roleIds.Where(id => id != Guid.Empty).Distinct();
-
-            foreach (var roleId in validRoleIds)
+            var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId.Value);
+            if (role != null && role.IsActive)
             {
-                var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
-                if (role != null && role.IsActive)
-                {
-                    user.Roles.Add(role);
-                }
-                else
-                {
-                    _logger.LogWarning("Role not found or inactive while assigning to user {UserId}: {RoleId}",
-                        user.UserId, roleId);
-                }
+                user.Role = role;
+            }
+            else
+            {
+                _logger.LogWarning("Role not found or inactive while assigning to user {UserId}: {RoleId}",
+                    user.UserId, roleId);
             }
         }
     }

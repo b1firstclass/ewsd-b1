@@ -3,11 +3,9 @@ using CMS.Application.Common;
 using CMS.Application.DTOs;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
-using CMS.Application.Utilities;
 using CMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace CMS.Application.Services
 {
@@ -21,9 +19,12 @@ namespace CMS.Application.Services
         private readonly ITokenService _tokenService;
         private readonly IUserValidationService _userValidationService;
         private readonly IUserAssignmentService _userAssigmentService;
+        private readonly IEmailService _emailService;
+
         public UsersService(ILogger<UsersService> logger, IMapper mapper, IPasswordHasher<User> passwordHasher,
             IUnitOfWork unitOfWork, ICurrentUserService currentUserService, ITokenService tokenService,
-            IUserValidationService userValidationService, IUserAssignmentService userAssignmentService)
+            IUserValidationService userValidationService, IUserAssignmentService userAssignmentService,
+            IEmailService emailService)
         {
             _logger = logger;
             _mapper = mapper;
@@ -33,6 +34,7 @@ namespace CMS.Application.Services
             _tokenService = tokenService;
             _userValidationService = userValidationService;
             _userAssigmentService = userAssignmentService;
+            _emailService = emailService;
         }
 
         public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest)
@@ -90,11 +92,22 @@ namespace CMS.Application.Services
             userEntity.CreatedBy = _currentUserService.UserId;
             userEntity.IsActive = true;
 
+            await _userAssigmentService.AssignRoleToUserAsync(userEntity, request.RoleId);
             await _userAssigmentService.AssignFacultiesToUserAsync(userEntity, request.FacultyIds);
-            await _userAssigmentService.AssignRolesToUserAsync(userEntity, request.RoleIds);
 
             await _unitOfWork.Repository<User>().AddAsync(userEntity);
             await _unitOfWork.SaveChangesAsync();
+
+            if (userEntity.Role.Name == RoleNames.Guest)
+            {
+                var facultyCoordintors = await _unitOfWork.UsersRepository.GetUsersByFacultyIdAsync(userEntity.Faculties.Select(f => f.FacultyId).ToList(), RoleNames.Coordinator);
+
+                foreach (var coordinator in facultyCoordintors)
+                {
+                    var body = _emailService.GenerateEmailBody("New Guest User Created", coordinator.FullName, "New guest user account is created under your faculty.");
+                    await _emailService.SendEmailAsync(coordinator.Email, "New Guest User Created", body);
+                }
+            }
 
             _logger.LogInformation("User created: {UserId} - {LoginId}", userEntity.UserId, userEntity.LoginId);
 
@@ -148,9 +161,9 @@ namespace CMS.Application.Services
                 await _userAssigmentService.AssignFacultiesToUserAsync(user, request.FacultyIds);
             }
 
-            if (request.RoleIds != null)
+            if (request.RoleId != null)
             {
-                await _userAssigmentService.AssignRolesToUserAsync(user, request.RoleIds);
+                await _userAssigmentService.AssignRoleToUserAsync(user, request.RoleId);
             }
 
             if (request.IsActive.HasValue)
