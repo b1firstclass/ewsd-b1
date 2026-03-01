@@ -42,5 +42,14 @@ namespace CMS.Infrastructure.Repositories
 
             return new PagedResult<Permission>(items, totalCount);
         }
+
+        public async Task<List<Permission>> GetAllActivePermissionsAsync()
+        {
+            return await _context.Permissions
+                .AsNoTracking()
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
     }
 }

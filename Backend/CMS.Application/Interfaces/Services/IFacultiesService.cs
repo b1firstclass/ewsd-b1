@@ -6,6 +6,7 @@ namespace CMS.Application.Interfaces.Services
     public interface IFacultiesService
     {
         Task<PagedResponse<FaculityInfo>> GetAllFacultiesAsync(PaginationRequest paginationRequest);
+        Task<List<FaculityInfo>> GetAllActiveFacultiesAsync();
         Task<FaculityInfo?> GetFacultyByIdAsync(Guid facultyId);
         Task<FaculityInfo> CreateFacultyAsync(FacultyCreateRequest request);
         Task<FaculityInfo?> UpdateFacultyAsync(Guid facultyId, FacultyUpdateRequest request);

@@ -35,6 +35,15 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(r => r.RoleId == roleId);
         }
 
+        public async Task<List<Role>> GetAllActiveRolesAsync()
+        {
+            return await _context.Roles
+               .AsNoTracking()
+               .Where(r => r.IsActive)
+               .OrderBy(r => r.Name)
+               .ToListAsync();
+        }
+
         public async Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
         {
             if (skip < 0)

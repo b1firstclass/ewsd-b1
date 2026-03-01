@@ -72,6 +72,23 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.RolesRead)]
+        [HttpGet("ActiveRoles")]
+        public async Task<IActionResult> GetAllActiveRoles()
+        {
+            try
+            {
+                var roles = await _rolesService.GetAllActiveRolesAsync();
+
+                return roles.ToApiResponse(ApiResponseMessages.Retrieved("Role"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active roles");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("roles"), 500);
+            }
+        }
+
         [HasPermission(PermissionNames.RolesCreate)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(RoleCreateRequest request)

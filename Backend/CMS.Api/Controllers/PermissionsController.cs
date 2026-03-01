@@ -46,6 +46,23 @@ namespace CMS.Api.Controllers
         }
 
         [HasPermission(PermissionNames.PermissionsRead)]
+        [HttpGet("ActivePermissions")]
+        public async Task<IActionResult> GetAllActivePermissions()
+        {
+            try
+            {
+                var permissions = await _permissionsService.GetAllActivePermissionsAsync();
+                return permissions.ToApiResponse(ApiResponseMessages.Retrieved("Permissions"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving permissions");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("permissions"), 500);
+            }
+        }
+
+
+        [HasPermission(PermissionNames.PermissionsRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetPermissionById(Guid id)
         {

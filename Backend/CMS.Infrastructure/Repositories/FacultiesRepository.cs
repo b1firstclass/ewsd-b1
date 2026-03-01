@@ -41,5 +41,14 @@ namespace CMS.Infrastructure.Repositories
 
             return new PagedResult<Faculty>(items, totalCount);
         }
+
+        public async Task<List<Faculty>> GetAllActiveFacultiesAsync()
+        {
+            return await _context.Faculties
+                .AsNoTracking()
+                .Where(f => f.IsActive)
+                .OrderBy(f => f.FacultyName)
+                .ToListAsync();
+        }
     }
 }

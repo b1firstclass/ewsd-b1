@@ -48,6 +48,23 @@ namespace CMS.Api.Controllers
         }
 
         [HasPermission(PermissionNames.FacultyRead)]
+        [HttpGet("ActiveFaculties")]
+        public async Task<IActionResult> GetAllActiveFaculties()
+        {
+            try
+            {
+                var faculties = await _facultyService.GetAllActiveFacultiesAsync();
+
+                return faculties.ToApiResponse(ApiResponseMessages.Retrieved("Faculties"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving faculties");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculties"), 500);
+            }
+        }
+
+        [HasPermission(PermissionNames.FacultyRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetFacultyById(Guid id)
         {

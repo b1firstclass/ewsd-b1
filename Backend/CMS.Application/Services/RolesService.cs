@@ -39,6 +39,12 @@ namespace CMS.Application.Services
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
         }
 
+        public async Task<List<RoleInfo>> GetAllActiveRolesAsync()
+        {
+            var activeRoles = await _unitOfWork.RolesRepository.GetAllActiveRolesAsync();
+            return _mapper.Map<List<RoleInfo>>(activeRoles);
+        }
+
         public async Task<RoleInfo?> GetRoleByIdAsync(Guid roleId)
         {
             if (roleId == Guid.Empty)

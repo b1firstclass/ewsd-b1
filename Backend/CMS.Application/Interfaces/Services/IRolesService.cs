@@ -6,6 +6,7 @@ namespace CMS.Application.Interfaces.Services
     public interface IRolesService
     {
         Task<PagedResponse<RoleInfo>> GetAllRolesAsync(PaginationRequest paginationRequest);
+        Task<List<RoleInfo>> GetAllActiveRolesAsync();
         Task<RoleInfo?> GetRoleByIdAsync(Guid roleId);
         Task<RoleInfo> CreateRoleAsync(RoleCreateRequest request);
         Task<RoleInfo?> UpdateRoleAsync(Guid roleId, RoleUpdateRequest request);
