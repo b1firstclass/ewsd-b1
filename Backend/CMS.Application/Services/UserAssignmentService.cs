@@ -1,3 +1,4 @@
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Application.Interfaces.Services;
 using CMS.Domain.Entities;
@@ -29,6 +30,16 @@ namespace CMS.Application.Services
 
             var validFacultyIds = facultyIds.Where(id => id != Guid.Empty).Distinct();
 
+            if (validFacultyIds.Count() > 0 && user.Roles.Any(r => r.Name == RoleNames.Admin))
+            {
+                throw new InvalidOperationException($"Admin users cannot be assigned to specific faculties.");
+            }
+
+            if(validFacultyIds.Count() > 1 && !user.Roles.Any(r => r.Name == RoleNames.Manager))
+            {
+                throw new InvalidOperationException($"Only manager users can be assigned to more than one faculty.");
+            }
+
             foreach (var facultyId in validFacultyIds)
             {
                 var faculty = await _unitOfWork.Repository<Faculty>().GetByIdAsync(facultyId);
@@ -56,8 +67,13 @@ namespace CMS.Application.Services
 
             var validRoleIds = roleIds.Where(id => id != Guid.Empty).Distinct();
 
-            foreach (var roleId in validRoleIds)
+            if (validRoleIds.Count() > 1)
             {
+                throw new InvalidOperationException($"User cannot have more than one role assigned");
+            }
+
+            foreach (var roleId in validRoleIds)
+            {     
                 var role = await _unitOfWork.Repository<Role>().GetByIdAsync(roleId);
                 if (role != null && role.IsActive)
                 {
