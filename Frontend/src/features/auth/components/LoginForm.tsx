@@ -95,6 +95,25 @@ export const LoginForm = () => {
                             Reset password
                         </button>
                     </div> */}
+                    <div className="flex items-center justify-between gap-3 pt-1">
+                        <label
+                            htmlFor="rememberMe"
+                            className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"
+                        >
+                            <input
+                                id="rememberMe"
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-input accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                            />
+                            <span>Remember me</span>
+                        </label>
+                        <button
+                            type="button"
+                            className="rounded-sm text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        >
+                            Forgot password?
+                        </button>
+                    </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
                     <Button type="submit"
