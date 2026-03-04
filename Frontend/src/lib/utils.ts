@@ -28,19 +28,10 @@ export const storage = {
   removeRefreshToken: () => {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   },
-  setUser: (user: any) => {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-  },
-  getUser: () => {
-    const user = localStorage.getItem(USER_KEY);
-    return user ? JSON.parse(user) : null;
-  },
-  removeUser: () => {
-    localStorage.removeItem(USER_KEY);
-  },
   clear: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    // Keep legacy cleanup for older sessions that stored user snapshots.
     localStorage.removeItem(USER_KEY);
   },
 };
