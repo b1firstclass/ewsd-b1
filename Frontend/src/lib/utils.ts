@@ -35,3 +35,18 @@ export const storage = {
     localStorage.removeItem(USER_KEY);
   },
 };
+
+export interface pageQueryProps {
+  route: string;
+  pageNumber: number;
+  pageSize: number;
+  searchKeyword: string;
+  isActive: boolean;
+}
+
+export const getPageQuery = (pageQuery: pageQueryProps) => {
+  return `${pageQuery.route}?PageNumber=${pageQuery.pageNumber}
+          &PageSize=${pageQuery.pageSize}&SearchKeyword=${pageQuery.searchKeyword}
+          &IsActive=${pageQuery.isActive}
+          `;
+}

@@ -20,3 +20,12 @@ export interface LoginResponse{
     refreshToken: string;
 }
 
+export interface RefreshTokenRequest{
+    refreshToken: string;
+}
+
+export interface RefreshTokenResponse{
+    token: string;
+    refreshToken: string;
+    expiresAt: string;
+}

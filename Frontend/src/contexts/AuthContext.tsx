@@ -1,4 +1,5 @@
 import { profileQueryOptions } from "@/features/user/hooks/useUser";
+import { registerAuthRefreshListener } from "@/lib/api/refreshInterceptor";
 import { storage } from "@/lib/utils";
 import type { AuthState } from "@/types/authType";
 import type { User } from "@/types/userType";
@@ -45,7 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const profile = await queryClient.fetchQuery(profileQueryOptions);
         setUser(profile);
-        console.log("User data => ",profile);
         return profile;
     }, [queryClient]);
 
@@ -79,6 +79,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(userData);
         queryClient.setQueryData(profileQueryOptions.queryKey, userData);
     }, [queryClient]);
+
+    useEffect(() => {
+        const unsubscribe = registerAuthRefreshListener({
+            onTokensRefreshed: (token, newRefreshToken) => {
+                setToken(token);
+                setRefreshToken(newRefreshToken);
+                setIsAuthenticated(true);
+            },
+            onUnauthorized: () => {
+                clearAuthState();
+                setIsLoading(false);
+            },
+        });
+
+        return unsubscribe;
+    }, [clearAuthState]);
 
     useEffect(() => {
         let isMounted = true;
