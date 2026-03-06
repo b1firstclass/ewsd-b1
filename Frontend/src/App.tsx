@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import { AppRoutes } from "./routes/routes"
 import "@/lib/api/refreshInterceptor"
+import { Toaster } from "@/components/ui/sonner"
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <AppRoutes />
+          <Toaster position="top-right" richColors />
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
