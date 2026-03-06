@@ -1,3 +1,5 @@
+import type { PageResponse } from "./sharedType";
+
 export interface Faculity {
     id: string;
     name: string;
@@ -10,9 +12,12 @@ export interface FaculityCreateRequest {
 }
 
 export interface FaculityUpdateRequest extends FaculityCreateRequest {
-    isActive: boolean;
+    isActive: boolean | true;
 }
 
-export interface FaculityListResponse {
+export interface FaculityListResponse extends PageResponse {
     items: Faculity[];
 }
+
+export type FaculitySortKey = "id" | "name";
+export type SortDirection = "asc" | "desc";

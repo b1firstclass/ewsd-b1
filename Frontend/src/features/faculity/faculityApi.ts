@@ -6,7 +6,13 @@ import type { ApiResponse } from "@/types/sharedType";
 
 export const faculityApi = {
     getList: async (request: pageQueryProps): Promise<FaculityListResponse> => {
-        const response = await api.get<ApiResponse<FaculityListResponse>>(getPageQuery(request));
+        const response = await api.get<ApiResponse<FaculityListResponse>>(
+            getPageQuery({
+                ...request,
+                route: ApiRoute.Faculity.List,
+            }),
+        );
+        console.log("faculty response => ",response.data.data);
         return response.data.data;
     },
     getById: async (id: string): Promise<Faculity> => {
