@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useEditDialogInitialFocus } from "@/hooks/useEditDialogInitialFocus";
 import { getErrorMessage, getFieldError } from "@/lib/utils";
 import type { Faculity } from "@/types/faculityType";
 
@@ -38,6 +39,7 @@ export const FaculityFormDialog = ({
   const [name, setName] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [nameError, setNameError] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Sync initial values when the dialog opens or target record changes.
   useEffect(() => {
@@ -84,10 +86,16 @@ export const FaculityFormDialog = ({
   const isCreateMode = mode === "create";
   const title = isCreateMode ? "Create faculty" : "Update faculty";
   const submitLabel = isCreateMode ? "Create" : "Update";
+  const { onOpenAutoFocus } = useEditDialogInitialFocus({
+    open,
+    enabled: mode === "edit",
+    inputRef: nameInputRef,
+    value: name,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={onOpenAutoFocus}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
@@ -96,6 +104,7 @@ export const FaculityFormDialog = ({
           <div className="space-y-2">
             <Label htmlFor="faculity-name">Name</Label>
             <Input
+              ref={nameInputRef}
               id="faculity-name"
               placeholder="Enter faculty name"
               value={name}
