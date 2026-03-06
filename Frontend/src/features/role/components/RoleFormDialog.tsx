@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useEditDialogInitialFocus } from "@/hooks/useEditDialogInitialFocus";
 import { getErrorMessage, getFieldError } from "@/lib/utils";
 import type { Role } from "@/types/roleType";
 
@@ -38,6 +39,7 @@ export const RoleFormDialog = ({
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [nameError, setNameError] = useState<string | null>(null);
+    const nameInputRef = useRef<HTMLInputElement>(null);
 
     // Sync initial values when the dialog opens or target record changes.
     useEffect(() => {
@@ -83,6 +85,12 @@ export const RoleFormDialog = ({
 
     const isCreateMode = mode === "create";
     const title = isCreateMode ? "Create role" : "Update role";
+    const { onOpenAutoFocus } = useEditDialogInitialFocus({
+        open,
+        enabled: mode === "edit",
+        inputRef: nameInputRef,
+        value: name,
+    });
     // const description = isCreateMode
     //     ? "Add a new faculty record to your organization."
     //     : "Update faculty details and status.";
@@ -90,7 +98,7 @@ export const RoleFormDialog = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent onOpenAutoFocus={onOpenAutoFocus}>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     {/* <DialogDescription>{description}</DialogDescription> */}
@@ -100,6 +108,7 @@ export const RoleFormDialog = ({
                     <div className="space-y-2">
                         <Label htmlFor="role-name">Name</Label>
                         <Input
+                            ref={nameInputRef}
                             id="role-name"
                             placeholder="Enter role name"
                             value={name}

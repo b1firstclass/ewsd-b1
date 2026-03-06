@@ -47,7 +47,7 @@ export const ProtectedLayout = () => {
   const navigate = useNavigate();
 
   const displayName = user?.fullName || user?.loginId || "Guest";
-  const roleName = user?.role?.[0]?.name;
+  const roleName = user?.role.name;
 
   const handleLogout = () => {
     logout();
