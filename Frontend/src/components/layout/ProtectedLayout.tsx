@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageUrl } from "@/types/constantPageUrl";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import { Building2, LayoutDashboard, LogOut, UserCircle, Users } from "lucide-react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AppShell } from "./AppShell";
 import type { SidebarNavItem } from "./AppSidebar";
@@ -25,14 +25,29 @@ const navItems: SidebarNavItem[] = [
     icon: LayoutDashboard,
     end: true,
   },
+  {
+    href: PageUrl.Faculity,
+    label: "Faculty",
+    icon: Building2,
+  },
+  {
+    href: PageUrl.Role,
+    label: "Role",
+    icon: UserCircle
+  },
+  {
+    href: PageUrl.User,
+    label: "User",
+    icon: Users,
+  },
 ];
 
 export const ProtectedLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const displayName = user?.name || user?.userName || "Guest";
-  const roleName = user?.roleName;
+  const displayName = user?.fullName || user?.loginId || "Guest";
+  const roleName = user?.role?.[0]?.name;
 
   const handleLogout = () => {
     logout();
@@ -41,8 +56,6 @@ export const ProtectedLayout = () => {
 
   return (
     <AppShell
-      title="Dashboard"
-      subtitle="Overview and management workspace"
       brandName="EchoPress"
       navItems={navItems}
       sidebarFooter={

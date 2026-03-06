@@ -1,17 +1,13 @@
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Menu } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface AppHeaderProps {
-  title: string;
-  subtitle?: string;
   rightSlot?: ReactNode;
   showCollapseButton?: boolean;
 }
 
 export const AppHeader = ({
-  title,
-  subtitle,
   rightSlot,
   showCollapseButton = true,
 }: AppHeaderProps) => {
@@ -25,12 +21,12 @@ export const AppHeader = ({
         {showCollapseButton ? (
           <button
             type="button"
-            className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex"
+            className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex cursor-pointer"
             onClick={toggleDesktopCollapsed}
             aria-label={collapseLabel}
             title={collapseLabel}
           >
-            {isDesktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            <Menu className="h-4 w-4" />
           </button>
         ) : null}
 

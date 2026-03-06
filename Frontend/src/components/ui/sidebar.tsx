@@ -233,7 +233,7 @@ const sidebarMenuButtonVariants = cva(
       isActive: {
         true: "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground",
         false:
-          "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary-foreground",
       },
       size: {
         default: "h-10",

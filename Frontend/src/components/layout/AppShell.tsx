@@ -5,8 +5,6 @@ import { AppHeader } from "./AppHeader";
 import { AppSidebar, type SidebarNavItem } from "./AppSidebar";
 
 interface AppShellProps {
-  title: string;
-  subtitle?: string;
   brandName: string;
   brandDescription?: string;
   navItems: SidebarNavItem[];
@@ -17,8 +15,6 @@ interface AppShellProps {
 }
 
 export const AppShell = ({
-  title,
-  subtitle,
   brandName,
   brandDescription,
   navItems,
@@ -37,7 +33,7 @@ export const AppShell = ({
       />
 
       <SidebarInset>
-        <AppHeader title={title} subtitle={subtitle} rightSlot={headerRight} />
+        <AppHeader rightSlot={headerRight} />
 
         <main className={cn("flex-1 px-4 py-6 sm:px-6 lg:px-8", contentClassName)}>{children}</main>
       </SidebarInset>
