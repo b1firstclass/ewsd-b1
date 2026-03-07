@@ -148,6 +148,50 @@ namespace CMS.Application.Services
             return download;
         }
 
+        public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
+        {
+            var currentUser = await GetAuthenticatedUserAsync();
+
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var normalizedStatus = string.IsNullOrWhiteSpace(status)
+                ? null
+                : _statusService.NormalizeStatus(status);
+
+            PagedResult<Contribution> pagedContributions;
+
+            if (string.Equals(currentUser.Role.Name, RoleNames.Coordinator, StringComparison.OrdinalIgnoreCase))
+            {
+                var facultyIds = currentUser.Faculties
+                    .Select(faculty => faculty.FacultyId)
+                    .Distinct()
+                    .ToList();
+
+                pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedByFacultiesAsync(
+                    currentUser.UserId,
+                    facultyIds,
+                    skip,
+                    take,
+                    normalizedStatus,
+                    paginationRequest.SearchKeyword,
+                    paginationRequest.IsActive);
+            }
+            else
+            {
+                pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedByUserAsync(
+                    currentUser.UserId,
+                    skip,
+                    take,
+                    normalizedStatus,
+                    paginationRequest.SearchKeyword,
+                    paginationRequest.IsActive);
+            }
+
+            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+
+            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+        }
+
         public async Task<IReadOnlyList<ContributionInfo>> GetContributionsByStatusAsync(string status)
         {
             _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");

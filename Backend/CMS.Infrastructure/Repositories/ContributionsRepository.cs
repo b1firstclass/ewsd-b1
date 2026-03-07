@@ -1,5 +1,7 @@
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Repositories;
 using CMS.Domain.Entities;
+using CMS.Infrastructure.Extensions;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +38,84 @@ namespace CMS.Infrastructure.Repositories
                 .Where(contribution => contribution.Status == status)
                 .OrderByDescending(contribution => contribution.CreatedDate)
                 .ToListAsync();
+        }
+
+        public async Task<PagedResult<Contribution>> GetPagedByUserAsync(Guid userId, int skip, int take, string? status = null, string? searchKeyword = null, bool? isActive = null)
+        {
+            if (userId == Guid.Empty)
+            {
+                return new PagedResult<Contribution>(Array.Empty<Contribution>(), 0);
+            }
+
+            if (skip < 0)
+            {
+                skip = 0;
+            }
+
+            var query = _context.Contributions
+                .AsNoTracking()
+                .Where(contribution => contribution.UserId == userId)
+                .ApplySearch(searchKeyword);
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(contribution => contribution.Status == status);
+            }
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(contribution => contribution.IsActive == isActive.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(contribution => contribution.CreatedDate)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedResult<Contribution>(items, totalCount);
+        }
+
+        public async Task<PagedResult<Contribution>> GetPagedByFacultiesAsync(Guid coordinatorUserId, IReadOnlyCollection<Guid> facultyIds, int skip, int take, string? status = null, string? searchKeyword = null, bool? isActive = null)
+        {
+            if (coordinatorUserId == Guid.Empty || facultyIds.Count == 0)
+            {
+                return new PagedResult<Contribution>(Array.Empty<Contribution>(), 0);
+            }
+
+            if (skip < 0)
+            {
+                skip = 0;
+            }
+
+            var query = _context.Contributions
+                .AsNoTracking()
+                .Where(contribution => facultyIds.Contains(contribution.FacultyId))
+                .Where(contribution => contribution.Status != ContributionConstants.StatusDraft)
+                .Where(contribution => !contribution.ReviewedBy.HasValue || contribution.ReviewedBy.Value == coordinatorUserId)
+                .ApplySearch(searchKeyword);
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(contribution => contribution.Status == status);
+            }
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(contribution => contribution.IsActive == isActive.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(contribution => contribution.CreatedDate)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedResult<Contribution>(items, totalCount);
         }
 
         public async Task<Contribution?> GetByIdWithDocumentsAsync(Guid contributionId)

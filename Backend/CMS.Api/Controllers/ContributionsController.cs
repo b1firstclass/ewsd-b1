@@ -160,6 +160,46 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet]
+        public async Task<IActionResult> GetMyContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] string? status)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var contributions = await _contributionsService.GetMyContributionsAsync(paginationRequest, status);
+                return contributions.ToApiResponse(ApiResponseMessages.Retrieved("Contributions"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution filter validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution filter validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user contributions");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("contributions"), 500);
+            }
+        }
+
+
+
 
         [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/status")]
