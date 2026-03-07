@@ -75,10 +75,9 @@ namespace CMS.Application.Services
 
         private static void ValidateReviewStatus(string targetStatus)
         {
-            if (!string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
+            if (!ContributionConstants.CoordinatorReviewStatuses.Contains(targetStatus))
             {
-                throw new InvalidOperationException("Only Approved or Rejected statuses are allowed for review.");
+                throw new InvalidOperationException("Only Under Review, Revision Required, Approved, Rejected, or Selected statuses are allowed for review.");
             }
         }
 

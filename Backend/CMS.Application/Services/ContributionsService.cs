@@ -42,7 +42,6 @@ namespace CMS.Application.Services
         public async Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request)
         {
             var currentUser = await GetAuthenticatedUserAsync();
-            await _authorizationService.ValidateStudentCanCreateContributionAsync(currentUser);
 
             await ValidateContributionWindowExistsAsync(request.ContributionWindowId);
             await ValidateFacultyExistsAsync(request.FacultyId);
@@ -93,7 +92,7 @@ namespace CMS.Application.Services
 
         private async Task ValidateFacultyExistsAsync(Guid facultyId)
         {
-            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(facultyId);
+            var faculty = await _unitOfWork.FacultiesRepository.GetActiveFacultyByIdAsync(facultyId);
             if (faculty == null)
             {
                 throw new InvalidOperationException("Faculty not found");
@@ -149,6 +148,50 @@ namespace CMS.Application.Services
             return download;
         }
 
+        public async Task<IReadOnlyList<ContributionInfo>> GetContributionsByStatusAsync(string status)
+        {
+            _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+
+            var normalizedStatus = _statusService.NormalizeStatus(status);
+            var contributions = await _unitOfWork.ContributionsRepository.GetByStatusAsync(normalizedStatus);
+
+            return _mapper.Map<IReadOnlyList<ContributionInfo>>(contributions);
+        }
+
+        public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDetailsAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found: {ContributionId}", contributionId);
+                return null;
+            }
+
+            return new ContributionDetailInfo
+            {
+                Id = contribution.ContributionId,
+                ContributionWindowId = contribution.ContributionWindowId,
+                Subject = contribution.Subject,
+                Description = contribution.Description,
+                Status = contribution.Status,
+                CreatedDate = DateTimeHelper.NormalizeToUtc(contribution.CreatedDate),
+                ModifiedDate = DateTimeHelper.NormalizeToUtc(contribution.ModifiedDate),
+                Documents = _mapper.Map<List<ContributionDocumentInfo>>(contribution.Documents
+                    .Where(document => document.IsActive)
+                    .OrderByDescending(document => document.CreatedDate)),
+                Comments = _mapper.Map<List<CommentInfo>>(contribution.Comments
+                    .Where(comment => comment.IsActive)
+                    .OrderByDescending(comment => comment.CreatedDate))
+            };
+        }
+
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -187,7 +230,8 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var currentUser = await GetAuthenticatedUserAsync();
+            var currentUserId = currentUser.UserId;
 
             var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
             if (contribution == null)
@@ -199,6 +243,12 @@ namespace CMS.Application.Services
             if (contribution.CreatedBy != currentUserId)
             {
                 throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!_statusService.IsStatusDraft(contribution.Status) &&
+                !string.Equals(contribution.Status, ContributionConstants.StatusRevisionRequired, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only draft or revision required contributions can be updated.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Subject))

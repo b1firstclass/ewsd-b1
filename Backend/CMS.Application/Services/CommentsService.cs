@@ -91,6 +91,7 @@ namespace CMS.Application.Services
                 CommentId = Guid.NewGuid(),
                 ContributionId = request.ContributionId,
                 Comment1 = request.Comment.Trim(),
+                Poster = _currentUserService.UserName,
                 IsActive = true,
                 CreatedDate = now,
                 CreatedBy = currentUserId

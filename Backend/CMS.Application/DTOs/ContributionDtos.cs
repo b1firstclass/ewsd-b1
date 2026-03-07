@@ -66,6 +66,25 @@ namespace CMS.Application.DTOs
         public DateTime? ModifiedDate { get; set; }
     }
 
+    public class ContributionDocumentInfo
+    {
+        public Guid Id { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
+        public int Size { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public Guid? ModifiedBy { get; set; }
+    }
+
+    public class ContributionDetailInfo : ContributionInfo
+    {
+        public IReadOnlyList<ContributionDocumentInfo> Documents { get; set; } = Array.Empty<ContributionDocumentInfo>();
+        public IReadOnlyList<CommentInfo> Comments { get; set; } = Array.Empty<CommentInfo>();
+    }
+
     public class ContributionFilesDownload
     {
         public byte[] Data { get; set; } = Array.Empty<byte>();

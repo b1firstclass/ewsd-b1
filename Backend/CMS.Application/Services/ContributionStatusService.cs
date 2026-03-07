@@ -39,7 +39,7 @@ namespace CMS.Application.Services
                 contribution.SubmittedDate = now;
                 contribution.SubmittedBy = currentUserId;
             }
-            else if (IsStatusApprovedOrRejected(status))
+            else if (IsStatusCoordinatorReview(status))
             {
                 contribution.ReviewedDate = now;
                 contribution.ReviewedBy = currentUserId;
@@ -56,10 +56,9 @@ namespace CMS.Application.Services
             return string.Equals(status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsStatusApprovedOrRejected(string status)
+        private static bool IsStatusCoordinatorReview(string status)
         {
-            return string.Equals(status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(status, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase);
+            return ContributionConstants.CoordinatorReviewStatuses.Contains(status);
         }
     }
 }

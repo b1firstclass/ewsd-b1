@@ -25,6 +25,19 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
         }
 
+        public async Task<IReadOnlyList<Contribution>> GetByStatusAsync(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+            {
+                return Array.Empty<Contribution>();
+            }
+
+            return await _context.Contributions
+                .Where(contribution => contribution.Status == status)
+                .OrderByDescending(contribution => contribution.CreatedDate)
+                .ToListAsync();
+        }
+
         public async Task<Contribution?> GetByIdWithDocumentsAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -34,6 +47,19 @@ namespace CMS.Infrastructure.Repositories
 
             return await _context.Contributions
                 .Include(contribution => contribution.Documents)
+                .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
+        }
+
+        public async Task<Contribution?> GetByIdWithDetailsAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            return await _context.Contributions
+                .Include(contribution => contribution.Documents)
+                .Include(contribution => contribution.Comments)
                 .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
         }
 

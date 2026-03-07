@@ -34,5 +34,18 @@ namespace CMS.Api.Services
                 return null;
             }
         }
+
+        public string? UserName
+        {
+            get
+            {
+                var principal = _httpContextAccessor.HttpContext?.User;
+                if (principal?.Identity?.IsAuthenticated != true)
+                {
+                    return null;
+                }
+                return principal.Identity.Name;
+            }
+        }
     }
 }
