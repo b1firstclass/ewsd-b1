@@ -15,16 +15,6 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task ValidateStudentCanCreateContributionAsync(User currentUser)
-        {
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            return Task.CompletedTask;
-        }
-
         public async Task ValidateStudentCanSubmitContributionAsync(Contribution contribution, User currentUser)
         {
             if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
@@ -33,7 +23,10 @@ namespace CMS.Application.Services
             }
 
             ValidateUserOwnsContribution(contribution, currentUser.UserId);
-            ValidateContributionStatus(contribution.Status, ContributionConstants.StatusDraft, "Only draft contributions can be submitted.");
+            ValidateContributionStatus(
+                contribution.Status,
+                new[] { ContributionConstants.StatusDraft, ContributionConstants.StatusRevisionRequired },
+                "Only draft or revision required contributions can be submitted.");
 
             await ValidateCoordinatorExistsForUserFacultiesAsync(currentUser);
         }
@@ -68,6 +61,14 @@ namespace CMS.Application.Services
         private static void ValidateContributionStatus(string currentStatus, string expectedStatus, string errorMessage)
         {
             if (!string.Equals(currentStatus, expectedStatus, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+        }
+
+        private static void ValidateContributionStatus(string currentStatus, IReadOnlyCollection<string> expectedStatuses, string errorMessage)
+        {
+            if (!expectedStatuses.Any(status => string.Equals(currentStatus, status, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException(errorMessage);
             }

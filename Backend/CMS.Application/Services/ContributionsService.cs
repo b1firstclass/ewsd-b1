@@ -67,6 +67,43 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+        public async Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for submit: {ContributionId}", contributionId);
+                return null;
+            }
+
+            await _authorizationService.ValidateStudentCanSubmitContributionAsync(contribution, currentUser);
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSubmitted, currentUser.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            var facultyCoordintors = await _unitOfWork.UsersRepository.GetUsersByFacultyIdAsync(new List<Guid> { contribution.FacultyId }, RoleNames.Coordinator);
+            foreach (var coordinator in facultyCoordintors)
+            {
+                var body = _emailService.GenerateEmailBody(
+                    "Contribution Submitted",
+                    coordinator.FullName,
+                    "A contribution has been submitted and is ready for review in your faculty.");
+
+                await _emailService.SendEmailAsync(coordinator.Email, "Contribution Submitted", body);
+            }
+
+            _logger.LogInformation("Contribution submitted: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
 
         private async Task<User> GetAuthenticatedUserAsync()
         {
@@ -365,5 +402,7 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+
+        
     }
 }
