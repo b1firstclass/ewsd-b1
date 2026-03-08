@@ -26,11 +26,6 @@ const navItems: SidebarNavItem[] = [
     end: true,
   },
   {
-    href: PageUrl.Faculity,
-    label: "Faculty",
-    icon: Building2,
-  },
-  {
     href: PageUrl.Role,
     label: "Role",
     icon: UserCircle
@@ -39,6 +34,11 @@ const navItems: SidebarNavItem[] = [
     href: PageUrl.User,
     label: "User",
     icon: Users,
+  },
+  {
+    href: PageUrl.Faculity,
+    label: "Faculty",
+    icon: Building2,
   },
 ];
 
