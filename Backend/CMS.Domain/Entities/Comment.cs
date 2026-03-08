@@ -18,5 +18,7 @@ public partial class Comment
 
     public Guid? ModifiedBy { get; set; }
 
+    public string? Poster { get; set; }
+
     public virtual Contribution Contribution { get; set; } = null!;
 }

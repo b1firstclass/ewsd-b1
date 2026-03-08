@@ -15,25 +15,13 @@ namespace CMS.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task ValidateStudentCanCreateContributionAsync(User currentUser)
-        {
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            return Task.CompletedTask;
-        }
-
         public async Task ValidateStudentCanSubmitContributionAsync(Contribution contribution, User currentUser)
         {
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
             ValidateUserOwnsContribution(contribution, currentUser.UserId);
-            ValidateContributionStatus(contribution.Status, ContributionConstants.StatusDraft, "Only draft contributions can be submitted.");
+            ValidateContributionStatus(
+                contribution.Status,
+                new[] { ContributionConstants.StatusDraft, ContributionConstants.StatusRevisionRequired },
+                "Only draft or revision required contributions can be submitted.");
 
             await ValidateCoordinatorExistsForUserFacultiesAsync(currentUser);
         }
@@ -73,12 +61,19 @@ namespace CMS.Application.Services
             }
         }
 
+        private static void ValidateContributionStatus(string currentStatus, IReadOnlyCollection<string> expectedStatuses, string errorMessage)
+        {
+            if (!expectedStatuses.Any(status => string.Equals(currentStatus, status, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+        }
+
         private static void ValidateReviewStatus(string targetStatus)
         {
-            if (!string.Equals(targetStatus, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(targetStatus, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase))
+            if (!ContributionConstants.CoordinatorReviewStatuses.Contains(targetStatus))
             {
-                throw new InvalidOperationException("Only Approved or Rejected statuses are allowed for review.");
+                throw new InvalidOperationException("Only Under Review, Revision Required, Approved, Rejected, or Selected statuses are allowed for review.");
             }
         }
 

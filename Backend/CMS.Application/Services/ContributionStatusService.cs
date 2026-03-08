@@ -22,7 +22,7 @@ namespace CMS.Application.Services
             return normalized;
         }
 
-        public void UpdateContributionStatus(Contribution contribution, string status, Guid currentUserId)
+        public void UpdateContributionStatus(Contribution contribution, string status, Guid? currentUserId)
         {
             if (string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
             {
@@ -39,7 +39,7 @@ namespace CMS.Application.Services
                 contribution.SubmittedDate = now;
                 contribution.SubmittedBy = currentUserId;
             }
-            else if (IsStatusApprovedOrRejected(status))
+            else if (IsStatusUnderReview(status))
             {
                 contribution.ReviewedDate = now;
                 contribution.ReviewedBy = currentUserId;
@@ -51,15 +51,19 @@ namespace CMS.Application.Services
             return string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase);
         }
 
+        public bool IsRevisionRequired(string status)
+        {
+            return string.Equals(status, ContributionConstants.StatusRevisionRequired, StringComparison.OrdinalIgnoreCase);
+        }
+
         public bool IsStatusSubmitted(string status)
         {
             return string.Equals(status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsStatusApprovedOrRejected(string status)
+        public bool IsStatusUnderReview(string status)
         {
-            return string.Equals(status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(status, ContributionConstants.StatusRejected, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(status, ContributionConstants.StatusUnderReview, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

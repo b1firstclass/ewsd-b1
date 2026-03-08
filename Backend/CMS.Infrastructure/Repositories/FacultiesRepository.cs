@@ -42,6 +42,14 @@ namespace CMS.Infrastructure.Repositories
             return new PagedResult<Faculty>(items, totalCount);
         }
 
+        public async Task<Faculty?> GetActiveFacultyByIdAsync(Guid id)
+        {
+            return await _context.Faculties
+                .AsNoTracking()
+                .Where(f => f.FacultyId == id & f.IsActive)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<List<Faculty>> GetAllActiveFacultiesAsync()
         {
             return await _context.Faculties
