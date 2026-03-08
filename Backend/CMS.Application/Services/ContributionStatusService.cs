@@ -22,7 +22,7 @@ namespace CMS.Application.Services
             return normalized;
         }
 
-        public void UpdateContributionStatus(Contribution contribution, string status, Guid currentUserId)
+        public void UpdateContributionStatus(Contribution contribution, string status, Guid? currentUserId)
         {
             if (string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase))
             {
@@ -39,7 +39,7 @@ namespace CMS.Application.Services
                 contribution.SubmittedDate = now;
                 contribution.SubmittedBy = currentUserId;
             }
-            else if (IsStatusCoordinatorReview(status))
+            else if (IsStatusUnderReview(status))
             {
                 contribution.ReviewedDate = now;
                 contribution.ReviewedBy = currentUserId;
@@ -56,9 +56,9 @@ namespace CMS.Application.Services
             return string.Equals(status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsStatusCoordinatorReview(string status)
+        public bool IsStatusUnderReview(string status)
         {
-            return ContributionConstants.CoordinatorReviewStatuses.Contains(status);
+            return string.Equals(status, ContributionConstants.StatusUnderReview, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
