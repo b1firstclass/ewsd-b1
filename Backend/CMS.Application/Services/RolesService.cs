@@ -36,13 +36,57 @@ namespace CMS.Application.Services
                 paginationRequest.IsActive);
 
             var mappedRoles = _mapper.Map<List<RoleInfo>>(pagedRoles.Items);
+
+            foreach (var role in mappedRoles)
+            {
+                if (role.Name == RoleNames.Admin)
+                {
+                    role.IsFacultyAssignable = false;
+                    continue;
+                }
+
+                role.IsFacultyAssignable = true;
+
+                if(role.Name == RoleNames.Manager)
+                {
+                    role.IsMultipleFaculty = true;
+                }
+                else
+                {
+                    role.IsMultipleFaculty = false;
+                }
+            }
+
             return new PagedResponse<RoleInfo>(mappedRoles, pagedRoles.TotalCount);
         }
 
         public async Task<List<RoleInfo>> GetAllActiveRolesAsync()
         {
             var activeRoles = await _unitOfWork.RolesRepository.GetAllActiveRolesAsync();
-            return _mapper.Map<List<RoleInfo>>(activeRoles);
+
+            var mappedRoles = _mapper.Map<List<RoleInfo>>(activeRoles);
+
+            foreach (var role in mappedRoles)
+            {
+                if (role.Name == RoleNames.Admin)
+                {
+                    role.IsFacultyAssignable = false;
+                    continue;
+                }
+
+                role.IsFacultyAssignable = true;
+
+                if (role.Name == RoleNames.Manager)
+                {
+                    role.IsMultipleFaculty = true;
+                }
+                else
+                {
+                    role.IsMultipleFaculty = false;
+                }
+            }
+
+            return mappedRoles;
         }
 
         public async Task<RoleInfo?> GetRoleByIdAsync(Guid roleId)

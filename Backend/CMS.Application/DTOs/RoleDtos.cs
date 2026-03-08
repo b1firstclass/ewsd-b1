@@ -35,6 +35,8 @@ namespace CMS.Application.DTOs
         public required string Name { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }
+        public bool? IsFacultyAssignable { get; set; }
+        public bool? IsMultipleFaculty { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public List<PermissionInfo> Permissions { get; set; } = new();
