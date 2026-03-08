@@ -19,6 +19,9 @@ export const ApiRoute = {
         ...getActionsRoute("/users"),
     },
     Faculity: getActionsRoute("/faculties"),
+    Permission: {
+        getActiveList: "/permissions/activePermissions"
+    }
 }
 
 interface ActionProperties {

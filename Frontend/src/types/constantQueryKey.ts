@@ -52,5 +52,11 @@ export const roleKeys = {
       searchKeyword,
       isActive ?? "all",
     ] as const,
+  detail: (id: string) => [...roleKeys.all, "detail", id] as const,
+};
+
+export const permissionKeys = {
+  all: ["permissions"] as const,
+  activeList: ["permissions", "active-list"] as const,
 };
 

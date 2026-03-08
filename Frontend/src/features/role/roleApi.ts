@@ -17,9 +17,11 @@ export const roleApi = {
     },
     getById: async (id: string): Promise<Role> => {
         const response = await api.get<ApiResponse<Role>>(ApiRoute.Role.GetById(id));
+        console.log("Role get by id response =>", response.data.data);
         return response.data.data;
     },
     create: async (request: RoleCreateRequest): Promise<Role> => {
+        console.log("Role create request => ",request);
         const response = await api.post<ApiResponse<Role>>(ApiRoute.Role.Create, request);
         return response.data.data;
     },
