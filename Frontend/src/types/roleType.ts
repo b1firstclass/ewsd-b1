@@ -8,6 +8,8 @@ export interface Role {
     createdDate: string;
     modifiedDate: string;
     permissions: PermissionInfo[];
+    isFacultyAssignable: boolean;
+    isMultipleFaculty?: boolean;
 }
 
 export interface RoleCreateRequest {
@@ -33,5 +35,9 @@ export interface PermissionInfo {
     createdDate: string;
     modifiedDate: string;
 }
+
+// export interface ActivePermissionListResopnse{
+
+// }
 
 export type RoleSortKey = "id" | "name" | "description";

@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DeleteDialog } from "@/components/common/DeleteDialog";
+import { getErrorMessage } from "@/lib/utils";
 import type { Role } from "@/types/roleType";
+import { useActivePermissionList } from "../hook/useActivePermissionList";
+import { useRoleDetail } from "../hook/useRoleDetail";
 import { useRoleMutations } from "../hook/useRoleMutation";
 import { useRoleTableController } from "../hook/useRoleTableController";
 import { RoleTable } from "./RoleTable";
-import { RoleFormDialog } from "./RoleFormDialog";
+import { RoleFormDialog, type RoleFormValues } from "./RoleFormDialog";
 
 export const RolePage = () => {
     const [formOpen, setFormOpen] = useState(false);
@@ -15,6 +18,28 @@ export const RolePage = () => {
 
     const { createMutation, updateMutation, deleteMutation } = useRoleMutations();
     const tableController = useRoleTableController();
+    const permissionListQuery = useActivePermissionList(formOpen);
+    const roleDetailQuery = useRoleDetail(editingRole?.id ?? null, formOpen && Boolean(editingRole?.id));
+
+    const permissionOptions = permissionListQuery.data ?? [];
+    const resolvedEditingRole = editingRole ? roleDetailQuery.data ?? editingRole : null;
+    const isRoleLoading = Boolean(editingRole) && !roleDetailQuery.data && roleDetailQuery.isLoading;
+
+    const permissionError = useMemo(() => {
+        if (!permissionListQuery.isError || permissionOptions.length) {
+            return null;
+        }
+
+        return getErrorMessage(permissionListQuery.error, "Failed to load permissions.");
+    }, [permissionListQuery.error, permissionListQuery.isError, permissionOptions.length]);
+
+    const roleLoadError = useMemo(() => {
+        if (!editingRole || !roleDetailQuery.isError || roleDetailQuery.data) {
+            return null;
+        }
+
+        return getErrorMessage(roleDetailQuery.error, "Failed to load role details.");
+    }, [editingRole, roleDetailQuery.data, roleDetailQuery.error, roleDetailQuery.isError]);
 
     const resetFormMutationErrors = () => {
         createMutation.reset();
@@ -46,7 +71,7 @@ export const RolePage = () => {
         setDeleteOpen(true);
     };
 
-    const handleFormSubmit = async (values: { name: string; description: string }) => {
+    const handleFormSubmit = async (values: RoleFormValues) => {
         try {
             if (editingRole) {
                 await updateMutation.mutateAsync({
@@ -54,6 +79,7 @@ export const RolePage = () => {
                     request: {
                         name: values.name,
                         description: values.description,
+                        permissionIds: values.permissionIds,
                         isActive: true,
                     },
                 });
@@ -61,6 +87,7 @@ export const RolePage = () => {
                 await createMutation.mutateAsync({
                     name: values.name,
                     description: values.description,
+                    permissionIds: values.permissionIds,
                 });
             }
 
@@ -108,7 +135,18 @@ export const RolePage = () => {
                 open={formOpen}
                 onOpenChange={handleFormOpenChange}
                 mode={editingRole ? "edit" : "create"}
-                value={editingRole}
+                value={resolvedEditingRole}
+                permissionOptions={permissionOptions}
+                isPermissionsLoading={permissionListQuery.isLoading && !permissionOptions.length}
+                permissionError={permissionError}
+                onRetryPermissions={() => {
+                    void permissionListQuery.refetch();
+                }}
+                isRoleLoading={isRoleLoading}
+                roleLoadError={roleLoadError}
+                onRetryRole={editingRole ? () => {
+                    void roleDetailQuery.refetch();
+                } : undefined}
                 isPending={createMutation.isPending || updateMutation.isPending}
                 error={formError}
                 onSubmit={handleFormSubmit}
