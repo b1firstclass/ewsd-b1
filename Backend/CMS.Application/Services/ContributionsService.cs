@@ -42,7 +42,6 @@ namespace CMS.Application.Services
         public async Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request)
         {
             var currentUser = await GetAuthenticatedUserAsync();
-            await _authorizationService.ValidateStudentCanCreateContributionAsync(currentUser);
 
             await ValidateContributionWindowExistsAsync(request.ContributionWindowId);
             await ValidateFacultyExistsAsync(request.FacultyId);
@@ -68,6 +67,294 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+        public async Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for submit: {ContributionId}", contributionId);
+                return null;
+            }
+
+            await _authorizationService.ValidateStudentCanSubmitContributionAsync(contribution, currentUser);
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSubmitted, currentUser.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            var facultyCoordintors = await _unitOfWork.UsersRepository.GetUsersByFacultyIdAsync(new List<Guid> { contribution.FacultyId }, RoleNames.Coordinator);
+            foreach (var coordinator in facultyCoordintors)
+            {
+                var body = _emailService.GenerateEmailBody(
+                    "Contribution Submitted",
+                    coordinator.FullName,
+                    "A contribution has been submitted and is ready for review in your faculty.");
+
+                await _emailService.SendEmailAsync(coordinator.Email, "Contribution Submitted", body);
+            }
+
+            _logger.LogInformation("Contribution submitted: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<ContributionInfo?> ReviewedContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for submit: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusSubmitted(contribution.Status))
+            {
+                throw new InvalidOperationException("Only submitted contributions can be reviewed.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusUnderReview, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution submitted: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<ContributionInfo?> ApprovedContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for submit: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusUnderReview(contribution.Status))
+            {
+                throw new InvalidOperationException("Only submitted contributions can be approved.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusApproved, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution approved: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<ContributionInfo?> RejectedContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for submit: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusUnderReview(contribution.Status))
+            {
+                throw new InvalidOperationException("Only submitted contributions can be rejected.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusRejected, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution rejected: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<ContributionInfo?> RequestRevisionContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for request revision: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusUnderReview(contribution.Status))
+            {
+                throw new InvalidOperationException("Only submitted contributions can be requested to revision.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusRevisionRequired, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution requested to revision: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            var currentUserId = currentUser.UserId;
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for update: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (contribution.CreatedBy != currentUserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!_statusService.IsStatusDraft(contribution.Status) &&
+                !_statusService.IsRevisionRequired(contribution.Status))
+            {
+                throw new InvalidOperationException("Only draft or revision required contributions can be updated.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Subject))
+            {
+                contribution.Subject = request.Subject.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Description))
+            {
+                contribution.Description = request.Description.Trim();
+            }
+
+            if (request.DocumentFile != null)
+            {
+                _fileService.ValidateDocumentFile(request.DocumentFile);
+                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
+                contribution.Documents.Add(_fileService.CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId));
+            }
+
+            if (request.ImageFile != null)
+            {
+                _fileService.ValidateImageFile(request.ImageFile);
+                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
+                contribution.Documents.Add(_fileService.CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId));
+            }
+
+            contribution.ModifiedDate = DateTime.UtcNow;
+            contribution.ModifiedBy = currentUserId;
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution updated: {ContributionId}", contribution.ContributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
+        {
+            var currentUser = await GetAuthenticatedUserAsync();
+
+            var skip = paginationRequest.GetSkipCount();
+            var take = paginationRequest.PageSize;
+            var normalizedStatus = string.IsNullOrWhiteSpace(status)
+                ? null
+                : _statusService.NormalizeStatus(status);
+
+            PagedResult<Contribution> pagedContributions;
+
+            if (string.Equals(currentUser.Role.Name, RoleNames.Coordinator, StringComparison.OrdinalIgnoreCase))
+            {
+                var facultyIds = currentUser.Faculties
+                    .Select(faculty => faculty.FacultyId)
+                    .Distinct()
+                    .ToList();
+
+                pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedByFacultiesAsync(
+                    currentUser.UserId,
+                    facultyIds,
+                    skip,
+                    take,
+                    normalizedStatus,
+                    paginationRequest.SearchKeyword,
+                    paginationRequest.IsActive);
+            }
+            else
+            {
+                pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedByUserAsync(
+                    currentUser.UserId,
+                    skip,
+                    take,
+                    normalizedStatus,
+                    paginationRequest.SearchKeyword,
+                    paginationRequest.IsActive);
+            }
+
+            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+
+            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+        }
+        public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDetailsAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found: {ContributionId}", contributionId);
+                return null;
+            }
+
+            return new ContributionDetailInfo
+            {
+                Id = contribution.ContributionId,
+                ContributionWindowId = contribution.ContributionWindowId,
+                Subject = contribution.Subject,
+                Description = contribution.Description,
+                Status = contribution.Status,
+                CreatedDate = DateTimeHelper.NormalizeToUtc(contribution.CreatedDate),
+                ModifiedDate = DateTimeHelper.NormalizeToUtc(contribution.ModifiedDate),
+                Documents = _mapper.Map<List<ContributionDocumentInfo>>(contribution.Documents
+                    .Where(document => document.IsActive)
+                    .OrderByDescending(document => document.CreatedDate)),
+                Comments = _mapper.Map<List<CommentInfo>>(contribution.Comments
+                    .Where(comment => comment.IsActive)
+                    .OrderByDescending(comment => comment.CreatedDate))
+            };
+        }
+
 
         private async Task<User> GetAuthenticatedUserAsync()
         {
@@ -93,7 +380,7 @@ namespace CMS.Application.Services
 
         private async Task ValidateFacultyExistsAsync(Guid facultyId)
         {
-            var faculty = await _unitOfWork.FacultiesRepository.GetByIdAsync(facultyId);
+            var faculty = await _unitOfWork.FacultiesRepository.GetActiveFacultyByIdAsync(facultyId);
             if (faculty == null)
             {
                 throw new InvalidOperationException("Faculty not found");
@@ -147,7 +434,7 @@ namespace CMS.Application.Services
             }
 
             return download;
-        }
+        }     
 
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
@@ -180,63 +467,7 @@ namespace CMS.Application.Services
             return download;
         }
 
-        public async Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request)
-        {
-            if (contributionId == Guid.Empty)
-            {
-                return null;
-            }
-
-            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
-
-            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
-            if (contribution == null)
-            {
-                _logger.LogWarning("Contribution not found for update: {ContributionId}", contributionId);
-                return null;
-            }
-
-            if (contribution.CreatedBy != currentUserId)
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
-            if (!string.IsNullOrWhiteSpace(request.Subject))
-            {
-                contribution.Subject = request.Subject.Trim();
-            }
-
-            if (!string.IsNullOrWhiteSpace(request.Description))
-            {
-                contribution.Description = request.Description.Trim();
-            }
-
-            if (request.DocumentFile != null)
-            {
-                _fileService.ValidateDocumentFile(request.DocumentFile);
-                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
-                contribution.Documents.Add(_fileService.CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId));
-            }
-
-            if (request.ImageFile != null)
-            {
-                _fileService.ValidateImageFile(request.ImageFile);
-                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
-                contribution.Documents.Add(_fileService.CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId));
-            }
-
-            contribution.ModifiedDate = DateTime.UtcNow;
-            contribution.ModifiedBy = currentUserId;
-
-            _unitOfWork.ContributionsRepository.Update(contribution);
-            await _unitOfWork.SaveChangesAsync();
-
-            _logger.LogInformation("Contribution updated: {ContributionId}", contribution.ContributionId);
-
-            return _mapper.Map<ContributionInfo>(contribution);
-        }
-
-        public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, ContributionStatusUpdateRequest request)
+        public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status)
         {
             if (contributionId == Guid.Empty)
             {
@@ -251,7 +482,7 @@ namespace CMS.Application.Services
                 return null;
             }
 
-            var targetStatus = _statusService.NormalizeStatus(request.Status);
+            var targetStatus = _statusService.NormalizeStatus(status);
 
             if (_statusService.IsStatusSubmitted(targetStatus))
             {
@@ -271,5 +502,7 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+
+        
     }
 }

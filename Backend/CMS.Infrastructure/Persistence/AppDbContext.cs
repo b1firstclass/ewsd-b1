@@ -24,6 +24,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<TestView> TestViews { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserActivityLog> UserActivityLogs { get; set; }
@@ -39,6 +41,7 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("Comment");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Poster).HasMaxLength(200);
 
             entity.HasOne(d => d.Contribution).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ContributionId)
@@ -158,6 +161,15 @@ public partial class AppDbContext : DbContext
                         j.HasKey("RoleId", "PermissionId").HasName("Roles_Permissions_pkey");
                         j.ToTable("Roles_Permissions");
                     });
+        });
+
+        modelBuilder.Entity<TestView>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("TestView");
+
+            entity.Property(e => e.BrowserName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<User>(entity =>
