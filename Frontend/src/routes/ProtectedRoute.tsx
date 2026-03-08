@@ -9,11 +9,10 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
 
-  // Show loading while checking authentication
-  if (typeof isAuthenticated === "undefined") {
-    return (
+  if(isLoading){
+     return (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner />
       </div>

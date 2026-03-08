@@ -5,6 +5,7 @@ export interface AuthState {
     accessToken: string | null;
     refreshToken: string | null;
     isAuthenticated: boolean;
+    isLoading: boolean;
 }
 
 export interface LoginCrendential{
@@ -19,3 +20,12 @@ export interface LoginResponse{
     refreshToken: string;
 }
 
+export interface RefreshTokenRequest{
+    refreshToken: string;
+}
+
+export interface RefreshTokenResponse{
+    token: string;
+    refreshToken: string;
+    expiresAt: string;
+}

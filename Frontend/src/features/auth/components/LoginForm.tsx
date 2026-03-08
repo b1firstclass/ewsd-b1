@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
-import { Lock, User, UserCheck2 } from "lucide-react"
+import { Eye, EyeOff, Lock, User } from "lucide-react"
 import { useState, type FormEvent } from "react"
 import { useLogin } from "../hooks/useLogin"
 import { inputIconClass } from "@/tailwindStyle"
@@ -11,6 +11,7 @@ export const LoginForm = () => {
 
     const [formData, setFormData] = useState({ loginId: "", password: "" });
     const [errors, setErrors] = useState<{ userName?: string; password?: string }>();
+    const [showPassword, setShowPassword] = useState(false);
 
     const { mutate: login, isPending, error } = useLogin();
 
@@ -74,9 +75,18 @@ export const LoginForm = () => {
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 error={errors?.password}
                                 placeholder="Enter password"
-                                type="password" className="pl-10">
+                                type={showPassword ? "text" : "password"} className="pl-10 pr-11">
                                 <Lock className={inputIconClass} />
                             </Input>
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                aria-pressed={showPassword}
+                                className="absolute right-3 top-[22px] -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
                         </div>
                     </div>
                     {/* <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -85,6 +95,25 @@ export const LoginForm = () => {
                             Reset password
                         </button>
                     </div> */}
+                    <div className="flex items-center justify-between gap-3 pt-1">
+                        <label
+                            htmlFor="rememberMe"
+                            className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"
+                        >
+                            <input
+                                id="rememberMe"
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-input accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                            />
+                            <span>Remember me</span>
+                        </label>
+                        <button
+                            type="button"
+                            className="rounded-sm text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        >
+                            Forgot password?
+                        </button>
+                    </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
                     <Button type="submit"

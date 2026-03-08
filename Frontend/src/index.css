@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -47,15 +47,15 @@
 
 :root {
   --radius: 1rem;
-  --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
-  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-display: "Newsreader", "Times New Roman", serif;
   --background: oklch(0.98 0.01 80);
   --foreground: oklch(0.18 0.02 250);
   --card: oklch(0.99 0.01 80);
   --card-foreground: oklch(0.18 0.02 250);
   --popover: oklch(0.99 0.01 80);
   --popover-foreground: oklch(0.18 0.02 250);
-  --primary: oklch(0.55 0.18 180);
+  --primary: #003366;
   --primary-foreground: oklch(0.98 0.02 95);
   --secondary: oklch(0.92 0.03 90);
   --secondary-foreground: oklch(0.22 0.02 250);
@@ -66,20 +66,20 @@
   --destructive: oklch(0.6 0.2 25);
   --border: oklch(0.9 0.02 80);
   --input: oklch(0.9 0.02 80);
-  --ring: oklch(0.6 0.12 180);
-  --chart-1: oklch(0.6 0.19 190);
+  --ring: #003366;
+  --chart-1: #003366;
   --chart-2: oklch(0.7 0.12 40);
   --chart-3: oklch(0.5 0.12 260);
   --chart-4: oklch(0.78 0.14 120);
   --chart-5: oklch(0.6 0.18 20);
   --sidebar: oklch(0.98 0.01 80);
   --sidebar-foreground: oklch(0.18 0.02 250);
-  --sidebar-primary: oklch(0.55 0.18 180);
+  --sidebar-primary: #003366;
   --sidebar-primary-foreground: oklch(0.98 0.02 95);
-  --sidebar-accent: oklch(0.9 0.05 190);
+  --sidebar-accent: #003366;
   --sidebar-accent-foreground: oklch(0.2 0.02 250);
   --sidebar-border: oklch(0.9 0.02 80);
-  --sidebar-ring: oklch(0.6 0.12 180);
+  --sidebar-ring:#003366;
 }
 
 .dark {
@@ -102,7 +102,7 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-2: #003366;
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);

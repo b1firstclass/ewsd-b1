@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import type { AxiosError } from "axios"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -19,18 +20,91 @@ export const storage = {
   removeToken: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
   },
-  setUser: (user: any) => {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  setRefreshToken: (refreshToken: string) => {
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   },
-  getUser: () => {
-    const user = localStorage.getItem(USER_KEY);
-    return user ? JSON.parse(user) : null;
+  getRefreshToken: (): string | null => {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
   },
-  removeUser: () => {
-    localStorage.removeItem(USER_KEY);
+  removeRefreshToken: () => {
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
   },
   clear: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    // Keep legacy cleanup for older sessions that stored user snapshots.
     localStorage.removeItem(USER_KEY);
   },
 };
+
+export interface pageQueryProps {
+  route: string;
+  pageNumber: number;
+  pageSize: number;
+  searchKeyword?: string;
+  isActive?: boolean;
+}
+
+export const getPageQuery = (pageQuery: pageQueryProps) => {
+  const params = new URLSearchParams();
+  params.set("PageNumber", String(pageQuery.pageNumber));
+  params.set("PageSize", String(pageQuery.pageSize));
+
+  const trimmedKeyword = pageQuery.searchKeyword?.trim();
+  if (trimmedKeyword) {
+    params.set("SearchKeyword", trimmedKeyword);
+  }
+
+  if (typeof pageQuery.isActive === "boolean") {
+    params.set("IsActive", String(pageQuery.isActive));
+  }
+
+  return `${pageQuery.route}?${params.toString()}`;
+}
+
+interface ApiErrorResponse {
+  message?: string | null;
+  errors?: Record<string, string[]> | null;
+}
+
+export const getErrorMessage = (
+  error: unknown,
+  fallback = "Something went wrong. Please try again.",
+) => {
+  if (typeof error === "string" && error.trim()) {
+    return error;
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  const axiosError = error as AxiosError<ApiErrorResponse>;
+  const responseData = axiosError?.response?.data;
+
+  if (responseData?.message) {
+    return responseData.message;
+  }
+
+  const firstFieldError = responseData?.errors
+    ? Object.values(responseData.errors).find((messages) => messages?.length)?.[0]
+    : undefined;
+
+  return firstFieldError || fallback;
+}
+
+export const getFieldError = (error: unknown, fieldName: string) => {
+  const axiosError = error as AxiosError<ApiErrorResponse>;
+  const errors = axiosError?.response?.data?.errors;
+  if (!errors) {
+    return undefined;
+  }
+
+  const target = fieldName.toLowerCase();
+  const matchedKey = Object.keys(errors).find((key) => key.toLowerCase() === target);
+  if (!matchedKey) {
+    return undefined;
+  }
+
+  return errors[matchedKey]?.[0];
+}

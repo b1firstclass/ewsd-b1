@@ -10,9 +10,12 @@ export const useLogin = () => {
     const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: (credentials: LoginCrendential) => authApi.login(credentials),
-        onSuccess: (data) => {
-            login(null, data.token, data.refreshToken);
+        mutationFn: async (credentials: LoginCrendential) => {
+            const data = await authApi.login(credentials);
+            await login(data.token, data.refreshToken);
+            return data;
+        },
+        onSuccess: () => {
             navigate(PageUrl.Home);
         },
     });
