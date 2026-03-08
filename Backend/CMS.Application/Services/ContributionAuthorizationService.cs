@@ -17,11 +17,6 @@ namespace CMS.Application.Services
 
         public async Task ValidateStudentCanSubmitContributionAsync(Contribution contribution, User currentUser)
         {
-            if (!IsInRole(currentUser, ContributionConstants.RoleStudent))
-            {
-                throw new UnauthorizedAccessException("Forbidden");
-            }
-
             ValidateUserOwnsContribution(contribution, currentUser.UserId);
             ValidateContributionStatus(
                 contribution.Status,

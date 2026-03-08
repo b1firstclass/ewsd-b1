@@ -239,7 +239,7 @@ namespace CMS.Application.Services
             }
 
             if (!_statusService.IsStatusDraft(contribution.Status) &&
-                !string.Equals(contribution.Status, ContributionConstants.StatusRevisionRequired, StringComparison.OrdinalIgnoreCase))
+                !_statusService.IsRevisionRequired(contribution.Status))
             {
                 throw new InvalidOperationException("Only draft or revision required contributions can be updated.");
             }

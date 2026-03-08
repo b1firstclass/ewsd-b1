@@ -51,6 +51,11 @@ namespace CMS.Application.Services
             return string.Equals(status, ContributionConstants.StatusDraft, StringComparison.OrdinalIgnoreCase);
         }
 
+        public bool IsRevisionRequired(string status)
+        {
+            return string.Equals(status, ContributionConstants.StatusRevisionRequired, StringComparison.OrdinalIgnoreCase);
+        }
+
         public bool IsStatusSubmitted(string status)
         {
             return string.Equals(status, ContributionConstants.StatusSubmitted, StringComparison.OrdinalIgnoreCase);
