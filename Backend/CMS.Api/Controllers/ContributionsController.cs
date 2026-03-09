@@ -198,6 +198,35 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Roles = RoleNames.Manager + "," + RoleNames.Guest)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("selected")]
+        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest);
+                return contributions.ToApiResponse(ApiResponseMessages.Retrieved("Selected contributions"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving selected contributions for manager/guest");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contributions"), 500);
+            }
+        }
+
         [Authorize(Roles = RoleNames.Student)]
         [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/submit")]

@@ -392,6 +392,32 @@ namespace CMS.Application.Services
 
             return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
         }
+        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest)
+        {
+            var currentUser = await GetAuthenticatedUserAsync();
+
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(currentUser.Role.Name, RoleNames.Guest, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var facultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .Distinct()
+                .ToList();
+
+            var pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedSelectedByFacultiesAsync(
+                facultyIds,
+                paginationRequest.GetSkipCount(),
+                paginationRequest.PageSize,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
+
+            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+
+            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+        }
         public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
