@@ -331,6 +331,90 @@ namespace CMS.Api.Controllers
 
         [Authorize(Roles = RoleNames.Coordinator)]
         [HasPermission(PermissionNames.ContributionUpdate)]
+        [HttpPut("{id:guid}/select")]
+        public async Task<IActionResult> SelectContribution(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var updated = await _contributionsService.SelectedContributionAsync(id);
+                if (updated == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution"), 404);
+                }
+
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution selection status"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution selection validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution selection failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting contribution {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution selection status"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionUpdate)]
+        [HttpPut("select")]
+        public async Task<IActionResult> SelectContributions([FromBody] ContributionBulkSelectRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var updated = await _contributionsService.SelectedContributionsAsync(request.ContributionIds);
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution selection statuses"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection failed due to missing contribution");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection failed due to invalid state");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting contributions in bulk");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution selection statuses"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/reject")]
         public async Task<IActionResult> RejectContribution(Guid id)
         {

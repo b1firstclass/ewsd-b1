@@ -12,6 +12,8 @@ namespace CMS.Application.Interfaces.Services
         Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId);
         Task<ContributionInfo?> ReviewedContributionAsync(Guid contributionId);
         Task<ContributionInfo?> ApprovedContributionAsync(Guid contributionId);
+        Task<ContributionInfo?> SelectedContributionAsync(Guid contributionId);
+        Task<IReadOnlyList<ContributionInfo>> SelectedContributionsAsync(IReadOnlyCollection<Guid> contributionIds);
         Task<ContributionInfo?> RejectedContributionAsync(Guid contributionId);
         Task<ContributionInfo?> RequestRevisionContributionAsync(Guid contributionId);
         Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status);

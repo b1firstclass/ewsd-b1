@@ -160,6 +160,77 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+        public async Task<ContributionInfo?> SelectedContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for selection: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only approved contributions can be selected.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSelected, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution selected: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<IReadOnlyList<ContributionInfo>> SelectedContributionsAsync(IReadOnlyCollection<Guid> contributionIds)
+        {
+            if (contributionIds == null || contributionIds.Count == 0)
+            {
+                throw new ArgumentException("At least one contribution id is required.");
+            }
+
+            var distinctIds = contributionIds
+                .Where(id => id != Guid.Empty)
+                .Distinct()
+                .ToList();
+
+            if (distinctIds.Count == 0)
+            {
+                throw new ArgumentException("At least one valid contribution id is required.");
+            }
+
+            var selectedContributions = new List<Contribution>(distinctIds.Count);
+
+            foreach (var contributionId in distinctIds)
+            {
+                var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+                if (contribution == null)
+                {
+                    throw new KeyNotFoundException($"Contribution '{contributionId}' not found.");
+                }
+
+                if (!string.Equals(contribution.Status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Contribution '{contributionId}' is not approved and cannot be selected.");
+                }
+
+                _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSelected, _currentUserService.UserId);
+                _unitOfWork.ContributionsRepository.Update(contribution);
+                selectedContributions.Add(contribution);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Bulk contribution selection completed for {Count} contribution(s)", selectedContributions.Count);
+
+            return _mapper.Map<List<ContributionInfo>>(selectedContributions);
+        }
         public async Task<ContributionInfo?> RejectedContributionAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -434,7 +505,7 @@ namespace CMS.Application.Services
             }
 
             return download;
-        }     
+        }
 
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
@@ -503,6 +574,6 @@ namespace CMS.Application.Services
             return _mapper.Map<ContributionInfo>(contribution);
         }
 
-        
+
     }
 }
