@@ -227,6 +227,90 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Roles = RoleNames.Manager)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("selected/{id:guid}/download")]
+        public async Task<IActionResult> DownloadSelectedContribution(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var download = await _contributionsService.DownloadSelectedContributionFilesForManagerAsync(id);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution files"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Selected contribution download validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading selected contribution files {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contribution files"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Manager)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpPost("selected/download")]
+        public async Task<IActionResult> DownloadSelectedContributions([FromBody] ContributionBulkSelectRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var download = await _contributionsService.DownloadSelectedContributionsFilesForManagerAsync(request.ContributionIds);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution files"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download failed due to missing contribution");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download failed due to invalid state");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading selected contributions files");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contribution files"), 500);
+            }
+        }
+
         [Authorize(Roles = RoleNames.Student)]
         [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/submit")]

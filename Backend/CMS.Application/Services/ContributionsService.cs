@@ -564,6 +564,107 @@ namespace CMS.Application.Services
             return download;
         }
 
+        public async Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Selected contribution not found for manager download: {ContributionId}", contributionId);
+                return null;
+            }
+
+            var managerFacultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .ToHashSet();
+
+            if (!managerFacultyIds.Contains(contribution.FacultyId))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusSelected, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only selected contributions can be downloaded by manager.");
+            }
+
+            var download = _fileService.CreateZipArchiveForSingleContribution(contribution);
+            if (download == null)
+            {
+                _logger.LogWarning("No active files found for selected contribution {ContributionId}", contributionId);
+            }
+
+            return download;
+        }
+
+        public async Task<ContributionFilesDownload?> DownloadSelectedContributionsFilesForManagerAsync(IReadOnlyCollection<Guid> contributionIds)
+        {
+            if (contributionIds == null || contributionIds.Count == 0)
+            {
+                throw new ArgumentException("At least one contribution id is required.");
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var distinctIds = contributionIds
+                .Where(id => id != Guid.Empty)
+                .Distinct()
+                .ToList();
+
+            if (distinctIds.Count == 0)
+            {
+                throw new ArgumentException("At least one valid contribution id is required.");
+            }
+
+            var managerFacultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .ToHashSet();
+
+            var contributions = new List<Contribution>(distinctIds.Count);
+            foreach (var contributionId in distinctIds)
+            {
+                var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
+                if (contribution == null)
+                {
+                    throw new KeyNotFoundException($"Contribution '{contributionId}' not found.");
+                }
+
+                if (!managerFacultyIds.Contains(contribution.FacultyId))
+                {
+                    throw new UnauthorizedAccessException("Forbidden");
+                }
+
+                if (!string.Equals(contribution.Status, ContributionConstants.StatusSelected, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Contribution '{contributionId}' is not selected and cannot be downloaded.");
+                }
+
+                contributions.Add(contribution);
+            }
+
+            var download = _fileService.CreateZipArchive(contributions);
+            if (download == null)
+            {
+                _logger.LogWarning("No active files found for selected contributions download request");
+            }
+
+            return download;
+        }
+
         public async Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status)
         {
             if (contributionId == Guid.Empty)
