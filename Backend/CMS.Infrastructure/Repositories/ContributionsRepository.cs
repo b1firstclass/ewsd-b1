@@ -118,6 +118,40 @@ namespace CMS.Infrastructure.Repositories
             return new PagedResult<Contribution>(items, totalCount);
         }
 
+        public async Task<PagedResult<Contribution>> GetPagedSelectedByFacultiesAsync(IReadOnlyCollection<Guid> facultyIds, int skip, int take, string? searchKeyword = null, bool? isActive = null)
+        {
+            if (facultyIds.Count == 0)
+            {
+                return new PagedResult<Contribution>(Array.Empty<Contribution>(), 0);
+            }
+
+            if (skip < 0)
+            {
+                skip = 0;
+            }
+
+            var query = _context.Contributions
+                .AsNoTracking()
+                .Where(contribution => facultyIds.Contains(contribution.FacultyId))
+                .Where(contribution => contribution.Status == ContributionConstants.StatusSelected)
+                .ApplySearch(searchKeyword);
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(contribution => contribution.IsActive == isActive.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(contribution => contribution.CreatedDate)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedResult<Contribution>(items, totalCount);
+        }
+
         public async Task<Contribution?> GetByIdWithDocumentsAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)

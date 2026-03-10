@@ -67,7 +67,8 @@ namespace CMS.Application.Services
 
         public async Task<CommentInfo> CreateCommentAsync(CommentCreateRequest request)
         {
-            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var currentUser = await GetAuthenticatedUserAsync();
+            var currentUserId = currentUser.UserId;
 
             if (request.ContributionId == Guid.Empty)
             {
@@ -85,6 +86,24 @@ namespace CMS.Application.Services
                 throw new InvalidOperationException("Contribution not found");
             }
 
+            var isStudent = string.Equals(currentUser.Role.Name, RoleNames.Student, StringComparison.OrdinalIgnoreCase);
+            var isCoordinator = string.Equals(currentUser.Role.Name, RoleNames.Coordinator, StringComparison.OrdinalIgnoreCase);
+
+            if (!isStudent && !isCoordinator)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (isStudent && contribution.UserId != currentUserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (isCoordinator && contribution.ReviewedBy != currentUserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
             var now = DateTime.UtcNow;
             var comment = new Comment
             {
@@ -96,6 +115,14 @@ namespace CMS.Application.Services
                 CreatedDate = now,
                 CreatedBy = currentUserId
             };
+
+            // Persist first coordinator comment metadata at contribution level.
+            if (isCoordinator && !contribution.CommentedDate.HasValue && !contribution.CommentedBy.HasValue)
+            {
+                contribution.CommentedDate = now;
+                contribution.CommentedBy = currentUserId;
+                _unitOfWork.ContributionsRepository.Update(contribution);
+            }
 
             await _unitOfWork.CommentsRepository.AddAsync(comment);
             await _unitOfWork.SaveChangesAsync();
@@ -178,6 +205,19 @@ namespace CMS.Application.Services
 
             _logger.LogInformation("Comment deleted: {CommentId}", comment.CommentId);
             return true;
+        }
+
+        private async Task<User> GetAuthenticatedUserAsync()
+        {
+            var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+            var currentUser = await _unitOfWork.UsersRepository.GetByUserIdAsync(currentUserId);
+
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("Unauthorized");
+            }
+
+            return currentUser;
         }
 
     }

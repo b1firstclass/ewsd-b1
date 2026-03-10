@@ -36,6 +36,10 @@ public partial class Contribution
 
     public Guid? ModifiedBy { get; set; }
 
+    public DateTime? CommentedDate { get; set; }
+
+    public Guid? CommentedBy { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ContributionWindow ContributionWindow { get; set; } = null!;

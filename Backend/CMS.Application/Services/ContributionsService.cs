@@ -160,6 +160,77 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+        public async Task<ContributionInfo?> SelectedContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for selection: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only approved contributions can be selected.");
+            }
+
+            _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSelected, _currentUserService.UserId);
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution selected: {ContributionId}", contributionId);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+        public async Task<IReadOnlyList<ContributionInfo>> SelectedContributionsAsync(IReadOnlyCollection<Guid> contributionIds)
+        {
+            if (contributionIds == null || contributionIds.Count == 0)
+            {
+                throw new ArgumentException("At least one contribution id is required.");
+            }
+
+            var distinctIds = contributionIds
+                .Where(id => id != Guid.Empty)
+                .Distinct()
+                .ToList();
+
+            if (distinctIds.Count == 0)
+            {
+                throw new ArgumentException("At least one valid contribution id is required.");
+            }
+
+            var selectedContributions = new List<Contribution>(distinctIds.Count);
+
+            foreach (var contributionId in distinctIds)
+            {
+                var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+                if (contribution == null)
+                {
+                    throw new KeyNotFoundException($"Contribution '{contributionId}' not found.");
+                }
+
+                if (!string.Equals(contribution.Status, ContributionConstants.StatusApproved, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Contribution '{contributionId}' is not approved and cannot be selected.");
+                }
+
+                _statusService.UpdateContributionStatus(contribution, ContributionConstants.StatusSelected, _currentUserService.UserId);
+                _unitOfWork.ContributionsRepository.Update(contribution);
+                selectedContributions.Add(contribution);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Bulk contribution selection completed for {Count} contribution(s)", selectedContributions.Count);
+
+            return _mapper.Map<List<ContributionInfo>>(selectedContributions);
+        }
         public async Task<ContributionInfo?> RejectedContributionAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -321,6 +392,32 @@ namespace CMS.Application.Services
 
             return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
         }
+        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest)
+        {
+            var currentUser = await GetAuthenticatedUserAsync();
+
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(currentUser.Role.Name, RoleNames.Guest, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var facultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .Distinct()
+                .ToList();
+
+            var pagedContributions = await _unitOfWork.ContributionsRepository.GetPagedSelectedByFacultiesAsync(
+                facultyIds,
+                paginationRequest.GetSkipCount(),
+                paginationRequest.PageSize,
+                paginationRequest.SearchKeyword,
+                paginationRequest.IsActive);
+
+            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+
+            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+        }
         public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -434,7 +531,7 @@ namespace CMS.Application.Services
             }
 
             return download;
-        }     
+        }
 
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
@@ -462,6 +559,107 @@ namespace CMS.Application.Services
             if (download == null)
             {
                 _logger.LogWarning("No active files found for contribution {ContributionId}", contributionId);
+            }
+
+            return download;
+        }
+
+        public async Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Selected contribution not found for manager download: {ContributionId}", contributionId);
+                return null;
+            }
+
+            var managerFacultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .ToHashSet();
+
+            if (!managerFacultyIds.Contains(contribution.FacultyId))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!string.Equals(contribution.Status, ContributionConstants.StatusSelected, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Only selected contributions can be downloaded by manager.");
+            }
+
+            var download = _fileService.CreateZipArchiveForSingleContribution(contribution);
+            if (download == null)
+            {
+                _logger.LogWarning("No active files found for selected contribution {ContributionId}", contributionId);
+            }
+
+            return download;
+        }
+
+        public async Task<ContributionFilesDownload?> DownloadSelectedContributionsFilesForManagerAsync(IReadOnlyCollection<Guid> contributionIds)
+        {
+            if (contributionIds == null || contributionIds.Count == 0)
+            {
+                throw new ArgumentException("At least one contribution id is required.");
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Manager, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var distinctIds = contributionIds
+                .Where(id => id != Guid.Empty)
+                .Distinct()
+                .ToList();
+
+            if (distinctIds.Count == 0)
+            {
+                throw new ArgumentException("At least one valid contribution id is required.");
+            }
+
+            var managerFacultyIds = currentUser.Faculties
+                .Select(faculty => faculty.FacultyId)
+                .ToHashSet();
+
+            var contributions = new List<Contribution>(distinctIds.Count);
+            foreach (var contributionId in distinctIds)
+            {
+                var contribution = await _unitOfWork.ContributionsRepository.GetByIdWithDocumentsAsync(contributionId);
+                if (contribution == null)
+                {
+                    throw new KeyNotFoundException($"Contribution '{contributionId}' not found.");
+                }
+
+                if (!managerFacultyIds.Contains(contribution.FacultyId))
+                {
+                    throw new UnauthorizedAccessException("Forbidden");
+                }
+
+                if (!string.Equals(contribution.Status, ContributionConstants.StatusSelected, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Contribution '{contributionId}' is not selected and cannot be downloaded.");
+                }
+
+                contributions.Add(contribution);
+            }
+
+            var download = _fileService.CreateZipArchive(contributions);
+            if (download == null)
+            {
+                _logger.LogWarning("No active files found for selected contributions download request");
             }
 
             return download;
@@ -503,6 +701,6 @@ namespace CMS.Application.Services
             return _mapper.Map<ContributionInfo>(contribution);
         }
 
-        
+
     }
 }

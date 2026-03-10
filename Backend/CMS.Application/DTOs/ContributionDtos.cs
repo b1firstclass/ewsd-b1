@@ -42,6 +42,13 @@ namespace CMS.Application.DTOs
         public string Status { get; set; } = string.Empty;
     }
 
+    public class ContributionBulkSelectRequest
+    {
+        [Required]
+        [MinLength(1)]
+        public List<Guid> ContributionIds { get; set; } = new();
+    }
+
     public class ContributionUpdateRequest
     {
         [MaxLength(100)]

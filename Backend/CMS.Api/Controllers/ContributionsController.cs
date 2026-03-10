@@ -198,6 +198,119 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Roles = RoleNames.Manager + "," + RoleNames.Guest)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("selected")]
+        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest);
+                return contributions.ToApiResponse(ApiResponseMessages.Retrieved("Selected contributions"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving selected contributions for manager/guest");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contributions"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Manager)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("selected/{id:guid}/download")]
+        public async Task<IActionResult> DownloadSelectedContribution(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var download = await _contributionsService.DownloadSelectedContributionFilesForManagerAsync(id);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution files"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Selected contribution download validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading selected contribution files {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contribution files"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Manager)]
+        [HasPermission(PermissionNames.ContributionRead)]
+        [HttpPost("selected/download")]
+        public async Task<IActionResult> DownloadSelectedContributions([FromBody] ContributionBulkSelectRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var download = await _contributionsService.DownloadSelectedContributionsFilesForManagerAsync(request.ContributionIds);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution files"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download failed due to missing contribution");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Selected contributions download failed due to invalid state");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading selected contributions files");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("selected contribution files"), 500);
+            }
+        }
+
         [Authorize(Roles = RoleNames.Student)]
         [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/submit")]
@@ -326,6 +439,90 @@ namespace CMS.Api.Controllers
             {
                 _logger.LogError(ex, "Error approving contribution {ContributionId}", id);
                 return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution review status"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionUpdate)]
+        [HttpPut("{id:guid}/select")]
+        public async Task<IActionResult> SelectContribution(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var updated = await _contributionsService.SelectedContributionAsync(id);
+                if (updated == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution"), 404);
+                }
+
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution selection status"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution selection validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution selection failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting contribution {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution selection status"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionUpdate)]
+        [HttpPut("select")]
+        public async Task<IActionResult> SelectContributions([FromBody] ContributionBulkSelectRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var updated = await _contributionsService.SelectedContributionsAsync(request.ContributionIds);
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution selection statuses"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection failed due to missing contribution");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Bulk contribution selection failed due to invalid state");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting contributions in bulk");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution selection statuses"), 500);
             }
         }
 
