@@ -63,6 +63,7 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(u => u.CreatedDate)
+                .Include(u => u.Role)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
