@@ -34,6 +34,7 @@ export const userKeys = {
       isActive ?? "all",
     ] as const,
   profile: "user-profile",
+  detail: (id: string) => [...userKeys.all, "detail", id] as const,
 }
 
 export const roleKeys = {
@@ -58,5 +59,23 @@ export const roleKeys = {
 export const permissionKeys = {
   all: ["permissions"] as const,
   activeList: ["permissions", "active-list"] as const,
+};
+
+export const contributionWindowKeys = {
+  all: ["contribution-windows"] as const,
+  list: (
+    pageNumber: number,
+    pageSize: number,
+    searchKeyword: string,
+    isActive?: boolean,
+  ) =>
+    [
+      ...contributionWindowKeys.all,
+      "list",
+      pageNumber,
+      pageSize,
+      searchKeyword,
+      isActive ?? "all",
+    ] as const,
 };
 
