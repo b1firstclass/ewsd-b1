@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
-import type { AxiosError } from "axios"
+import type { AxiosError, AxiosResponse } from "axios"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -108,3 +108,28 @@ export const getFieldError = (error: unknown, fieldName: string) => {
 
   return errors[matchedKey]?.[0];
 }
+
+export const downloadBlobResponse = (response: AxiosResponse<Blob>) => {
+  const blob = response.data;
+
+  let fileName = "download";
+
+  const disposition = response.headers["content-disposition"];
+
+  if (disposition) {
+    const match = disposition.match(/filename="?(.+?)"?$/);
+    if (match) fileName = match[1];
+  }
+
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+
+  document.body.appendChild(link);
+  link.click();
+
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
