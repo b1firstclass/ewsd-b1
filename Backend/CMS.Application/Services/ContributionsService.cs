@@ -533,6 +533,30 @@ namespace CMS.Application.Services
             return download;
         }
 
+        public async Task<ContributionFileDownload?> DownloadDocumentByIdAsync(Guid documentId)
+        {
+            if (documentId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+
+            var document = await _unitOfWork.Repository<Document>().GetByIdAsync(documentId);
+            if (document == null || !document.IsActive || document.Data == null || document.Data.Length == 0)
+            {
+                _logger.LogWarning("Document not found for download: {DocumentId}", documentId);
+                return null;
+            }
+
+            return new ContributionFileDownload
+            {
+                Data = document.Data,
+                FileName = document.FileName,
+                ContentType = GetDocumentContentType(document.Extension)
+            };
+        }
+
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -562,6 +586,20 @@ namespace CMS.Application.Services
             }
 
             return download;
+        }
+
+        private static string GetDocumentContentType(string? extension)
+        {
+            return extension?.ToLowerInvariant() switch
+            {
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
         }
 
         public async Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId)

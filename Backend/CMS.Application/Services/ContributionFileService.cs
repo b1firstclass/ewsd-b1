@@ -33,14 +33,13 @@ namespace CMS.Application.Services
         public Document CreateDocument(ContributionFileRequest file, Guid contributionId, Guid currentUserId)
         {
             var extension = Path.GetExtension(file.FileName);
-            var storedFileName = $"{Guid.NewGuid()}{extension}";
             var now = DateTime.UtcNow;
 
             return new Document
             {
                 DocumentId = Guid.NewGuid(),
                 ContributionId = contributionId,
-                FileName = storedFileName,
+                FileName = file.FileName,
                 Extension = extension,
                 Size = Convert.ToInt32(file.Size),
                 Data = file.Data,
