@@ -19,6 +19,7 @@ namespace CMS.Application.Interfaces.Services
         Task<ContributionInfo?> RequestRevisionContributionAsync(Guid contributionId);
         Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status);
         Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId);
+        Task<ContributionFileDownload?> DownloadDocumentByIdAsync(Guid documentId);
         Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId);
         Task<ContributionFilesDownload?> DownloadSelectedContributionsFilesForManagerAsync(IReadOnlyCollection<Guid> contributionIds);
         Task<ContributionFilesDownload?> DownloadAllContributionFilesAsync();

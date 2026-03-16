@@ -161,6 +161,37 @@ namespace CMS.Api.Controllers
         }
 
         [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("documents/{documentId:guid}/download")]
+        public async Task<IActionResult> DownloadDocument(Guid documentId)
+        {
+            try
+            {
+                if (documentId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Document"), 400);
+                }
+
+                var download = await _contributionsService.DownloadDocumentByIdAsync(documentId);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Document"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading document {DocumentId}", documentId);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("document"), 500);
+            }
+        }
+
+        [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet]
         public async Task<IActionResult> GetMyContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] string? status)
         {
