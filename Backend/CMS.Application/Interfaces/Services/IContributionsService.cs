@@ -1,5 +1,5 @@
-using CMS.Application.DTOs;
 using CMS.Application.Common;
+using CMS.Application.DTOs;
 
 namespace CMS.Application.Interfaces.Services
 {

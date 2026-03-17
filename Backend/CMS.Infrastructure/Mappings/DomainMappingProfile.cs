@@ -128,6 +128,23 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)))
                 .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.ModifiedBy));
+
+            CreateMap<vw_BrowserList, BrowserListDto>()
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.count));
+
+            CreateMap<vw_ContributionCountByFacultyAcademicYear, ContributionCountByFacultyAcademicYearDto>();
+
+            CreateMap<vw_ContributionPercentageByFacultyAcademicYear, ContributionPercentageByFacultyAcademicYearDto>();
+
+            CreateMap<vw_ContributionsWithoutComment, ContributionsWithoutCommentDto>();
+
+            CreateMap<vw_ContributionsWithoutCommentAfter14Day, ContributionsWithoutCommentDto>();
+
+            CreateMap<vw_PageAccessCount, PageAccessCountDto>()
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.count));
+
+            CreateMap<vw_UserActivityCount, UserActivityCountDto>()
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.count));
         }
     }
 }

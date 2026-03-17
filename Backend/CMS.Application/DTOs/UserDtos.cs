@@ -55,6 +55,16 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "Password is required")]
         public required string Password { get; set; }
     }
+
+    public class ChangePasswordRequest
+    {
+        [Required(ErrorMessage = "Current password is required")]
+        public required string CurrentPassword { get; set; }
+
+        [Required(ErrorMessage = "New password is required")]
+        [PasswordValidation]
+        public required string NewPassword { get; set; }
+    }
     #endregion
 
     #region response
@@ -82,6 +92,7 @@ namespace CMS.Application.DTOs
         public required string Token { get; set; }
         public DateTime ExpiresAt { get; set; }
         public required string RefreshToken { get; set; }
+        public bool FirstTimeLogin { get; set; }
     }
 
     public class RefreshTokenRequest
