@@ -1,5 +1,5 @@
-using CMS.Domain.Entities;
 using CMS.Application.Common;
+using CMS.Domain.Entities;
 
 namespace CMS.Application.Interfaces.Repositories
 {
