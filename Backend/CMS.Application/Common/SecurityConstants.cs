@@ -47,6 +47,8 @@ namespace CMS.Application.Common
 
         public const string ActivityLogCreate = "ActivityLog.Create";
         public const string ActivityLogRead = "ActivityLog.Read";
+
+        public const string ReportRead = "Report.Read";
     }
 
     public static class RoleNames
