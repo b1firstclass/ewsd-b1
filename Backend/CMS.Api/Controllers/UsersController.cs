@@ -240,5 +240,36 @@ namespace CMS.Api.Controllers
                 return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("user"), 500);
             }
         }
+
+        [HttpPatch("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var userId = _currentUserService.UserId;
+                if (!userId.HasValue)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
+                }
+
+                await _userService.ChangePasswordAsync(userId.Value, request);
+                return this.ToSuccessResponse("Password changed successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Password change failed for user");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password");
+                return this.ToErrorResponse("An error occurred while changing the password", 500);
+            }
+        }
     }
 }

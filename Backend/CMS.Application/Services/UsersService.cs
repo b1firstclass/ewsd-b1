@@ -289,5 +289,29 @@ namespace CMS.Application.Services
                 RefreshToken = refreshTokenInfo.Token
             };
         }
+
+        public async Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
+        {
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found");
+            }
+
+            var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, request.CurrentPassword);
+            if (verificationResult == PasswordVerificationResult.Failed)
+            {
+                throw new InvalidOperationException("Current password is incorrect");
+            }
+
+            user.Password = _passwordHasher.HashPassword(user, request.NewPassword);
+            user.ModifiedDate = DateTime.UtcNow;
+            user.ModifiedBy = _currentUserService.UserId;
+
+            _unitOfWork.Repository<User>().Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Password changed for user: {UserId}", user.UserId);
+        }
     }
 }

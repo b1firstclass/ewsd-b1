@@ -13,5 +13,6 @@ namespace CMS.Application.Interfaces.Services
         Task<bool> DeleteUserAsync(Guid userId);
         Task<UserLoginResponse> LoginAsync(UserLoginRequest request);
         Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request);
+        Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
     }
 }
