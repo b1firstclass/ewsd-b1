@@ -240,11 +240,14 @@ namespace CMS.Application.Services
 
             var accessTokenInfo = _tokenService.GenerateAccessToken(user);
 
+            var isFirstTimeLogin = user.LastLoginDate == null ? true : false;
+
             return new UserLoginResponse
             {
                 Token = accessTokenInfo.Token,
                 ExpiresAt = accessTokenInfo.ExpireAt,
-                RefreshToken = refreshTokenInfo.Token
+                RefreshToken = refreshTokenInfo.Token,
+                FirstTimeLogin = isFirstTimeLogin,
             };
         }
 

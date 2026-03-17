@@ -82,6 +82,7 @@ namespace CMS.Application.DTOs
         public required string Token { get; set; }
         public DateTime ExpiresAt { get; set; }
         public required string RefreshToken { get; set; }
+        public bool FirstTimeLogin { get; set; }
     }
 
     public class RefreshTokenRequest
