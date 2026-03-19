@@ -7,7 +7,7 @@ namespace CMS.Application.Interfaces.Services
     {
         Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request);
         Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null);
-        Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest);
+        Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null);
         Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId);
         Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request);
         Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId);

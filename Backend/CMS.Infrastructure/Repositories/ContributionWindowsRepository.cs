@@ -55,6 +55,15 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(cw => cw.ContributionWindowId == contributionWindowId);
         }
 
+        public async Task<IReadOnlyList<ContributionWindow>> GetAllActiveAsync()
+        {
+            return await _context.ContributionWindows
+                .AsNoTracking()
+                .Where(cw => cw.IsActive)
+                .OrderByDescending(cw => cw.CreatedDate)
+                .ToListAsync();
+        }
+
         public async Task<ContributionWindow?> GetCurrentWindowAsync(DateTime utcNow)
         {
             return await _context.ContributionWindows

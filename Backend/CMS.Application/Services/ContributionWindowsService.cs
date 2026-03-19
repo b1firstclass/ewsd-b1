@@ -42,6 +42,12 @@ namespace CMS.Application.Services
             return new PagedResponse<ContributionWindowInfo>(mapped, pagedWindows.TotalCount);
         }
 
+        public async Task<IReadOnlyList<ContributionWindowInfo>> GetAllActiveContributionWindowsAsync()
+        {
+            var windows = await _unitOfWork.ContributionWindowsRepository.GetAllActiveAsync();
+            return _mapper.Map<List<ContributionWindowInfo>>(windows);
+        }
+
         public async Task<ContributionWindowInfo?> GetContributionWindowByIdAsync(Guid contributionWindowId)
         {
             var contributionWindow = await _unitOfWork.ContributionWindowsRepository.GetByIdAsync(contributionWindowId);

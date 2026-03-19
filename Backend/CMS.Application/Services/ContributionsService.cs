@@ -392,7 +392,7 @@ namespace CMS.Application.Services
 
             return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest)
+        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
 
@@ -411,6 +411,7 @@ namespace CMS.Application.Services
                 facultyIds,
                 paginationRequest.GetSkipCount(),
                 paginationRequest.PageSize,
+                contributionWindowId,
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 

@@ -232,7 +232,7 @@ namespace CMS.Api.Controllers
         [Authorize(Roles = RoleNames.Manager + "," + RoleNames.Guest)]
         [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet("selected")]
-        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] Guid? contributionWindowId)
         {
             try
             {
@@ -243,7 +243,7 @@ namespace CMS.Api.Controllers
 
                 paginationRequest ??= new PaginationRequest();
 
-                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest);
+                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest, contributionWindowId);
                 return contributions.ToApiResponse(ApiResponseMessages.Retrieved("Selected contributions"));
             }
             catch (UnauthorizedAccessException ex)

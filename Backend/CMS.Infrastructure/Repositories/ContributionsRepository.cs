@@ -118,7 +118,7 @@ namespace CMS.Infrastructure.Repositories
             return new PagedResult<Contribution>(items, totalCount);
         }
 
-        public async Task<PagedResult<Contribution>> GetPagedSelectedByFacultiesAsync(IReadOnlyCollection<Guid> facultyIds, int skip, int take, string? searchKeyword = null, bool? isActive = null)
+        public async Task<PagedResult<Contribution>> GetPagedSelectedByFacultiesAsync(IReadOnlyCollection<Guid> facultyIds, int skip, int take, Guid? contributionWindowId = null, string? searchKeyword = null, bool? isActive = null)
         {
             if (facultyIds.Count == 0)
             {
@@ -135,6 +135,11 @@ namespace CMS.Infrastructure.Repositories
                 .Where(contribution => facultyIds.Contains(contribution.FacultyId))
                 .Where(contribution => contribution.Status == ContributionConstants.StatusSelected)
                 .ApplySearch(searchKeyword);
+
+            if (contributionWindowId.HasValue && contributionWindowId.Value != Guid.Empty)
+            {
+                query = query.Where(contribution => contribution.ContributionWindowId == contributionWindowId.Value);
+            }
 
             if (isActive.HasValue)
             {
