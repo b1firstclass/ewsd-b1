@@ -83,6 +83,12 @@ namespace CMS.Application.Services
 
             ContributionWindowValidator.ValidateWindowDates(submissionOpenDate, submissionEndDate, closureDate);
             ContributionWindowValidator.ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
+            ContributionWindowValidator.ValidateDatesWithinAcademicYear(
+                submissionOpenDate,
+                submissionEndDate,
+                closureDate,
+                request.AcademicYearStart,
+                request.AcademicYearEnd);
             var academicYearExists = await _unitOfWork.ContributionWindowsRepository.ExistsForAcademicYearAsync(
                 request.AcademicYearStart,
                 request.AcademicYearEnd);
@@ -131,6 +137,12 @@ namespace CMS.Application.Services
             var updatedAcademicYearStart = request.AcademicYearStart ?? contributionWindow.AcademicYearStart;
             var updatedAcademicYearEnd = request.AcademicYearEnd ?? contributionWindow.AcademicYearEnd;
             ContributionWindowValidator.ValidateAcademicYears(updatedAcademicYearStart, updatedAcademicYearEnd);
+            ContributionWindowValidator.ValidateDatesWithinAcademicYear(
+                updatedOpenDate,
+                updatedEndDate,
+                updatedClosureDate,
+                updatedAcademicYearStart,
+                updatedAcademicYearEnd);
             var updatedAcademicYearExists = await _unitOfWork.ContributionWindowsRepository.ExistsForAcademicYearAsync(
                 updatedAcademicYearStart,
                 updatedAcademicYearEnd,

@@ -67,7 +67,7 @@ namespace CMS.Infrastructure.Repositories
         public async Task<bool> ExistsForAcademicYearAsync(int academicYearStart, int academicYearEnd, Guid? excludeContributionWindowId = null)
         {
             var query = _context.ContributionWindows.AsNoTracking()
-                .Where(cw => cw.AcademicYearStart == academicYearStart && cw.AcademicYearEnd == academicYearEnd);
+                .Where(cw => cw.AcademicYearStart <= academicYearEnd && cw.AcademicYearEnd >= academicYearStart);
 
             if (excludeContributionWindowId.HasValue)
             {
