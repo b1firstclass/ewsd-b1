@@ -1,4 +1,5 @@
 using CMS.Api.Utilities;
+using CMS.Application.Common;
 using CMS.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace CMS.Api.Controllers
     {
         private readonly ILogger<ReportController> _logger;
         private readonly IReportService _reportService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ReportController(ILogger<ReportController> logger, IReportService reportService)
+        public ReportController(ILogger<ReportController> logger, IReportService reportService, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _reportService = reportService;
+            _currentUserService = currentUserService;
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
@@ -37,7 +40,7 @@ namespace CMS.Api.Controllers
 
         //[HasPermission(PermissionNames.ReportRead)]
         [HttpGet("contribution-count-by-faculty")]
-        public async Task<IActionResult> GetContributionCountByFacultyAcademicYear()
+        public async Task<IActionResult> GetContributionCountByFacultyAcademicYear() //filter
         {
             try
             {
@@ -53,7 +56,7 @@ namespace CMS.Api.Controllers
 
         //[HasPermission(PermissionNames.ReportRead)]
         [HttpGet("contribution-percentage-by-faculty")]
-        public async Task<IActionResult> GetContributionPercentageByFacultyAcademicYear()
+        public async Task<IActionResult> GetContributionPercentageByFacultyAcademicYear() //filter window
         {
             try
             {
@@ -69,11 +72,12 @@ namespace CMS.Api.Controllers
 
         //[HasPermission(PermissionNames.ReportRead)]
         [HttpGet("contributions-without-comment")]
-        public async Task<IActionResult> GetContributionsWithoutComment()
+        public async Task<IActionResult> GetContributionsWithoutComment([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var data = await _reportService.GetContributionsWithoutCommentAsync();
+                paginationRequest ??= new PaginationRequest();
+                var data = await _reportService.GetContributionsWithoutCommentAsync(paginationRequest);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contributions without comment"));
             }
             catch (Exception ex)
@@ -85,11 +89,12 @@ namespace CMS.Api.Controllers
 
         //[HasPermission(PermissionNames.ReportRead)]
         [HttpGet("contributions-without-comment-after-14-days")]
-        public async Task<IActionResult> GetContributionsWithoutCommentAfter14Days()
+        public async Task<IActionResult> GetContributionsWithoutCommentAfter14Days([FromQuery] PaginationRequest? paginationRequest)
         {
             try
             {
-                var data = await _reportService.GetContributionsWithoutCommentAfter14DaysAsync();
+                paginationRequest ??= new PaginationRequest();
+                var data = await _reportService.GetContributionsWithoutCommentAfter14DaysAsync(paginationRequest);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contributions without comment after 14 days"));
             }
             catch (Exception ex)
@@ -128,6 +133,97 @@ namespace CMS.Api.Controllers
             {
                 _logger.LogError(ex, "Error retrieving user activity count report");
                 return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("user activity count report"), 500);
+            }
+        }
+
+        //[Authorize(Roles = $"{ContributionConstants.RoleCoordinator},{ContributionConstants.RoleStudent}")]
+        [HttpGet("my-contribution-status-count")]
+        public async Task<IActionResult> GetMyContributionStatusCount()
+        {
+            try
+            {
+                var userId = _currentUserService.UserId;
+                if (!userId.HasValue)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
+                }
+
+                var data = await _reportService.GetContributionCountByStatusAsync(userId.Value);
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Contribution status count"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving contribution status count report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("contribution status count report"), 500);
+            }
+        }
+
+        //[Authorize(Roles = ContributionConstants.RoleManager)]
+        [HttpGet("faculty-contribution-status-count")]
+        public async Task<IActionResult> GetFacultyContributionStatusCount()
+        {
+            try
+            {
+                var data = await _reportService.GetContributionCountByStatusPerFacultyAsync();
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty contribution status count"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving faculty contribution status count report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculty contribution status count report"), 500);
+            }
+        }
+
+        //[Authorize(Roles = ContributionConstants.RoleAdmin)]
+        [HttpGet("faculty-user-count")]
+        public async Task<IActionResult> GetFacultyUserCount()
+        {
+            try
+            {
+                var data = await _reportService.GetUserCountPerFacultyAsync();
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty user count"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving faculty user count report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculty user count report"), 500);
+            }
+        }
+
+        //[Authorize(Roles = ContributionConstants.RoleCoordinator)]
+        [HttpGet("my-faculty-student-count")]
+        public async Task<IActionResult> GetMyFacultyStudentCount()
+        {
+            try
+            {
+                var facultyIds = _currentUserService.FacultyIds;
+                if (facultyIds.Count == 0)
+                {
+                    return this.ToErrorResponse("No faculties assigned to current user", 400);
+                }
+
+                var data = await _reportService.GetStudentCountPerFacultyAsync(facultyIds);
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty student count"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving faculty student count report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("faculty student count report"), 500);
+            }
+        }
+
+        [HttpGet("top-contributors")]
+        public async Task<IActionResult> GetTopContributors([FromQuery] Guid? contributionWindowId)
+        {
+            try
+            {
+                var data = await _reportService.GetTopContributorsAsync(contributionWindowId);
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Top contributors"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving top contributors report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("top contributors report"), 500);
             }
         }
     }

@@ -191,6 +191,7 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [Authorize(Roles = RoleNames.Student + "," + RoleNames.Coordinator)]
         [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet]
         public async Task<IActionResult> GetMyContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] string? status)
