@@ -253,6 +253,8 @@ public partial class AppDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_ContributionsWithoutComments");
 
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+            entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.Subject).HasMaxLength(100);
         });
 
@@ -262,6 +264,8 @@ public partial class AppDbContext : DbContext
                 .HasNoKey()
                 .ToView("vw_ContributionsWithoutCommentAfter14Days");
 
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+            entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.Subject).HasMaxLength(100);
         });
 

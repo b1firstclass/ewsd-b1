@@ -55,6 +55,15 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(cw => cw.ContributionWindowId == contributionWindowId);
         }
 
+        public async Task<IReadOnlyList<ContributionWindow>> GetAllActiveAsync()
+        {
+            return await _context.ContributionWindows
+                .AsNoTracking()
+                .Where(cw => cw.IsActive)
+                .OrderByDescending(cw => cw.CreatedDate)
+                .ToListAsync();
+        }
+
         public async Task<ContributionWindow?> GetCurrentWindowAsync(DateTime utcNow)
         {
             return await _context.ContributionWindows
@@ -67,7 +76,7 @@ namespace CMS.Infrastructure.Repositories
         public async Task<bool> ExistsForAcademicYearAsync(int academicYearStart, int academicYearEnd, Guid? excludeContributionWindowId = null)
         {
             var query = _context.ContributionWindows.AsNoTracking()
-                .Where(cw => cw.AcademicYearStart == academicYearStart && cw.AcademicYearEnd == academicYearEnd);
+                .Where(cw => cw.AcademicYearStart <= academicYearEnd && cw.AcademicYearEnd >= academicYearStart);
 
             if (excludeContributionWindowId.HasValue)
             {

@@ -63,6 +63,22 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HttpGet("active")]
+        [HasPermission(PermissionNames.ContributionWindowRead)]
+        public async Task<IActionResult> GetAllActiveContributionWindows()
+        {
+            try
+            {
+                var contributionWindows = await _contributionWindowsService.GetAllActiveContributionWindowsAsync();
+                return contributionWindows.ToApiResponse(ApiResponseMessages.Retrieved("Active contribution windows"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active contribution windows");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("active contribution windows"), 500);
+            }
+        }
+
         [HttpGet("{id:guid}")]
         [HasPermission(PermissionNames.ContributionWindowRead)]
         public async Task<IActionResult> GetContributionWindowById(Guid id)

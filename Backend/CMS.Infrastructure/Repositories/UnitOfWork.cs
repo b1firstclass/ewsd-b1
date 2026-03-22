@@ -14,6 +14,7 @@ namespace CMS.Infrastructure.Repositories
         private IContributionWindowsRepository? _contributionWindowsRepository;
         private IContributionsRepository? _contributionsRepository;
         private ICommentsRepository? _commentsRepository;
+        private IReportRepository? _reportRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -74,6 +75,14 @@ namespace CMS.Infrastructure.Repositories
             get
             {
                 return _commentsRepository ??= new CommentsRepository(_context);
+            }
+        }
+
+        public IReportRepository ReportRepository
+        {
+            get
+            {
+                return _reportRepository ??= new ReportRepository(_context);
             }
         }
 

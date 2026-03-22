@@ -352,6 +352,12 @@ namespace CMS.Application.Services
         public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
+            var currentWindow = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(DateTime.UtcNow);
+
+            if (currentWindow == null)
+            {
+                return new PagedResponse<ContributionInfo>(Array.Empty<ContributionInfo>(), 0);
+            }
 
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
@@ -373,6 +379,7 @@ namespace CMS.Application.Services
                     facultyIds,
                     skip,
                     take,
+                    currentWindow.ContributionWindowId,
                     normalizedStatus,
                     paginationRequest.SearchKeyword,
                     paginationRequest.IsActive);
@@ -383,6 +390,7 @@ namespace CMS.Application.Services
                     currentUser.UserId,
                     skip,
                     take,
+                    currentWindow.ContributionWindowId,
                     normalizedStatus,
                     paginationRequest.SearchKeyword,
                     paginationRequest.IsActive);
@@ -392,7 +400,7 @@ namespace CMS.Application.Services
 
             return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest)
+        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
 
@@ -411,6 +419,7 @@ namespace CMS.Application.Services
                 facultyIds,
                 paginationRequest.GetSkipCount(),
                 paginationRequest.PageSize,
+                contributionWindowId,
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 
