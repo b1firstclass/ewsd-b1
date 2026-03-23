@@ -120,7 +120,7 @@ namespace CMS.Infrastructure.Repositories
                 {
                     FacultyId = f.FacultyId,
                     FacultyName = f.FacultyName,
-                    Count = f.Users.Count(u => u.IsActive && u.Role.Name == ContributionConstants.RoleStudent)
+                    Count = f.Users.Count(u => u.IsActive && u.Role.Name == RoleNames.Student)
                 })
                 .OrderBy(f => f.FacultyName)
                 .ToListAsync();
@@ -132,7 +132,7 @@ namespace CMS.Infrastructure.Repositories
                         join u in _context.Users.AsNoTracking() on c.UserId equals u.UserId
                         join r in _context.Roles.AsNoTracking() on u.RoleId equals r.RoleId
                         join f in _context.Faculties.AsNoTracking() on c.FacultyId equals f.FacultyId
-                        where r.Name == ContributionConstants.RoleStudent
+                        where r.Name == RoleNames.Student
                         select new { c.UserId, c.ContributionWindowId, u.FullName, f.FacultyName };
 
             if (contributionWindowId.HasValue)

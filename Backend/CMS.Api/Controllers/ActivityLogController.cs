@@ -43,6 +43,23 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (string.IsNullOrWhiteSpace(request.Route))
+                {
+                    return this.ToErrorResponse("Route must not be empty or whitespace", 400);
+                }
+
+                var userId = _currentUserService.UserId;
+                if (!userId.HasValue)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
+                }
+
+                var userAgentHeader = Request.Headers["User-Agent"].ToString();
+                if (string.IsNullOrWhiteSpace(userAgentHeader))
+                {
+                    return this.ToErrorResponse("User-Agent header is required", 400);
+                }
+
                 var clientInfo = _parser.ClientInfo;
                 var context = _httpContextAccessor.HttpContext;
 
@@ -53,14 +70,24 @@ namespace CMS.Api.Controllers
                     BrowserVersion = clientInfo.Browser?.Version ?? "unknown",
                     OS = clientInfo.OS?.Family ?? "unknown",
                     OSVersion = clientInfo.OS?.Major ?? "unknown",
-                    UserAgent = Request.Headers["User-Agent"].ToString(),
+                    UserAgent = userAgentHeader,
                     IpAddress = context?.Connection?.RemoteIpAddress?.ToString()
                 };
 
                 await _activityLogService.LogFrontendRouteAsync(request, userAgentInfo);
 
-                _logger.LogInformation($"Frontend route logged: {request.Route}");
+                _logger.LogInformation("Frontend route logged: {Route}", request.Route);
                 return this.ToSuccessResponse(ApiResponseMessages.Saved("Activity log"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Activity log validation failed");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while logging activity");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {

@@ -102,6 +102,11 @@ namespace CMS.Api.Controllers
                 var createdPermission = await _permissionsService.CreatePermissionAsync(request);
                 return createdPermission.ToApiResponse(ApiResponseMessages.Created("Permission"), 201);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Permission validation failed while creating permission");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while creating permission");
@@ -137,6 +142,11 @@ namespace CMS.Api.Controllers
                 }
 
                 return updatedPermission.ToApiResponse(ApiResponseMessages.Updated("Permission"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Permission validation failed while updating permission {PermissionId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
             }
             catch (InvalidOperationException ex)
             {
