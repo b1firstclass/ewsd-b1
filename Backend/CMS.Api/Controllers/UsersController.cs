@@ -167,6 +167,16 @@ namespace CMS.Api.Controllers
 
                 return userEntity.ToApiResponse(ApiResponseMessages.Created("User"), 201);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "User validation failed while creating user");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Referenced resource not found while creating user");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while creating user");
@@ -202,6 +212,16 @@ namespace CMS.Api.Controllers
                 }
 
                 return updatedUser.ToApiResponse(ApiResponseMessages.Updated("User"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "User validation failed while updating user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Referenced resource not found while updating user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 404);
             }
             catch (InvalidOperationException ex)
             {

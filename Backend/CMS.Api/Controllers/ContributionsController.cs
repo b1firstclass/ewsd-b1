@@ -38,6 +38,16 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.ContributionWindowId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution window"), 400);
+                }
+
+                if (request.FacultyId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
+                }
+
                 var createRequest = new ContributionCreateRequest
                 {
                     ContributionWindowId = request.ContributionWindowId,

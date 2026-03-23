@@ -104,6 +104,11 @@ namespace CMS.Api.Controllers
                 var createdFaculty = await _facultyService.CreateFacultyAsync(request);
                 return createdFaculty.ToApiResponse(ApiResponseMessages.Created("Faculty"), 201);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Faculty validation failed while creating faculty");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while creating faculty");
@@ -139,6 +144,11 @@ namespace CMS.Api.Controllers
                 }
 
                 return updatedFaculty.ToApiResponse(ApiResponseMessages.Updated("Faculty"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Faculty validation failed while updating faculty {FacultyId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
             }
             catch (InvalidOperationException ex)
             {

@@ -23,6 +23,7 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpGet("browser-list")]
         public async Task<IActionResult> GetBrowserList()
         {
@@ -30,6 +31,16 @@ namespace CMS.Api.Controllers
             {
                 var data = await _reportService.GetBrowserListAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Browser list"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving browser list report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving browser list report");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
@@ -39,6 +50,7 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Manager)]
         [HttpGet("contribution-count-by-faculty")]
         public async Task<IActionResult> GetContributionCountByFacultyAcademicYear() //filter
         {
@@ -46,6 +58,16 @@ namespace CMS.Api.Controllers
             {
                 var data = await _reportService.GetContributionCountByFacultyAcademicYearAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contribution count by faculty and academic year"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving contribution count by faculty report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving contribution count by faculty report");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
@@ -55,6 +77,7 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Manager)]
         [HttpGet("contribution-percentage-by-faculty")]
         public async Task<IActionResult> GetContributionPercentageByFacultyAcademicYear() //filter window
         {
@@ -62,6 +85,16 @@ namespace CMS.Api.Controllers
             {
                 var data = await _reportService.GetContributionPercentageByFacultyAcademicYearAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contribution percentage by faculty and academic year"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving contribution percentage by faculty report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving contribution percentage by faculty report");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
@@ -80,6 +113,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetContributionsWithoutCommentAsync(paginationRequest);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contributions without comment"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving contributions without comment report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving contributions without comment report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving contributions without comment report");
@@ -97,6 +140,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetContributionsWithoutCommentAfter14DaysAsync(paginationRequest);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contributions without comment after 14 days"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving contributions without comment after 14 days report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving contributions without comment after 14 days report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving contributions without comment after 14 days report");
@@ -105,6 +158,7 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpGet("page-access-count")]
         public async Task<IActionResult> GetPageAccessCount()
         {
@@ -112,6 +166,16 @@ namespace CMS.Api.Controllers
             {
                 var data = await _reportService.GetPageAccessCountAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Page access count"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving page access count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving page access count report");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
@@ -121,6 +185,7 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpGet("user-activity-count")]
         public async Task<IActionResult> GetUserActivityCount()
         {
@@ -129,6 +194,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetUserActivityCountAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("User activity count"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving user activity count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving user activity count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user activity count report");
@@ -136,7 +211,8 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[Authorize(Roles = $"{ContributionConstants.RoleCoordinator},{ContributionConstants.RoleStudent}")]
+        //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = $"{RoleNames.Coordinator},{RoleNames.Student}")]
         [HttpGet("my-contribution-status-count")]
         public async Task<IActionResult> GetMyContributionStatusCount()
         {
@@ -151,6 +227,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetContributionCountByStatusAsync(userId.Value);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Contribution status count"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving contribution status count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving contribution status count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving contribution status count report");
@@ -158,7 +244,8 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[Authorize(Roles = ContributionConstants.RoleManager)]
+        //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Manager)]
         [HttpGet("faculty-contribution-status-count")]
         public async Task<IActionResult> GetFacultyContributionStatusCount()
         {
@@ -167,6 +254,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetContributionCountByStatusPerFacultyAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty contribution status count"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving faculty contribution status count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving faculty contribution status count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving faculty contribution status count report");
@@ -174,7 +271,8 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[Authorize(Roles = ContributionConstants.RoleAdmin)]
+        //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = $"{RoleNames.Admin},{RoleNames.Manager}")]
         [HttpGet("faculty-user-count")]
         public async Task<IActionResult> GetFacultyUserCount()
         {
@@ -183,6 +281,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetUserCountPerFacultyAsync();
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty user count"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving faculty user count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving faculty user count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving faculty user count report");
@@ -190,7 +298,8 @@ namespace CMS.Api.Controllers
             }
         }
 
-        //[Authorize(Roles = ContributionConstants.RoleCoordinator)]
+        //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Coordinator)]
         [HttpGet("my-faculty-student-count")]
         public async Task<IActionResult> GetMyFacultyStudentCount()
         {
@@ -205,6 +314,16 @@ namespace CMS.Api.Controllers
                 var data = await _reportService.GetStudentCountPerFacultyAsync(facultyIds);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Faculty student count"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving faculty student count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving faculty student count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving faculty student count report");
@@ -212,13 +331,29 @@ namespace CMS.Api.Controllers
             }
         }
 
+        //[HasPermission(PermissionNames.ReportRead)]
         [HttpGet("top-contributors")]
         public async Task<IActionResult> GetTopContributors([FromQuery] Guid? contributionWindowId)
         {
             try
             {
+                if (contributionWindowId.HasValue && contributionWindowId.Value == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution window"), 400);
+                }
+
                 var data = await _reportService.GetTopContributorsAsync(contributionWindowId);
                 return data.ToApiResponse(ApiResponseMessages.Retrieved("Top contributors"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving top contributors report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving top contributors report");
+                return this.ToErrorResponse(ex.Message, 409);
             }
             catch (Exception ex)
             {
