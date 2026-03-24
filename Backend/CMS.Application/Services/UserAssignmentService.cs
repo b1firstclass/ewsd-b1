@@ -35,7 +35,7 @@ namespace CMS.Application.Services
                 throw new InvalidOperationException($"Admin users cannot be assigned to specific faculties.");
             }
 
-            if (validFacultyIds.Count() > 1 && user.Role.Name == RoleNames.Manager)
+            if (validFacultyIds.Count() > 1 && user.Role.Name != RoleNames.Manager)
             {
                 throw new InvalidOperationException($"Only manager users can be assigned to more than one faculty.");
             }
