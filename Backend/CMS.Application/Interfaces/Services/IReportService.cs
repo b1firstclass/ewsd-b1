@@ -12,6 +12,8 @@ namespace CMS.Application.Interfaces.Services
         Task<PagedResponse<ContributionsWithoutCommentDto>> GetContributionsWithoutCommentAfter14DaysAsync(PaginationRequest paginationRequest);
         Task<IReadOnlyList<PageAccessCountDto>> GetPageAccessCountAsync();
         Task<IReadOnlyList<UserActivityCountDto>> GetUserActivityCountAsync();
+        Task<IReadOnlyList<DeviceActivityCountDto>> GetDeviceActivityCountAsync();
+        Task<IReadOnlyList<ActivityCountByHourDto>> GetActivityCountByHourAsync(DateTime fromDate, DateTime toDate);
         Task<ContributionStatusSummaryDto> GetContributionCountByStatusAsync(Guid userId);
         Task<IReadOnlyList<FacultyContributionStatusSummaryDto>> GetContributionCountByStatusPerFacultyAsync();
         Task<IReadOnlyList<FacultyUserCountDto>> GetUserCountPerFacultyAsync();

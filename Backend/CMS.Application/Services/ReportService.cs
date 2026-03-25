@@ -64,6 +64,18 @@ namespace CMS.Application.Services
             return _mapper.Map<List<UserActivityCountDto>>(data);
         }
 
+        public async Task<IReadOnlyList<DeviceActivityCountDto>> GetDeviceActivityCountAsync()
+        {
+            var data = await _unitOfWork.ReportRepository.GetDeviceActivityCountAsync();
+            return data.OrderByDescending(d => d.Count).ToList();
+        }
+
+        public async Task<IReadOnlyList<ActivityCountByHourDto>> GetActivityCountByHourAsync(DateTime fromDate, DateTime toDate)
+        {
+            var data = await _unitOfWork.ReportRepository.GetActivityCountByHourAsync(fromDate.Date, toDate.Date);
+            return data.OrderBy(x => x.Hour).ToList();
+        }
+
         public async Task<ContributionStatusSummaryDto> GetContributionCountByStatusAsync(Guid userId)
         {
             var items = await _unitOfWork.ReportRepository.GetContributionCountByStatusAsync(userId);

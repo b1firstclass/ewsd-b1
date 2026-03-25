@@ -212,6 +212,75 @@ namespace CMS.Api.Controllers
         }
 
         //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpGet("device-activity-count")]
+        public async Task<IActionResult> GetDeviceActivityCount()
+        {
+            try
+            {
+                var data = await _reportService.GetDeviceActivityCountAsync();
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Device activity count"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving device activity count report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving device activity count report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving device activity count report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("device activity count report"), 500);
+            }
+        }
+
+        //[HasPermission(PermissionNames.ReportRead)]
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpGet("activity-count-by-hour")]
+        public async Task<IActionResult> GetActivityCountByHour([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
+        {
+            try
+            {
+                if (!fromDate.HasValue)
+                {
+                    return this.ToErrorResponse("From date is required", 400);
+                }
+
+                if (!toDate.HasValue)
+                {
+                    return this.ToErrorResponse("To date is required", 400);
+                }
+
+                if (fromDate.Value.Date > toDate.Value.Date)
+                {
+                    return this.ToErrorResponse("To date must be greater than or equal to from date", 400);
+                }
+
+                var data = await _reportService.GetActivityCountByHourAsync(fromDate.Value, toDate.Value);
+                return data.ToApiResponse(ApiResponseMessages.Retrieved("Activity count by hour"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed while retrieving activity count by hour report");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while retrieving activity count by hour report");
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving activity count by hour report");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("activity count by hour report"), 500);
+            }
+        }
+
+        //[HasPermission(PermissionNames.ReportRead)]
         [Authorize(Roles = $"{RoleNames.Coordinator},{RoleNames.Student}")]
         [HttpGet("my-contribution-status-count")]
         public async Task<IActionResult> GetMyContributionStatusCount()

@@ -13,6 +13,8 @@ namespace CMS.Application.Interfaces.Repositories
         Task<PagedResult<vw_ContributionsWithoutCommentAfter14Day>> GetContributionsWithoutCommentAfter14DaysAsync(int skip, int take);
         Task<IReadOnlyList<vw_PageAccessCount>> GetPageAccessCountAsync();
         Task<IReadOnlyList<vw_UserActivityCount>> GetUserActivityCountAsync();
+        Task<IReadOnlyList<DeviceActivityCountDto>> GetDeviceActivityCountAsync();
+        Task<IReadOnlyList<ActivityCountByHourDto>> GetActivityCountByHourAsync(DateTime fromDate, DateTime toDate);
         Task<IReadOnlyList<ContributionStatusCountDto>> GetContributionCountByStatusAsync(Guid userId);
         Task<IReadOnlyList<FacultyContributionStatusRawDto>> GetContributionCountByStatusPerFacultyAsync();
         Task<IReadOnlyList<FacultyUserCountDto>> GetUserCountPerFacultyAsync();

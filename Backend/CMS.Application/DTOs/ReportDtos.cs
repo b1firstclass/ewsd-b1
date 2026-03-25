@@ -51,6 +51,18 @@ namespace CMS.Application.DTOs
         public long? Count { get; set; }
     }
 
+    public class DeviceActivityCountDto
+    {
+        public string Device { get; init; } = null!;
+        public long Count { get; init; }
+    }
+
+    public class ActivityCountByHourDto
+    {
+        public DateTime Hour { get; init; }
+        public long Count { get; init; }
+    }
+
     public class ContributionStatusCountDto
     {
         public string Status { get; set; } = null!;
