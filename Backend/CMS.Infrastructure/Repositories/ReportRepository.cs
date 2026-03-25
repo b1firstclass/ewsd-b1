@@ -66,6 +66,55 @@ namespace CMS.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IReadOnlyList<DeviceActivityCountDto>> GetDeviceActivityCountAsync()
+        {
+            return await _context.UserActivityLogs
+                .AsNoTracking()
+                .GroupBy(log => string.IsNullOrWhiteSpace(log.Device) ? "unknown" : log.Device)
+                .Select(group => new DeviceActivityCountDto
+                {
+                    Device = group.Key!,
+                    Count = group.LongCount()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<ActivityCountByHourDto>> GetActivityCountByHourAsync(DateTime fromDate, DateTime toDate)
+        {
+            var fromDateUtc = fromDate.Date;
+            var toDateExclusiveUtc = toDate.Date.AddDays(1);
+
+            var data = await _context.UserActivityLogs
+                .AsNoTracking()
+                .Where(log => log.LoggedDate.HasValue
+                    && log.LoggedDate.Value >= fromDateUtc
+                    && log.LoggedDate.Value < toDateExclusiveUtc)
+                .GroupBy(log => new
+                {
+                    Year = log.LoggedDate!.Value.Year,
+                    Month = log.LoggedDate.Value.Month,
+                    Day = log.LoggedDate.Value.Day,
+                    Hour = log.LoggedDate.Value.Hour
+                })
+                .Select(group => new
+                {
+                    group.Key.Year,
+                    group.Key.Month,
+                    group.Key.Day,
+                    group.Key.Hour,
+                    Count = group.LongCount()
+                })
+                .ToListAsync();
+
+            return data
+                .Select(x => new ActivityCountByHourDto
+                {
+                    Hour = new DateTime(x.Year, x.Month, x.Day, x.Hour, 0, 0, DateTimeKind.Utc),
+                    Count = x.Count
+                })
+                .ToList();
+        }
+
         public async Task<IReadOnlyList<ContributionStatusCountDto>> GetContributionCountByStatusAsync(Guid userId)
         {
             return await _context.Contributions
