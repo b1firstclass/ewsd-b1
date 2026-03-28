@@ -22,6 +22,8 @@ namespace CMS.Application.DTOs
         [Required]
         public Guid FacultyId { get; set; }
 
+        public Guid? CategoryId { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Subject { get; set; } = string.Empty;
@@ -57,6 +59,8 @@ namespace CMS.Application.DTOs
         [MaxLength(500)]
         public string? Description { get; set; }
 
+        public Guid? CategoryId { get; set; }
+
         public ContributionFileRequest? DocumentFile { get; set; }
 
         public ContributionFileRequest? ImageFile { get; set; }
@@ -66,6 +70,7 @@ namespace CMS.Application.DTOs
     {
         public Guid Id { get; set; }
         public Guid ContributionWindowId { get; set; }
+        public Guid? CategoryId { get; set; }
         public string Subject { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
@@ -89,6 +94,7 @@ namespace CMS.Application.DTOs
 
     public class ContributionDetailInfo : ContributionInfo
     {
+        public CategoryInfo? Category { get; set; }
         public IReadOnlyList<ContributionDocumentInfo> Documents { get; set; } = Array.Empty<ContributionDocumentInfo>();
         public IReadOnlyList<CommentInfo> Comments { get; set; } = Array.Empty<CommentInfo>();
     }

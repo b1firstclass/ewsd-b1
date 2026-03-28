@@ -9,6 +9,7 @@ public partial class Contribution
     public Guid FacultyId { get; set; }
 
     public Guid ContributionWindowId { get; set; }
+    public Guid? CategoryId { get; set; }
 
     public string Subject { get; set; } = null!;
 
@@ -43,6 +44,8 @@ public partial class Contribution
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ContributionWindow ContributionWindow { get; set; } = null!;
+
+    public virtual Category? Category { get; set; }
 
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 

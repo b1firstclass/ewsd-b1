@@ -46,6 +46,11 @@ namespace CMS.Application.Services
             await ValidateContributionWindowExistsAsync(request.ContributionWindowId);
             await ValidateFacultyExistsAsync(request.FacultyId);
 
+            if (request.CategoryId.HasValue)
+            {
+                await ValidateCategoryExistsAsync(request.CategoryId.Value);
+            }
+
             _fileService.ValidateDocumentFile(request.DocumentFile);
             _fileService.ValidateImageFile(request.ImageFile);
 
@@ -325,6 +330,12 @@ namespace CMS.Application.Services
                 contribution.Description = request.Description.Trim();
             }
 
+            if (request.CategoryId.HasValue)
+            {
+                await ValidateCategoryExistsAsync(request.CategoryId.Value);
+                contribution.CategoryId = request.CategoryId.Value;
+            }
+
             if (request.DocumentFile != null)
             {
                 _fileService.ValidateDocumentFile(request.DocumentFile);
@@ -447,6 +458,8 @@ namespace CMS.Application.Services
             {
                 Id = contribution.ContributionId,
                 ContributionWindowId = contribution.ContributionWindowId,
+                CategoryId = contribution.CategoryId,
+                Category = contribution.Category != null ? _mapper.Map<CategoryInfo>(contribution.Category) : null,
                 Subject = contribution.Subject,
                 Description = contribution.Description,
                 Status = contribution.Status,
@@ -493,6 +506,15 @@ namespace CMS.Application.Services
             }
         }
 
+        private async Task ValidateCategoryExistsAsync(Guid categoryId)
+        {
+            var category = await _unitOfWork.Repository<Category>().GetByIdAsync(categoryId);
+            if (category == null || !category.IsActive)
+            {
+                throw new InvalidOperationException("Category not found");
+            }
+        }
+
         private static Contribution CreateNewContribution(ContributionCreateRequest request, Guid currentUserId)
         {
             var now = DateTime.UtcNow;
@@ -501,6 +523,7 @@ namespace CMS.Application.Services
                 ContributionId = Guid.NewGuid(),
                 ContributionWindowId = request.ContributionWindowId,
                 FacultyId = request.FacultyId,
+                CategoryId = request.CategoryId,
                 UserId = currentUserId,
                 Subject = request.Subject.Trim(),
                 Description = request.Description.Trim(),

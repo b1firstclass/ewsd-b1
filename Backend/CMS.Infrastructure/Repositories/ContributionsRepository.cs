@@ -189,6 +189,7 @@ namespace CMS.Infrastructure.Repositories
             return await _context.Contributions
                 .Include(contribution => contribution.Documents)
                 .Include(contribution => contribution.Comments)
+                .Include(contribution => contribution.Category)
                 .FirstOrDefaultAsync(contribution => contribution.ContributionId == contributionId);
         }
 

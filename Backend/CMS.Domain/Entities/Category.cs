@@ -3,19 +3,13 @@ using System.Collections.Generic;
 
 namespace CMS.Domain.Entities;
 
-public partial class ContributionWindow
+public partial class Category
 {
-    public Guid ContributionWindowId { get; set; }
+    public Guid CategoryId { get; set; }
 
-    public DateTime SubmissionOpenDate { get; set; }
+    public string Name { get; set; } = null!;
 
-    public DateTime SubmissionEndDate { get; set; }
-
-    public DateTime ClosureDate { get; set; }
-
-    public int AcademicYearStart { get; set; }
-
-    public int AcademicYearEnd { get; set; }
+    public string? Description { get; set; }
 
     public bool IsActive { get; set; }
 
