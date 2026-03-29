@@ -43,7 +43,7 @@ namespace CMS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
-        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null)
+        public async Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null, Guid? roleId = null, Guid? facultyId = null)
         {
             if (skip < 0)
             {
@@ -59,11 +59,22 @@ namespace CMS.Infrastructure.Repositories
                 query = query.Where(u => u.IsActive == isActive.Value);
             }
 
+            if (roleId.HasValue && roleId.Value != Guid.Empty)
+            {
+                query = query.Where(u => u.RoleId == roleId.Value);
+            }
+
+            if (facultyId.HasValue && facultyId.Value != Guid.Empty)
+            {
+                query = query.Where(u => u.Faculties.Any(f => f.FacultyId == facultyId.Value));
+            }
+
             var totalCount = await query.CountAsync();
 
             var items = await query
                 .OrderByDescending(u => u.CreatedDate)
                 .Include(u => u.Role)
+                .Include(u => u.Faculties)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

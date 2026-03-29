@@ -24,6 +24,7 @@ namespace CMS.Application
             services.AddScoped<IActivityLogService, ActivityLogService>();
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             // Authorization Helpers
             services.AddScoped<IContributionAuthorizationService, ContributionAuthorizationService>();

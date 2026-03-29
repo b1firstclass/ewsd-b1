@@ -1,4 +1,7 @@
-﻿using CMS.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using CMS.Domain.Entities;
+using CMS.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Infrastructure.Persistence;
@@ -9,6 +12,8 @@ public partial class AppDbContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Comment> Comments { get; set; }
 
@@ -44,6 +49,18 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("Categories_pkey");
+
+            entity.HasIndex(e => e.Name, "Categories_Name_key").IsUnique();
+
+            entity.Property(e => e.CategoryId).ValueGeneratedNever();
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.CommentId).HasName("Comments_pkey");
@@ -69,6 +86,11 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.Subject).HasMaxLength(100);
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Contributions)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("Contributions_CategoryId_fkey");
 
             entity.HasOne(d => d.ContributionWindow).WithMany(p => p.Contributions)
                 .HasForeignKey(d => d.ContributionWindowId)

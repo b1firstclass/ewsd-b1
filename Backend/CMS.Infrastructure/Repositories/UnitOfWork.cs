@@ -15,6 +15,7 @@ namespace CMS.Infrastructure.Repositories
         private IContributionsRepository? _contributionsRepository;
         private ICommentsRepository? _commentsRepository;
         private IReportRepository? _reportRepository;
+        private ICategoryRepository? _categoryRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -83,6 +84,14 @@ namespace CMS.Infrastructure.Repositories
             get
             {
                 return _reportRepository ??= new ReportRepository(_context);
+            }
+        }
+
+        public ICategoryRepository CategoryRepository
+        {
+            get
+            {
+                return _categoryRepository ??= new CategoryRepository(_context);
             }
         }
 

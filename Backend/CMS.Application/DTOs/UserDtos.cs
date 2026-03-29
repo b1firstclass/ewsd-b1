@@ -1,4 +1,5 @@
-﻿using CMS.Application.Utilities;
+﻿using CMS.Application.Common;
+using CMS.Application.Utilities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Application.DTOs
@@ -64,6 +65,13 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "New password is required")]
         [PasswordValidation]
         public required string NewPassword { get; set; }
+    }
+
+    public class UserPaginationRequest : PaginationRequest
+    {
+        public Guid? RoleId { get; set; }
+
+        public Guid? FacultyId { get; set; }
     }
     #endregion
 

@@ -37,7 +37,7 @@ namespace CMS.Application.Services
             _emailService = emailService;
         }
 
-        public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest)
+        public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(UserPaginationRequest paginationRequest)
         {
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
@@ -46,7 +46,9 @@ namespace CMS.Application.Services
                 skip,
                 take,
                 paginationRequest.SearchKeyword,
-                paginationRequest.IsActive);
+                paginationRequest.IsActive,
+                paginationRequest.RoleId,
+                paginationRequest.FacultyId);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
 
