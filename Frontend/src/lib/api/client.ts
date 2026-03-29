@@ -6,6 +6,7 @@ import type {
     InternalAxiosRequestConfig,
 } from "axios";
 import axios, { AxiosHeaders } from "axios";
+import { storage } from "../utils";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -34,7 +35,7 @@ api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         console.log("api base url =>> ", API_BASE_URL);
         const headers = applyRequestContentType(config);
-        const token = localStorage.getItem("access_token");
+        const token = storage.getToken();
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
         }
@@ -44,6 +45,13 @@ api.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+// API Error Response interface
+interface ApiErrorResponse {
+    message?: string;
+    error?: string;
+    errors?: string[];
+}
 
 api.interceptors.response.use(
     (response) => response,
@@ -62,12 +70,20 @@ api.interceptors.response.use(
         //     }, 0);
         // }
 
+        const responseData = error.response.data as ApiErrorResponse;
         const errorMessage =
-            (error.response?.data as any)?.message ||
-            error.message || "An error is occured.";
-        error.message = errorMessage;
+            responseData?.message ||
+            responseData?.error ||
+            responseData?.errors?.[0] ||
+            error.message || 
+            "An error occurred.";
+        
+        // Create a new error with the enhanced message
+        const enhancedError = new Error(errorMessage) as AxiosError;
+        Object.assign(enhancedError, error);
+        enhancedError.message = errorMessage;
 
-        return Promise.reject(error);
+        return Promise.reject(enhancedError);
     }
 );
 

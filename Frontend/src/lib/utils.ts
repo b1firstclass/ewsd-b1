@@ -10,30 +10,52 @@ const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const USER_KEY = 'user';
 
+type AuthStorageMode = "local" | "session";
+
+const getStorageByMode = (mode: AuthStorageMode) =>
+  mode === "session" ? sessionStorage : localStorage;
+
+const getActiveAuthStorage = () => {
+  if (sessionStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY)) {
+    return sessionStorage;
+  }
+
+  return localStorage;
+};
+
 export const storage = {
-  setToken: (token: string) => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+  setToken: (token: string, mode?: AuthStorageMode) => {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    getStorageByMode(mode ?? (getActiveAuthStorage() === sessionStorage ? "session" : "local")).setItem(ACCESS_TOKEN_KEY, token);
   },
   getToken: (): string | null => {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return sessionStorage.getItem(ACCESS_TOKEN_KEY) ?? localStorage.getItem(ACCESS_TOKEN_KEY);
   },
   removeToken: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
   },
-  setRefreshToken: (refreshToken: string) => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  setRefreshToken: (refreshToken: string, mode?: AuthStorageMode) => {
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    getStorageByMode(mode ?? (getActiveAuthStorage() === sessionStorage ? "session" : "local")).setItem(REFRESH_TOKEN_KEY, refreshToken);
   },
   getRefreshToken: (): string | null => {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return sessionStorage.getItem(REFRESH_TOKEN_KEY) ?? localStorage.getItem(REFRESH_TOKEN_KEY);
   },
   removeRefreshToken: () => {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   },
   clear: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     // Keep legacy cleanup for older sessions that stored user snapshots.
     localStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(USER_KEY);
   },
 };
 
@@ -109,10 +131,10 @@ export const getFieldError = (error: unknown, fieldName: string) => {
   return errors[matchedKey]?.[0];
 }
 
-export const downloadBlobResponse = (response: AxiosResponse<Blob>) => {
+export const downloadBlobResponse = (response: AxiosResponse<Blob>, fallbackFileName = "download") => {
   const blob = response.data;
 
-  let fileName = "download";
+  let fileName = fallbackFileName;
 
   const disposition = response.headers["content-disposition"];
 

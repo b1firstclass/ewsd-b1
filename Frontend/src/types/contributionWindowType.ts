@@ -3,13 +3,17 @@ import type { PageResponse } from "./sharedType";
 export interface ContributionWindowInfo {
     id: string;
     submissionOpenDate?: string;
-    submissionEndDate?: string;
-    closureDate?: string;
+    submissionEndDate?: string;  // Initial deadline
+    closureDate?: string;         // Final closure date
     academicYearStart: number;
     academicYearEnd: number;
     isActive: boolean;
     createdDate: string;
     modifiedDate: string;
+    // Add deadline status helpers
+    daysToSubmission?: number;
+    daysToClosure?: number;
+    submissionStatus?: 'open' | 'submission-ended' | 'closed';
 }
 
 export interface ContributionWindowCreateRequest {

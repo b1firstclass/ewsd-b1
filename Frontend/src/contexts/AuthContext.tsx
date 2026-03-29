@@ -15,7 +15,7 @@ import {
 } from "react";
 
 interface AuthContextType extends AuthState {
-    login: (token: string, refreshToken: string) => Promise<void>;
+    login: (token: string, refreshToken: string, rememberMe: boolean) => Promise<void>;
     logout: () => void;
     updateUser: (user: User) => void;
 }
@@ -49,9 +49,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return profile;
     }, [queryClient]);
 
-    const login = useCallback(async (authToken: string, newRefreshToken: string) => {
-        storage.setToken(authToken);
-        storage.setRefreshToken(newRefreshToken);
+    const login = useCallback(async (authToken: string, newRefreshToken: string, rememberMe: boolean) => {
+        const storageMode = rememberMe ? "local" : "session";
+
+        storage.setToken(authToken, storageMode);
+        storage.setRefreshToken(newRefreshToken, storageMode);
         setToken(authToken);
         setRefreshToken(newRefreshToken);
 

@@ -10,8 +10,8 @@ const getActionsRoute = (mainRoute: string): ActionProperties => {
 
 export const ApiRoute = {
     Auth: {
-        Login: "/users/login",
-        RefreshToken: "/users/refresh-token"
+        Login: "/Users/login",
+        RefreshToken: "/Users/refresh-token"
     },
     Role: getActionsRoute("/roles"),
     User: {
@@ -35,14 +35,44 @@ export const ApiRoute = {
         approve: (id: string) => `/Contributions/${id}/approve`,
         select: (id: string) => `/Contributions/${id}/select`,
         selectList: "/Contributions/select",
-        reject: (id: string) => `/api/Contributions/${id}/reject`,
+        reject: (id: string) => `/Contributions/${id}/reject`,
         requestRevision: (id: string) => `/Contributions/${id}/request-revision`,
         ...getActionsRoute("/Contributions"),
     },
     Comment: {
         getByContributionId: (contributionId: string) => `/Comments/contribution/${contributionId}`,
-        ...getActionsRoute("Comments"),
-    }
+        ...getActionsRoute("/Comments"),
+    },
+    Report: {
+        browserList: "/report/browser-list",
+        contributionCountByFaculty: "/report/contribution-count-by-faculty",
+        contributionPercentageByFaculty: "/report/contribution-percentage-by-faculty",
+        contributionsWithoutComment: "/report/contributions-without-comment",
+        contributionsWithoutCommentAfter14Days: "/report/contributions-without-comment-after-14-days",
+        deviceActivityCount: "/report/device-activity-count",
+        activityCountByHour: "/report/activity-count-by-hour",
+        pageAccessCount: "/report/page-access-count",
+        userActivityCount: "/report/user-activity-count",
+        myContributionStatusCount: "/report/my-contribution-status-count",
+        facultyContributionStatusCount: "/report/faculty-contribution-status-count",
+        facultyUserCount: "/report/faculty-user-count",
+        myFacultyStudentCount: "/report/my-faculty-student-count",
+        topContributors: "/report/top-contributors",
+    },
+    // New system monitoring routes
+    SystemMonitoring: {
+        getActivityLogs: "/UserActivityLogs",
+        getAnalytics: "/UserActivityLogs/analytics",
+        getMostViewedPages: "/UserActivityLogs/most-viewed-pages",
+        getBrowserStats: "/UserActivityLogs/browser-stats",
+        getDeviceStats: "/UserActivityLogs/device-stats",
+    },
+    // New guest management routes
+    GuestManagement: {
+        getGuestList: "/Faculties/guests",
+        triggerNotification: (facultyId: string) => `/Faculties/${facultyId}/notify-coordinator`,
+        getGuestContributions: "/Contributions/guest-contributions",
+    },
 }
 
 interface ActionProperties {

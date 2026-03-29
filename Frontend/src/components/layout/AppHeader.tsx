@@ -1,41 +1,24 @@
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Menu } from "lucide-react";
+import { SidebarTrigger, SidebarCollapseToggle } from "@/components/ui/sidebar";
 import type { ReactNode } from "react";
 
 interface AppHeaderProps {
   rightSlot?: ReactNode;
-  showCollapseButton?: boolean;
 }
 
-export const AppHeader = ({
-  rightSlot,
-  showCollapseButton = true,
-}: AppHeaderProps) => {
-  const { isDesktopCollapsed, toggleDesktopCollapsed } = useSidebar();
-  const collapseLabel = isDesktopCollapsed ? "Expand sidebar" : "Collapse sidebar";
-
+export const AppHeader = ({ rightSlot }: AppHeaderProps) => {
   return (
-    <header className="sticky top-0 z-20 border-b border-border/70 bg-background/90 backdrop-blur">
-      <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="flex h-14 items-center gap-2 px-3 sm:px-4 lg:px-6">
+        {/* Mobile hamburger */}
         <SidebarTrigger />
-        {showCollapseButton ? (
-          <button
-            type="button"
-            className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex cursor-pointer"
-            onClick={toggleDesktopCollapsed}
-            aria-label={collapseLabel}
-            title={collapseLabel}
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-        ) : null}
+        {/* Desktop/tablet collapse */}
+        <SidebarCollapseToggle />
 
-        {/* <div className="min-w-0">
-          <h1 className="truncate text-lg font-semibold sm:text-xl">{title}</h1>
-          {subtitle ? <p className="hidden text-sm text-muted-foreground sm:block">{subtitle}</p> : null}
-        </div> */}
-
-        {rightSlot ? <div className="ml-auto flex items-center gap-2">{rightSlot}</div> : null}
+        {rightSlot && (
+          <div className="ml-auto flex items-center gap-2">
+            {rightSlot}
+          </div>
+        )}
       </div>
     </header>
   );

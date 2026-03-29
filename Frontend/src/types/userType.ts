@@ -10,6 +10,8 @@ export interface User {
     isActive: boolean;
     createdDate: string;
     modifiedDate: string;
+    lastLoginDate?: string;
+    firstTimeLogin?: boolean;
     faculties: Faculity[];
     role: Role;
 }
