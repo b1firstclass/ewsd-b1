@@ -5,7 +5,7 @@ namespace CMS.Application.Interfaces.Services
 {
     public interface IUsersService
     {
-        Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest);
+        Task<PagedResponse<UserInfo>> GetAllUsersAsync(UserPaginationRequest paginationRequest);
         Task<UserInfo?> GetUserByIdAsync(Guid userId);
         Task<UserProfile?> GetUserProfileById(Guid userId);
         Task<UserInfo> CreateUserAsync(UserRegisterRequest request);

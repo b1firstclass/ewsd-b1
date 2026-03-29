@@ -26,7 +26,7 @@ namespace CMS.Api.Controllers
 
         [HasPermission(PermissionNames.UsersRead)]
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetAllUsers([FromQuery] UserPaginationRequest? paginationRequest)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
-                paginationRequest ??= new PaginationRequest();
+                paginationRequest ??= new UserPaginationRequest();
 
                 var users = await _userService.GetAllUsersAsync(paginationRequest);
 
