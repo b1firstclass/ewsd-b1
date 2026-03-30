@@ -1,5 +1,5 @@
-using CMS.Application.DTOs;
 using CMS.Application.Common;
+using CMS.Application.DTOs;
 
 namespace CMS.Application.Interfaces.Services
 {
@@ -7,7 +7,7 @@ namespace CMS.Application.Interfaces.Services
     {
         Task<ContributionInfo> CreateContributionAsync(ContributionCreateRequest request);
         Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null);
-        Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest);
+        Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null);
         Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId);
         Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request);
         Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId);
@@ -19,6 +19,7 @@ namespace CMS.Application.Interfaces.Services
         Task<ContributionInfo?> RequestRevisionContributionAsync(Guid contributionId);
         Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status);
         Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId);
+        Task<ContributionFileDownload?> DownloadDocumentByIdAsync(Guid documentId);
         Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId);
         Task<ContributionFilesDownload?> DownloadSelectedContributionsFilesForManagerAsync(IReadOnlyCollection<Guid> contributionIds);
         Task<ContributionFilesDownload?> DownloadAllContributionFilesAsync();

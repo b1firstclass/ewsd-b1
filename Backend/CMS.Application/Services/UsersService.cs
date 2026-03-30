@@ -37,7 +37,7 @@ namespace CMS.Application.Services
             _emailService = emailService;
         }
 
-        public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(PaginationRequest paginationRequest)
+        public async Task<PagedResponse<UserInfo>> GetAllUsersAsync(UserPaginationRequest paginationRequest)
         {
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
@@ -46,7 +46,9 @@ namespace CMS.Application.Services
                 skip,
                 take,
                 paginationRequest.SearchKeyword,
-                paginationRequest.IsActive);
+                paginationRequest.IsActive,
+                paginationRequest.RoleId,
+                paginationRequest.FacultyId);
 
             var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers.Items);
 
@@ -240,11 +242,14 @@ namespace CMS.Application.Services
 
             var accessTokenInfo = _tokenService.GenerateAccessToken(user);
 
+            var isFirstTimeLogin = user.LastLoginDate == null ? true : false;
+
             return new UserLoginResponse
             {
                 Token = accessTokenInfo.Token,
                 ExpiresAt = accessTokenInfo.ExpireAt,
-                RefreshToken = refreshTokenInfo.Token
+                RefreshToken = refreshTokenInfo.Token,
+                FirstTimeLogin = isFirstTimeLogin,
             };
         }
 
@@ -285,6 +290,30 @@ namespace CMS.Application.Services
                 ExpiresAt = accessTokenInfo.ExpireAt,
                 RefreshToken = refreshTokenInfo.Token
             };
+        }
+
+        public async Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
+        {
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found");
+            }
+
+            var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, request.CurrentPassword);
+            if (verificationResult == PasswordVerificationResult.Failed)
+            {
+                throw new InvalidOperationException("Current password is incorrect");
+            }
+
+            user.Password = _passwordHasher.HashPassword(user, request.NewPassword);
+            user.ModifiedDate = DateTime.UtcNow;
+            user.ModifiedBy = _currentUserService.UserId;
+
+            _unitOfWork.Repository<User>().Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Password changed for user: {UserId}", user.UserId);
         }
     }
 }

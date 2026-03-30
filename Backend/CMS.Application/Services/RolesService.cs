@@ -47,7 +47,7 @@ namespace CMS.Application.Services
 
                 role.IsFacultyAssignable = true;
 
-                if(role.Name == RoleNames.Manager)
+                if (role.Name == RoleNames.Manager)
                 {
                     role.IsMultipleFaculty = true;
                 }

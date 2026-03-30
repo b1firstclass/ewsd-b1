@@ -108,6 +108,11 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.ContributionId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
                 var createdComment = await _commentsService.CreateCommentAsync(request);
                 return createdComment.ToApiResponse(ApiResponseMessages.Created("Comment"), 201);
             }

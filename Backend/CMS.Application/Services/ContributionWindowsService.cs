@@ -42,6 +42,12 @@ namespace CMS.Application.Services
             return new PagedResponse<ContributionWindowInfo>(mapped, pagedWindows.TotalCount);
         }
 
+        public async Task<IReadOnlyList<ContributionWindowInfo>> GetAllActiveContributionWindowsAsync()
+        {
+            var windows = await _unitOfWork.ContributionWindowsRepository.GetAllActiveAsync();
+            return _mapper.Map<List<ContributionWindowInfo>>(windows);
+        }
+
         public async Task<ContributionWindowInfo?> GetContributionWindowByIdAsync(Guid contributionWindowId)
         {
             var contributionWindow = await _unitOfWork.ContributionWindowsRepository.GetByIdAsync(contributionWindowId);
@@ -83,6 +89,12 @@ namespace CMS.Application.Services
 
             ContributionWindowValidator.ValidateWindowDates(submissionOpenDate, submissionEndDate, closureDate);
             ContributionWindowValidator.ValidateAcademicYears(request.AcademicYearStart, request.AcademicYearEnd);
+            ContributionWindowValidator.ValidateDatesWithinAcademicYear(
+                submissionOpenDate,
+                submissionEndDate,
+                closureDate,
+                request.AcademicYearStart,
+                request.AcademicYearEnd);
             var academicYearExists = await _unitOfWork.ContributionWindowsRepository.ExistsForAcademicYearAsync(
                 request.AcademicYearStart,
                 request.AcademicYearEnd);
@@ -131,6 +143,12 @@ namespace CMS.Application.Services
             var updatedAcademicYearStart = request.AcademicYearStart ?? contributionWindow.AcademicYearStart;
             var updatedAcademicYearEnd = request.AcademicYearEnd ?? contributionWindow.AcademicYearEnd;
             ContributionWindowValidator.ValidateAcademicYears(updatedAcademicYearStart, updatedAcademicYearEnd);
+            ContributionWindowValidator.ValidateDatesWithinAcademicYear(
+                updatedOpenDate,
+                updatedEndDate,
+                updatedClosureDate,
+                updatedAcademicYearStart,
+                updatedAcademicYearEnd);
             var updatedAcademicYearExists = await _unitOfWork.ContributionWindowsRepository.ExistsForAcademicYearAsync(
                 updatedAcademicYearStart,
                 updatedAcademicYearEnd,

@@ -46,6 +46,11 @@ namespace CMS.Application.Services
             await ValidateContributionWindowExistsAsync(request.ContributionWindowId);
             await ValidateFacultyExistsAsync(request.FacultyId);
 
+            if (request.CategoryId.HasValue)
+            {
+                await ValidateCategoryExistsAsync(request.CategoryId.Value);
+            }
+
             _fileService.ValidateDocumentFile(request.DocumentFile);
             _fileService.ValidateImageFile(request.ImageFile);
 
@@ -325,6 +330,12 @@ namespace CMS.Application.Services
                 contribution.Description = request.Description.Trim();
             }
 
+            if (request.CategoryId.HasValue)
+            {
+                await ValidateCategoryExistsAsync(request.CategoryId.Value);
+                contribution.CategoryId = request.CategoryId.Value;
+            }
+
             if (request.DocumentFile != null)
             {
                 _fileService.ValidateDocumentFile(request.DocumentFile);
@@ -352,6 +363,12 @@ namespace CMS.Application.Services
         public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
+            var currentWindow = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(DateTime.UtcNow);
+
+            if (currentWindow == null)
+            {
+                return new PagedResponse<ContributionInfo>(Array.Empty<ContributionInfo>(), 0);
+            }
 
             var skip = paginationRequest.GetSkipCount();
             var take = paginationRequest.PageSize;
@@ -373,6 +390,7 @@ namespace CMS.Application.Services
                     facultyIds,
                     skip,
                     take,
+                    currentWindow.ContributionWindowId,
                     normalizedStatus,
                     paginationRequest.SearchKeyword,
                     paginationRequest.IsActive);
@@ -383,6 +401,7 @@ namespace CMS.Application.Services
                     currentUser.UserId,
                     skip,
                     take,
+                    currentWindow.ContributionWindowId,
                     normalizedStatus,
                     paginationRequest.SearchKeyword,
                     paginationRequest.IsActive);
@@ -392,7 +411,7 @@ namespace CMS.Application.Services
 
             return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest)
+        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
 
@@ -411,6 +430,7 @@ namespace CMS.Application.Services
                 facultyIds,
                 paginationRequest.GetSkipCount(),
                 paginationRequest.PageSize,
+                contributionWindowId,
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 
@@ -438,6 +458,8 @@ namespace CMS.Application.Services
             {
                 Id = contribution.ContributionId,
                 ContributionWindowId = contribution.ContributionWindowId,
+                CategoryId = contribution.CategoryId,
+                Category = contribution.Category != null ? _mapper.Map<CategoryInfo>(contribution.Category) : null,
                 Subject = contribution.Subject,
                 Description = contribution.Description,
                 Status = contribution.Status,
@@ -484,6 +506,15 @@ namespace CMS.Application.Services
             }
         }
 
+        private async Task ValidateCategoryExistsAsync(Guid categoryId)
+        {
+            var category = await _unitOfWork.Repository<Category>().GetByIdAsync(categoryId);
+            if (category == null || !category.IsActive)
+            {
+                throw new InvalidOperationException("Category not found");
+            }
+        }
+
         private static Contribution CreateNewContribution(ContributionCreateRequest request, Guid currentUserId)
         {
             var now = DateTime.UtcNow;
@@ -492,6 +523,7 @@ namespace CMS.Application.Services
                 ContributionId = Guid.NewGuid(),
                 ContributionWindowId = request.ContributionWindowId,
                 FacultyId = request.FacultyId,
+                CategoryId = request.CategoryId,
                 UserId = currentUserId,
                 Subject = request.Subject.Trim(),
                 Description = request.Description.Trim(),
@@ -533,6 +565,30 @@ namespace CMS.Application.Services
             return download;
         }
 
+        public async Task<ContributionFileDownload?> DownloadDocumentByIdAsync(Guid documentId)
+        {
+            if (documentId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _ = _currentUserService.UserId ?? throw new UnauthorizedAccessException("Unauthorized");
+
+            var document = await _unitOfWork.Repository<Document>().GetByIdAsync(documentId);
+            if (document == null || !document.IsActive || document.Data == null || document.Data.Length == 0)
+            {
+                _logger.LogWarning("Document not found for download: {DocumentId}", documentId);
+                return null;
+            }
+
+            return new ContributionFileDownload
+            {
+                Data = document.Data,
+                FileName = document.FileName,
+                ContentType = GetDocumentContentType(document.Extension)
+            };
+        }
+
         public async Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -562,6 +618,20 @@ namespace CMS.Application.Services
             }
 
             return download;
+        }
+
+        private static string GetDocumentContentType(string? extension)
+        {
+            return extension?.ToLowerInvariant() switch
+            {
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
         }
 
         public async Task<ContributionFilesDownload?> DownloadSelectedContributionFilesForManagerAsync(Guid contributionId)

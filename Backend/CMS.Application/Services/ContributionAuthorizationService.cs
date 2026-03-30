@@ -28,7 +28,7 @@ namespace CMS.Application.Services
 
         public async Task ValidateCoordinatorCanReviewContributionAsync(Contribution contribution, User currentUser, string targetStatus)
         {
-            if (!IsInRole(currentUser, ContributionConstants.RoleCoordinator))
+            if (!IsInRole(currentUser, RoleNames.Coordinator))
             {
                 throw new UnauthorizedAccessException("Forbidden");
             }
@@ -86,7 +86,7 @@ namespace CMS.Application.Services
             }
 
             var coordinatorExists = await _unitOfWork.UsersRepository.ExistsUserInRoleWithFacultiesAsync(
-                ContributionConstants.RoleCoordinator,
+                RoleNames.Coordinator,
                 facultyIds,
                 currentUser.UserId);
 

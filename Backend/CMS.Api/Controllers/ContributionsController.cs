@@ -38,6 +38,16 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.ContributionWindowId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution window"), 400);
+                }
+
+                if (request.FacultyId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
+                }
+
                 var createRequest = new ContributionCreateRequest
                 {
                     ContributionWindowId = request.ContributionWindowId,
@@ -161,6 +171,38 @@ namespace CMS.Api.Controllers
         }
 
         [HasPermission(PermissionNames.ContributionRead)]
+        [HttpGet("documents/{documentId:guid}/download")]
+        public async Task<IActionResult> DownloadDocument(Guid documentId)
+        {
+            try
+            {
+                if (documentId == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Document"), 400);
+                }
+
+                var download = await _contributionsService.DownloadDocumentByIdAsync(documentId);
+                if (download == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Document"), 404);
+                }
+
+                return File(download.Data, download.ContentType, download.FileName);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading document {DocumentId}", documentId);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("document"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Student + "," + RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet]
         public async Task<IActionResult> GetMyContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] string? status)
         {
@@ -201,7 +243,7 @@ namespace CMS.Api.Controllers
         [Authorize(Roles = RoleNames.Manager + "," + RoleNames.Guest)]
         [HasPermission(PermissionNames.ContributionRead)]
         [HttpGet("selected")]
-        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetSelectedContributions([FromQuery] PaginationRequest? paginationRequest, [FromQuery] Guid? contributionWindowId)
         {
             try
             {
@@ -212,7 +254,7 @@ namespace CMS.Api.Controllers
 
                 paginationRequest ??= new PaginationRequest();
 
-                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest);
+                var contributions = await _contributionsService.GetSelectedContributionsForFacultyViewerAsync(paginationRequest, contributionWindowId);
                 return contributions.ToApiResponse(ApiResponseMessages.Retrieved("Selected contributions"));
             }
             catch (UnauthorizedAccessException ex)

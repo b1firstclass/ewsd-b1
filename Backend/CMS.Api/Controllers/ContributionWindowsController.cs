@@ -63,6 +63,22 @@ namespace CMS.Api.Controllers
             }
         }
 
+        [HttpGet("active")]
+        [HasPermission(PermissionNames.ContributionWindowRead)]
+        public async Task<IActionResult> GetAllActiveContributionWindows()
+        {
+            try
+            {
+                var contributionWindows = await _contributionWindowsService.GetAllActiveContributionWindowsAsync();
+                return contributionWindows.ToApiResponse(ApiResponseMessages.Retrieved("Active contribution windows"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active contribution windows");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("active contribution windows"), 500);
+            }
+        }
+
         [HttpGet("{id:guid}")]
         [HasPermission(PermissionNames.ContributionWindowRead)]
         public async Task<IActionResult> GetContributionWindowById(Guid id)
@@ -100,8 +116,28 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.SubmissionEndDate <= request.SubmissionOpenDate)
+                {
+                    return this.ToErrorResponse("Submission end date must be after the submission open date", 400);
+                }
+
+                if (request.ClosureDate < request.SubmissionEndDate)
+                {
+                    return this.ToErrorResponse("Closure date must be on or after the submission end date", 400);
+                }
+
+                if (request.AcademicYearEnd < request.AcademicYearStart)
+                {
+                    return this.ToErrorResponse("Academic year end must be greater than or equal to academic year start", 400);
+                }
+
                 var createdContributionWindow = await _contributionWindowsService.CreateContributionWindowAsync(request);
                 return createdContributionWindow.ToApiResponse(ApiResponseMessages.Created("Contribution window"), 201);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution window validation failed while creating contribution window");
+                return this.ToErrorResponse(ex.Message, 400);
             }
             catch (InvalidOperationException ex)
             {
@@ -131,6 +167,24 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.SubmissionOpenDate.HasValue && request.SubmissionEndDate.HasValue
+                    && request.SubmissionEndDate.Value <= request.SubmissionOpenDate.Value)
+                {
+                    return this.ToErrorResponse("Submission end date must be after the submission open date", 400);
+                }
+
+                if (request.SubmissionEndDate.HasValue && request.ClosureDate.HasValue
+                    && request.ClosureDate.Value < request.SubmissionEndDate.Value)
+                {
+                    return this.ToErrorResponse("Closure date must be on or after the submission end date", 400);
+                }
+
+                if (request.AcademicYearStart.HasValue && request.AcademicYearEnd.HasValue
+                    && request.AcademicYearEnd.Value < request.AcademicYearStart.Value)
+                {
+                    return this.ToErrorResponse("Academic year end must be greater than or equal to academic year start", 400);
+                }
+
                 var updatedContributionWindow = await _contributionWindowsService.UpdateContributionWindowAsync(id, request);
                 if (updatedContributionWindow == null)
                 {
@@ -138,6 +192,11 @@ namespace CMS.Api.Controllers
                 }
 
                 return updatedContributionWindow.ToApiResponse(ApiResponseMessages.Updated("Contribution window"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution window validation failed while updating contribution window {ContributionWindowId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
             }
             catch (InvalidOperationException ex)
             {

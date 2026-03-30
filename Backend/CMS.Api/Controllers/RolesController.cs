@@ -103,6 +103,11 @@ namespace CMS.Api.Controllers
                 var createdRole = await _rolesService.CreateRoleAsync(request);
                 return createdRole.ToApiResponse(ApiResponseMessages.Created("Role"), 201);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Role validation failed while creating role");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while creating role");
@@ -138,6 +143,11 @@ namespace CMS.Api.Controllers
                 }
 
                 return updatedRole.ToApiResponse(ApiResponseMessages.Updated("Role"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Role validation failed while updating role {RoleId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
             }
             catch (InvalidOperationException ex)
             {

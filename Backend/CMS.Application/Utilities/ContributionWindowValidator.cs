@@ -23,12 +23,35 @@ namespace CMS.Application.Utilities
             }
         }
 
+        public static void ValidateDatesWithinAcademicYear(
+            DateTime submissionOpenDate,
+            DateTime submissionEndDate,
+            DateTime closureDate,
+            int academicYearStart,
+            int academicYearEnd)
+        {
+            if (submissionOpenDate.Year < academicYearStart || submissionOpenDate.Year > academicYearEnd)
+            {
+                throw new InvalidOperationException("Submission open date must be within the academic year range.");
+            }
+
+            if (submissionEndDate.Year < academicYearStart || submissionEndDate.Year > academicYearEnd)
+            {
+                throw new InvalidOperationException("Submission end date must be within the academic year range.");
+            }
+
+            if (closureDate.Year < academicYearStart || closureDate.Year > academicYearEnd)
+            {
+                throw new InvalidOperationException("Closure date must be within the academic year range.");
+            }
+        }
+
         public static void EnsureAcademicYearAvailable(int academicYearStart, int academicYearEnd, bool exists)
         {
             if (exists)
             {
                 throw new InvalidOperationException(
-                    $"A contribution window already exists for academic year {academicYearStart}-{academicYearEnd}.");
+                    $"A contribution window with overlapping academic year already exists for {academicYearStart}-{academicYearEnd}.");
             }
         }
     }

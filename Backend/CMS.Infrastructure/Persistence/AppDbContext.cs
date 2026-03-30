@@ -1,4 +1,7 @@
-﻿using CMS.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using CMS.Domain.Entities;
+using CMS.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Infrastructure.Persistence;
@@ -9,6 +12,8 @@ public partial class AppDbContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Comment> Comments { get; set; }
 
@@ -24,14 +29,38 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<TestView> TestViews { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserActivityLog> UserActivityLogs { get; set; }
 
+    public virtual DbSet<vw_BrowserList> vw_BrowserLists { get; set; }
+
+    public virtual DbSet<vw_ContributionCountByFacultyAcademicYear> vw_ContributionCountByFacultyAcademicYears { get; set; }
+
+    public virtual DbSet<vw_ContributionPercentageByFacultyAcademicYear> vw_ContributionPercentageByFacultyAcademicYears { get; set; }
+
+    public virtual DbSet<vw_ContributionsWithoutComment> vw_ContributionsWithoutComments { get; set; }
+
+    public virtual DbSet<vw_ContributionsWithoutCommentAfter14Day> vw_ContributionsWithoutCommentAfter14Days { get; set; }
+
+    public virtual DbSet<vw_PageAccessCount> vw_PageAccessCounts { get; set; }
+
+    public virtual DbSet<vw_UserActivityCount> vw_UserActivityCounts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("Categories_pkey");
+
+            entity.HasIndex(e => e.Name, "Categories_Name_key").IsUnique();
+
+            entity.Property(e => e.CategoryId).ValueGeneratedNever();
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.CommentId).HasName("Comments_pkey");
@@ -57,6 +86,11 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.Subject).HasMaxLength(100);
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Contributions)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("Contributions_CategoryId_fkey");
 
             entity.HasOne(d => d.ContributionWindow).WithMany(p => p.Contributions)
                 .HasForeignKey(d => d.ContributionWindowId)
@@ -163,15 +197,6 @@ public partial class AppDbContext : DbContext
                     });
         });
 
-        modelBuilder.Entity<TestView>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("TestView");
-
-            entity.Property(e => e.BrowserName).HasMaxLength(100);
-        });
-
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("Users_pkey");
@@ -215,6 +240,73 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("UserActivityLogs_UserId_fkey");
+        });
+
+        modelBuilder.Entity<vw_BrowserList>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_BrowserList");
+
+            entity.Property(e => e.Browser).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<vw_ContributionCountByFacultyAcademicYear>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_ContributionCountByFacultyAcademicYear");
+
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<vw_ContributionPercentageByFacultyAcademicYear>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_ContributionPercentageByFacultyAcademicYear");
+
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<vw_ContributionsWithoutComment>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_ContributionsWithoutComments");
+
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+            entity.Property(e => e.FullName).HasMaxLength(200);
+            entity.Property(e => e.Subject).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<vw_ContributionsWithoutCommentAfter14Day>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_ContributionsWithoutCommentAfter14Days");
+
+            entity.Property(e => e.FacultyName).HasMaxLength(200);
+            entity.Property(e => e.FullName).HasMaxLength(200);
+            entity.Property(e => e.Subject).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<vw_PageAccessCount>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_PageAccessCount");
+
+            entity.Property(e => e.Resource).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<vw_UserActivityCount>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_UserActivityCount");
+
+            entity.Property(e => e.FullName).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);

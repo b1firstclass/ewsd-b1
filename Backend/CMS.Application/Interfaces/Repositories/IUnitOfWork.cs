@@ -9,6 +9,8 @@
         IContributionWindowsRepository ContributionWindowsRepository { get; }
         IContributionsRepository ContributionsRepository { get; }
         ICommentsRepository CommentsRepository { get; }
+        IReportRepository ReportRepository { get; }
+        ICategoryRepository CategoryRepository { get; }
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

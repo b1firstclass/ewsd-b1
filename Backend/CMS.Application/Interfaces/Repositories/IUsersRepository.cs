@@ -7,7 +7,7 @@ namespace CMS.Application.Interfaces.Repositories
     {
         Task<User?> GetByLoginIdAsync(string loginId);
         Task<User?> GetByUserIdAsync(Guid userId);
-        Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null);
+        Task<PagedResult<User>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null, Guid? roleId = null, Guid? facultyId = null);
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetByRefreshTokenAsync(string refreshToken);
         Task<List<User>> GetUsersByFacultyIdAsync(List<Guid> facultyIds, string roleName);

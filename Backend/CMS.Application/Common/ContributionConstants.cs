@@ -15,12 +15,6 @@ namespace CMS.Application.Common
         public const string StatusSelected = "Selected";
 
 
-        public const string RoleStudent = "Student";
-        public const string RoleCoordinator = "Coordinator";
-        public const string RoleGuest = "Guest";
-        public const string RoleManager = "Manager";
-        public const string RoleAdmin = "Admin";
-
         public static readonly Dictionary<string, string> StatusMap = new(StringComparer.OrdinalIgnoreCase)
         {
             [StatusDraft] = StatusDraft,

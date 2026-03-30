@@ -26,7 +26,7 @@ namespace CMS.Api.Controllers
 
         [HasPermission(PermissionNames.UsersRead)]
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetAllUsers([FromQuery] UserPaginationRequest? paginationRequest)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
-                paginationRequest ??= new PaginationRequest();
+                paginationRequest ??= new UserPaginationRequest();
 
                 var users = await _userService.GetAllUsersAsync(paginationRequest);
 
@@ -167,6 +167,16 @@ namespace CMS.Api.Controllers
 
                 return userEntity.ToApiResponse(ApiResponseMessages.Created("User"), 201);
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "User validation failed while creating user");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Referenced resource not found while creating user");
+                return this.ToErrorResponse(ex.Message, 404);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while creating user");
@@ -203,6 +213,16 @@ namespace CMS.Api.Controllers
 
                 return updatedUser.ToApiResponse(ApiResponseMessages.Updated("User"));
             }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "User validation failed while updating user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Referenced resource not found while updating user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 404);
+            }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Business validation failed while updating user {UserId}", id);
@@ -238,6 +258,37 @@ namespace CMS.Api.Controllers
             {
                 _logger.LogError(ex, "Error deleting user {UserId}", id);
                 return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("user"), 500);
+            }
+        }
+
+        [HttpPatch("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var userId = _currentUserService.UserId;
+                if (!userId.HasValue)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.Unauthorized, 401);
+                }
+
+                await _userService.ChangePasswordAsync(userId.Value, request);
+                return this.ToSuccessResponse("Password changed successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Password change failed for user");
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password");
+                return this.ToErrorResponse("An error occurred while changing the password", 500);
             }
         }
     }

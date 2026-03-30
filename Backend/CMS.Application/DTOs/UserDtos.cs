@@ -1,4 +1,5 @@
-﻿using CMS.Application.Utilities;
+﻿using CMS.Application.Common;
+using CMS.Application.Utilities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Application.DTOs
@@ -55,6 +56,23 @@ namespace CMS.Application.DTOs
         [Required(ErrorMessage = "Password is required")]
         public required string Password { get; set; }
     }
+
+    public class ChangePasswordRequest
+    {
+        [Required(ErrorMessage = "Current password is required")]
+        public required string CurrentPassword { get; set; }
+
+        [Required(ErrorMessage = "New password is required")]
+        [PasswordValidation]
+        public required string NewPassword { get; set; }
+    }
+
+    public class UserPaginationRequest : PaginationRequest
+    {
+        public Guid? RoleId { get; set; }
+
+        public Guid? FacultyId { get; set; }
+    }
     #endregion
 
     #region response
@@ -82,6 +100,7 @@ namespace CMS.Application.DTOs
         public required string Token { get; set; }
         public DateTime ExpiresAt { get; set; }
         public required string RefreshToken { get; set; }
+        public bool FirstTimeLogin { get; set; }
     }
 
     public class RefreshTokenRequest
