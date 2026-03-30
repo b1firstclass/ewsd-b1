@@ -198,6 +198,7 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
                 <ContributionGrid
                     contributions={filtered}
                     onView={onView}
+                    facultyName={guestFaculty?.name}
                     emptyMessage={`No selected contributions available${guestFaculty ? ` for ${guestFaculty.name}` : ''}.`}
                 />
             ) : (

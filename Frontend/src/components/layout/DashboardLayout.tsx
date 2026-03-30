@@ -4,7 +4,7 @@ import { AppShell } from "./AppShell";
 import { getNavItemsForRole } from "@/utils/roleNavigation";
 import { ROLES, type RoleName } from "@/types/constants/roleConstants";
 import { getUserRoleFromToken } from "@/utils/jwtUtils";
-import { SidebarUserCard, HeaderUserButton } from "./UserMenuDropdown";
+import { SidebarFacultyDisplay, HeaderUserButton } from "./UserMenuDropdown";
 import React from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { backendApi } from "@/lib/backendApi";
@@ -40,7 +40,7 @@ export const DashboardLayout = () => {
   return (
     <AppShell
       navItems={navItems}
-      sidebarFooter={<SidebarUserCard role={role} />}
+      sidebarFooter={<SidebarFacultyDisplay />}
       headerRight={<HeaderUserButton role={role} />}
     >
       <Outlet />

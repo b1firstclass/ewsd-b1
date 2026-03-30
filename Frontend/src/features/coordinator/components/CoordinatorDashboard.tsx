@@ -90,7 +90,13 @@ export const CoordinatorDashboard = () => {
         [ContributionStatus.Rejected]: stats.rejected,
     };
 
-    const recentSubmissions = reviewQueue.slice(0, 4);
+    const facultyName = user?.faculties?.[0]?.name;
+    const indexedSubmissions = reviewQueue.map((item, index) => ({
+                                item,
+                                index,
+                                }));
+
+    const recentSubmissions = indexedSubmissions.slice(0, 4);
 
     const handleStatClick = (filterValue: string) => {
         navigate({ to: `/coordinator/review-queue?status=${encodeURIComponent(filterValue)}` });
@@ -224,12 +230,14 @@ export const CoordinatorDashboard = () => {
 
                 {recentSubmissions.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        {recentSubmissions.map((submission) => (
+                        {recentSubmissions.map(({ item, index }) => (
                             <ContributionCard
-                                key={submission.id}
-                                contribution={submission}
+                                key={item.id}
+                                contribution={item}
+                                index={index}
                                 onView={(c) => setViewingId(c.id)}
                                 coordinatorMode
+                                facultyName={facultyName}
                             />
                         ))}
                     </div>

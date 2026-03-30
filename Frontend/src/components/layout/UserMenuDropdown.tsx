@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { ROLE_DISPLAY_NAMES, type RoleName } from "@/types/constants/roleConstants";
-import { LogOut, Shield, Clock, Building2, ChevronUp } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar";
+import { LogOut, Shield, Clock, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, type ReactNode } from "react";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface UserMenuDropdownProps {
   role: RoleName;
@@ -159,40 +159,39 @@ export const UserAvatar = ({
   );
 };
 
-/** Sidebar footer user card — reads collapse state from sidebar context */
-export const SidebarUserCard = ({ role }: { role: RoleName }) => {
+/** Faculty name display for sidebar footer */
+export const SidebarFacultyDisplay = () => {
   const { isCollapsed, viewportTier } = useSidebar();
   const isMobile = viewportTier === "mobile";
   const collapsed = !isMobile && isCollapsed;
   const { user } = useAuth();
-  const displayName = user?.fullName || user?.loginId || "User";
-
+  
+  const facultyNames = user?.faculties?.map((f) => f.name).join(", ");
+  
+  if (!facultyNames) return null;
+  
   return (
-    <UserMenuDropdown role={role} context="sidebar">
-      <button
-        type="button"
-        className={cn(
-          "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-sidebar-accent/10",
-          collapsed && "justify-center px-0",
-        )}
-      >
-        <UserAvatar name={displayName} />
+    <div className={cn(
+      "px-2 py-1.5 text-sidebar-foreground",
+      collapsed && "px-0 text-center"
+    )}>
+      <div className={cn(
+        "flex items-center gap-2",
+        collapsed && "justify-center"
+      )}>
+        <Building2 className="h-4 w-4 text-sidebar-foreground/80 shrink-0" />
         {!collapsed && (
-          <div className="flex flex-1 items-center gap-1 overflow-hidden">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-sidebar-foreground">
-                {displayName}
-              </p>
-              <p className="truncate text-[11px] text-sidebar-foreground/60">
-                {ROLE_DISPLAY_NAMES[role]}
-                {user?.faculties?.[0]?.name ? ` · ${user.faculties[0].name}` : ""}
-              </p>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-medium opacity-80">
+              Affiliated Faculty
             </div>
-            <ChevronUp className="h-3.5 w-3.5 shrink-0 text-sidebar-foreground/40" />
+            <div className="text-sm font-semibold truncate">
+              {facultyNames}
+            </div>
           </div>
         )}
-      </button>
-    </UserMenuDropdown>
+      </div>
+    </div>
   );
 };
 

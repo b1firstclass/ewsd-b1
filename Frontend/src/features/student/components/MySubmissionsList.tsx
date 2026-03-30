@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Plus, LayoutGrid, List } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { ApiRoute } from "@/types/constantApiRoute";
 import { ContributionStatus } from "@/types/contributionType";
@@ -30,6 +31,8 @@ const STATUS_FILTERS = [
 ] as const;
 
 export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmission, initialStatusFilter }: MySubmissionsListProps) => {
+    const { user } = useAuth();
+    const facultyName = user?.faculties?.[0]?.name;
     const [submissions, setSubmissions] = useState<ContributionInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -152,6 +155,7 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
                     onView={onViewSubmission}
                     onEdit={onEditSubmission}
                     onSubmit={handleSubmitContribution}
+                    facultyName={facultyName}
                     emptyMessage={
                         searchTerm
                             ? 'No contributions match your search.'

@@ -99,7 +99,13 @@ export const StudentDashboard = () => {
         [ContributionStatus.Selected]: stats.selected,
     };
 
-    const recentSubmissions = mySubmissions.slice(0, 4);
+    const facultyName = user?.faculties?.[0]?.name;
+    const indexedSubmissions = mySubmissions.map((item, index) => ({
+                                            item,
+                                            index,
+                                            }));
+
+    const recentSubmissions = indexedSubmissions.slice(0, 4);
 
     const handleStatClick = (filterValue: string) => {
         const search = filterValue !== 'all' ? `?status=${encodeURIComponent(filterValue)}` : '';
@@ -241,11 +247,13 @@ export const StudentDashboard = () => {
 
                 {recentSubmissions.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        {recentSubmissions.map((submission) => (
+                        {recentSubmissions.map(({ item, index }) => (
                             <ContributionCard
-                                key={submission.id}
-                                contribution={submission}
+                                key={item.id}
+                                contribution={item}
+                                index={index}
                                 onView={handleViewContribution}
+                                facultyName={facultyName}
                             />
                         ))}
                     </div>

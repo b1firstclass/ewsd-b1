@@ -222,6 +222,7 @@ export const GuestDashboard = ({ onView }: GuestDashboardProps = {}) => {
                 <ContributionGrid
                     contributions={contributions.slice(0, 6)}
                     onView={onView || (() => {})}
+                    facultyName={guestFaculty?.name}
                     emptyMessage="No selected contributions available for your faculty."
                 />
             </div>

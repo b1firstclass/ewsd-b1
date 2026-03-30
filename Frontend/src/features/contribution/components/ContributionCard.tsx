@@ -4,22 +4,7 @@ import { ContributionStatus, EDITABLE_STATUSES, SUBMITTABLE_STATUSES } from "@/t
 import type { ContributionInfo, ContributionStatusValue } from "@/types/contributionType";
 import { cn } from "@/lib/utils";
 
-import banner1 from "@/assets/banner1.jpg";
-import banner2 from "@/assets/banner2.jpg";
-import banner3 from "@/assets/banner3.jpg";
-import banner4 from "@/assets/banner4.jpg";
-
-const BANNERS = [banner1, banner2, banner3, banner4];
-
-const getBanner = (id: string) => {
-  let hash = 0;
-
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  return BANNERS[Math.abs(hash) % BANNERS.length];
-};
+import { getFacultyBanner } from "@/utils/facultyBanners";
 
 // ─── Status Visual Config ───────────────────────────────────────────────────
 
@@ -106,18 +91,22 @@ const formatRelativeDate = (dateString?: string): string => {
 
 interface ContributionCardProps {
     contribution: ContributionInfo;
+    index: number;
     onView: (c: ContributionInfo) => void;
     onEdit?: (c: ContributionInfo) => void;
     onSubmit?: (c: ContributionInfo) => void;
     coordinatorMode?: boolean;
+    facultyName?: string;
 }
 
 export const ContributionCard = ({
     contribution,
+    index,
     onView,
     onEdit,
     onSubmit,
     coordinatorMode = false,
+    facultyName,
 }: ContributionCardProps) => {
     const config = getStatusConfig(contribution.status);
     const canEdit = !coordinatorMode && EDITABLE_STATUSES.includes(contribution.status as ContributionStatusValue);
@@ -142,8 +131,8 @@ export const ContributionCard = ({
 
             {/* Content */}
             <div className="flex flex-1 flex-col p-4">
-                {/* Header: Status Badge + Date + Edited */}
-                <div className="mb-3 flex items-center justify-between">
+                {/* Row 1: Status Badge + Action Buttons */}
+                <div className="mb-1 flex items-center justify-between">
                     <span
                         className={cn(
                             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
@@ -153,11 +142,37 @@ export const ContributionCard = ({
                         <span className={cn("h-1.5 w-1.5 rounded-full", config.dotColor)} />
                         {config.label}
                     </span>
-                    <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {formatRelativeDate(contribution.createdDate)}
-                        {editedLabel && <span className="ml-0.5">{editedLabel}</span>}
-                    </span>
+                    <div className="flex items-center gap-1">
+                        {canEdit && onEdit && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent"
+                                onClick={(e) => { e.stopPropagation(); onEdit(contribution); }}
+                                title="Edit"
+                            >
+                                <Edit2 className="h-3 w-3" />
+                            </Button>
+                        )}
+                        {canSubmit && onSubmit && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 rounded-full text-primary hover:text-primary hover:bg-primary/10"
+                                onClick={(e) => { e.stopPropagation(); onSubmit(contribution); }}
+                                title="Submit for review"
+                            >
+                                <Send className="h-3 w-3" />
+                            </Button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Row 2: Date + Edited */}
+                <div className="mb-3 flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {formatRelativeDate(contribution.createdDate)}
+                    {editedLabel && <span>{editedLabel}</span>}
                 </div>
 
                 {/* Title */}
@@ -171,41 +186,15 @@ export const ContributionCard = ({
                 </p>
             </div>
 
-            {/* Banner Footer — decorative image strip with hover action overlay */}
+            {/* Banner Footer — purely decorative */}
             <div className="relative h-12 w-full overflow-hidden">
-                {/* Soft top fade */}
-                <div className="absolute inset-x-0 top-0 z-10 h-4 bg-gradient-to-b from-card/80 to-transparent" />
+                <div className="absolute inset-x-0 top-0 z-10 h-3 bg-gradient-to-b from-card/50 via-card/10 to-transparent" />
                 <img
-                    src={getBanner(contribution.id)}
+                    src={getFacultyBanner(index, facultyName)}
                     alt=""
                     aria-hidden
                     className="h-full w-full object-cover object-bottom opacity-80 transition-opacity duration-200 group-hover:opacity-90"
                 />
-                {/* Hover action buttons */}
-                <div className="absolute inset-0 z-20 flex items-center justify-end gap-1 px-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    {canEdit && onEdit && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0 bg-card/70 hover:bg-card backdrop-blur-sm"
-                            onClick={(e) => { e.stopPropagation(); onEdit(contribution); }}
-                            title="Edit"
-                        >
-                            <Edit2 className="h-3.5 w-3.5" />
-                        </Button>
-                    )}
-                    {canSubmit && onSubmit && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0 bg-card/70 hover:bg-card backdrop-blur-sm text-primary hover:text-primary"
-                            onClick={(e) => { e.stopPropagation(); onSubmit(contribution); }}
-                            title="Submit for review"
-                        >
-                            <Send className="h-3.5 w-3.5" />
-                        </Button>
-                    )}
-                </div>
             </div>
         </article>
     );
@@ -219,6 +208,7 @@ interface ContributionGridProps {
     onEdit?: (c: ContributionInfo) => void;
     onSubmit?: (c: ContributionInfo) => void;
     coordinatorMode?: boolean;
+    facultyName?: string;
     emptyMessage?: string;
 }
 
@@ -228,6 +218,7 @@ export const ContributionGrid = ({
     onEdit,
     onSubmit,
     coordinatorMode = false,
+    facultyName,
     emptyMessage = "No contributions found.",
 }: ContributionGridProps) => {
     if (contributions.length === 0) {
@@ -241,14 +232,16 @@ export const ContributionGrid = ({
 
     return (
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-            {contributions.map((contribution) => (
+            {contributions.map((contribution, index) => (
                 <div key={contribution.id} className="mb-4 break-inside-avoid">
                     <ContributionCard
                         contribution={contribution}
+                        index={index}
                         onView={onView}
                         onEdit={onEdit}
                         onSubmit={onSubmit}
                         coordinatorMode={coordinatorMode}
+                        facultyName={facultyName}
                     />
                 </div>
             ))}

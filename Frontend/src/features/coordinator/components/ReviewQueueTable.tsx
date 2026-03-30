@@ -10,6 +10,7 @@ import type { ContributionInfo, ContributionStatusValue } from "@/types/contribu
 import { ContributionGrid } from "@/features/contribution/components/ContributionCard";
 import { computeCommentDeadline, formatCommentDeadline, getCommentDeadlineBadgeColor } from "../hooks/useCommentDeadline";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ─── Status Filters (coordinator sees non-draft statuses) ───────────────────
 
@@ -30,6 +31,8 @@ interface ReviewQueueProps {
 }
 
 export const ReviewQueueTable = ({ onViewDetails, initialStatusFilter }: ReviewQueueProps) => {
+    const { user } = useAuth();
+    const facultyName = user?.faculties?.[0]?.name;
     const [submissions, setSubmissions] = useState<ContributionInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -206,6 +209,7 @@ export const ReviewQueueTable = ({ onViewDetails, initialStatusFilter }: ReviewQ
                     contributions={filteredSubmissions}
                     onView={onViewDetails}
                     coordinatorMode
+                    facultyName={facultyName}
                     emptyMessage={
                         statusFilter !== 'all'
                             ? `No ${statusFilter.toLowerCase()} contributions.`
