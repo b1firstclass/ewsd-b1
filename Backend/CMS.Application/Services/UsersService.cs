@@ -232,6 +232,8 @@ namespace CMS.Application.Services
                 user.Password = _passwordHasher.HashPassword(user, request.Password);
             }
 
+            var isFirstTimeLogin = user.LastLoginDate == null ? true : false;
+
             user.LastLoginDate = DateTime.UtcNow;
             var refreshTokenInfo = _tokenService.GenerateRefreshToken();
             user.RefreshToken = refreshTokenInfo.Token;
@@ -242,7 +244,7 @@ namespace CMS.Application.Services
 
             var accessTokenInfo = _tokenService.GenerateAccessToken(user);
 
-            var isFirstTimeLogin = user.LastLoginDate == null ? true : false;
+            
 
             return new UserLoginResponse
             {
