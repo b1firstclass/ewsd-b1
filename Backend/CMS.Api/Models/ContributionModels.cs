@@ -10,6 +10,8 @@ namespace CMS.Api.Models
         [Required]
         public Guid FacultyId { get; set; }
 
+        public Guid? CategoryId { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Subject { get; set; } = string.Empty;
@@ -31,6 +33,8 @@ namespace CMS.Api.Models
 
         [MaxLength(500)]
         public string? Description { get; set; }
+
+        public Guid? CategoryId { get; set; }
 
         public IFormFile? DocumentFile { get; set; }
 
