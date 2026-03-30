@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@radix-ui/react-label"
+import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Lock, User } from "lucide-react"
 import { useState, type FormEvent } from "react"
 import { useLogin } from "../hooks/useLogin"
@@ -10,6 +10,7 @@ import { inputIconClass } from "@/tailwindStyle"
 export const LoginForm = () => {
 
     const [formData, setFormData] = useState({ loginId: "", password: "" });
+    const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState<{ userName?: string; password?: string }>();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -34,20 +35,20 @@ export const LoginForm = () => {
         e.preventDefault();
 
         if (validate()) {
-            login({ loginId: formData.loginId, password: formData.password });
+            login({
+                credentials: { loginId: formData.loginId, password: formData.password },
+                rememberMe,
+            });
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} >
-            <Card className="w-[90vw] md:w-[350px] lg:w-[450px]">
+        <form onSubmit={handleSubmit} className="w-full max-w-md">
+            <Card>
                 <CardHeader>
                     <CardTitle className="font-display text-2xl">Sign in</CardTitle>
-                    {/* <p className="text-sm text-muted-foreground">
-                        Use your studio credentials to continue.
-                    </p> */}
                     {error && (
-                        <span className="text-red-500 text-sm">{error.message}</span>
+                        <span className="text-sm text-destructive">{error.message}</span>
                     )}
                 </CardHeader>
                 <CardContent className="grid gap-5">
@@ -89,12 +90,6 @@ export const LoginForm = () => {
                             </button>
                         </div>
                     </div>
-                    {/* <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>Need help? Contact support.</span>
-                        <button className="font-semibold text-foreground hover:text-primary">
-                            Reset password
-                        </button>
-                    </div> */}
                     <div className="flex items-center justify-between gap-3 pt-1">
                         <label
                             htmlFor="rememberMe"
@@ -103,6 +98,8 @@ export const LoginForm = () => {
                             <input
                                 id="rememberMe"
                                 type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
                                 className="h-4 w-4 rounded border-input accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                             />
                             <span>Remember me</span>

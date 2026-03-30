@@ -48,10 +48,16 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.IdRequired("Faculty"), 400);
                 }
 
+                if (request.CategoryId.HasValue && request.CategoryId.Value == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Category"), 400);
+                }
+
                 var createRequest = new ContributionCreateRequest
                 {
                     ContributionWindowId = request.ContributionWindowId,
                     FacultyId = request.FacultyId,
+                    CategoryId = request.CategoryId,
                     Subject = request.Subject,
                     Description = request.Description,
                     DocumentFile = await MapFileAsync(request.DocumentFile, cancellationToken),
@@ -101,10 +107,16 @@ namespace CMS.Api.Controllers
                     return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
                 }
 
+                if (request.CategoryId.HasValue && request.CategoryId.Value == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Category"), 400);
+                }
+
                 var updateRequest = new ContributionUpdateRequest
                 {
                     Subject = request.Subject,
                     Description = request.Description,
+                    CategoryId = request.CategoryId,
                     DocumentFile = request.DocumentFile == null ? null : await MapFileAsync(request.DocumentFile, cancellationToken),
                     ImageFile = request.ImageFile == null ? null : await MapFileAsync(request.ImageFile, cancellationToken)
                 };

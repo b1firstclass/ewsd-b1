@@ -1,0 +1,4530 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jira</title>
+    <meta http-equiv="Content-Type" Content="application/vnd.ms-word; charset=UTF-8">
+        <style type="text/css">
+
+.tableBorder, .grid
+{
+    background-color: #fff;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableBorder td, .grid td
+{
+    vertical-align: top;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+.noPadding
+{
+    padding: 0 !important;
+}
+
+h3 .subText
+{
+    font-size: 60%;
+    font-weight: normal;
+}
+
+.tabLabel
+{
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-bottom:none;
+    padding: 2px;
+    display: inline;
+}
+
+td.blank
+{
+    padding: 0;
+    margin: 0;
+}
+
+.blank td
+{
+    border: none;
+}
+
+#descriptionArea
+{
+    margin: 0;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+hr
+{
+    border-top:1px solid #aaa;
+}
+
+hr.fullcontent
+{
+  height: 15px;
+  padding: 10px 0;
+  background: #fff url('https://hhaheinms.atlassian.net/images/icons/hr.gif') no-repeat scroll center;
+}
+
+</style>
+
+</head>
+<body>
+
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-25]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-25">Core Information Architecture (Sitemap)</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 28/Feb/26
+
+                                                    &nbsp;Resolved: 28/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                id="word_assignee_712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A3a011695-a1d2-449e-8931-ac95109507d2">
+                    Zaw Naing Win
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10237-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10237-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:x
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10237-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <p>As a Web Designer/Information Architect, I want a clear Information Architecture for mobile and desktop so that we meet the "Site Design" (10%) criteria.</p>
+
+
+
+<ul>
+	<li><b>Technical Scope:</b> * Create a <b>Sitemap</b> and <b>User Flow</b> for the Login and Dashboard views.</li>
+	<li><b>Acceptance Criteria (UoG Alignment):</b>
+	<ul>
+		<li>Diagram clearly shows different paths for Students, Coordinators, and Admins.</li>
+		<li>Documentation includes a "Non-Technical" description to prepare for Task 3 (the Presentation).</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-24]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-24">Group Repository Setup &amp; Secure Access Management</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 28/Feb/26
+
+                                                    &nbsp;Resolved: 28/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                id="word_assignee_712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A3a011695-a1d2-449e-8931-ac95109507d2">
+                    Zaw Naing Win
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10236-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10236-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:y
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10236-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <p>As a Scrum Team, I want a secure, central repository with a structured menu so that the tutor can easily access all our coursework artefacts (ERDs, Minutes, Backlogs) as required by the Deliverables specification.</p>
+
+
+
+<ul>
+	<li><b>Technical Scope:</b> * Set up the Group Repository (GitHub Wiki, SharePoint, or Google Drive) with a professional "Main Menu."
+	<ul>
+		<li>Ensure the repository is secure but provides "Tutor Access" as per coursework requirements.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria (UoG Alignment):</b>
+	<ul>
+		<li>Repository has a clear folder structure: <tt>Minutes</tt>, <tt>Design_Artefacts</tt>, <tt>Agile_Metrics</tt>, <tt>Code</tt>.</li>
+		<li>A "Readme" or "Menu" page exists that allows the tutor to navigate to any artefact within two clicks.</li>
+		<li>URL and credentials for the repository are documented and ready for the individual reports.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-23]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-23">Agile Ceremony Documentation &amp; Minutes</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 26/Feb/26
+
+                                                    &nbsp;Resolved: 26/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                id="word_assignee_712020:3a011695-a1d2-449e-8931-ac95109507d2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A3a011695-a1d2-449e-8931-ac95109507d2">
+                    Zaw Naing Win
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10235-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            7 hours
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            7 hours
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10235-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:i
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10235-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <p>As a Scrum Master, I want to document our Sprint 1 Planning and Daily Standups so that we have evidence of "Agile methods followed" for the 10% assessment component.</p>
+
+
+
+<ul>
+	<li><b>Technical Scope:</b> * Create a standardized "Meeting Minutes" template.
+	<ul>
+		<li>Document the <b>Sprint 1 Planning Meeting</b> (Attendance, Goals, Task Allocation).</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>Minutes include a list of team members, roles assigned, and key decisions made.</li>
+		<li>Evidence of "Diverse Background" collaboration (Learning Outcome 1) is subtly highlighted in the meeting notes.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-22]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-22">Audit Logging &amp; Browser Metadata Schema (V2 Req)</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                id="word_assignee_712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A98778731-1bb0-4a18-8a84-f81833759fd2">
+                    Terra
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10234-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10234-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dr:9
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10234-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li>As an Administrator, I want a dedicated logging structure so that I can track user login activity and browser types as required by the V2 project specifications.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Design and deploy the <tt>UserActivityLogs</tt> table.</li>
+		<li><b>Columns:</b> <tt>Id</tt> (UUID), <tt>UserId</tt> (FK), <tt>Action</tt> (e.g., 'LOGIN_SUCCESS'), <tt>IPAddress</tt>, <tt>UserAgent</tt> (Text), <tt>CreatedAt</tt> (Timestamp).</li>
+		<li><b>Optimization:</b> Create a non-clustered index on <tt>UserId</tt> and <tt>CreatedAt</tt> to optimize for the "Last Login" lookup query used in <b><span class="error">&#91;GREEN-1.3&#93;</span></b>.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>The table successfully logs a dummy entry via a manual SQL insert.</li>
+		<li>The Foreign Key to the <tt>Users</tt> table is configured with <tt>ON DELETE SET NULL</tt> to preserve logs even if a user account is deleted (for audit compliance).</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-21]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-21">Identity Seeding &amp; Role-Based Configuration</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                id="word_assignee_712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A98778731-1bb0-4a18-8a84-f81833759fd2">
+                    Terra
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10233-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10233-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dv:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10233-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li>As a System Owner, I want the system to be pre-populated with Greenwich-specific roles and faculties so that we can begin testing role-based access immediately.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Create a SQL seeding script that populates the static lookup tables.</li>
+		<li><b>Faculties:</b> Insert "Business", "IT", "Creative Arts", "Engineering", etc.</li>
+		<li><b>Roles:</b> Insert "Administrator", "Marketing Manager", "Marketing Coordinator", "Student", and "Guest".</li>
+		<li><b>Test Data:</b> Create one test user per role with a known hashed password (provided by Min Khant).</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>Running the seed script results in zero errors.</li>
+		<li>A <tt>SELECT</tt> query confirms the presence of all 5 roles and all faculties.</li>
+		<li>Verification that a <tt>User</tt> can be successfully mapped to a <tt>Faculty</tt> and a <tt>Role</tt>.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-20]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-20">High-Fidelity App Shell &amp; Login Flow</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                id="word_assignee_712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ae07e5c4c-3205-48c1-98e7-a748cd9254a9">
+                    Yan Yan Moe Oo
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10232-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10232-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dr:i
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10232-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-19]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-19">Atomic Component Library (Shadcn Customization)</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                id="word_assignee_712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ae07e5c4c-3205-48c1-98e7-a748cd9254a9">
+                    Yan Yan Moe Oo
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10231-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10231-value" class="value" bgcolor="#ffffff" width="80%">      0|i000ds:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10231-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-18]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-18">Greenwich Digital Identity &amp; Tailwind 4 Design Tokens</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                id="word_assignee_712020:e07e5c4c-3205-48c1-98e7-a748cd9254a9"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ae07e5c4c-3205-48c1-98e7-a748cd9254a9">
+                    Yan Yan Moe Oo
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10230-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10230-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dr:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10230-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-17]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-17">Security Awareness: &quot;Last Login&quot; Notification UI</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_assignee_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10229-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10229-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dz:9
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10229-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-16]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-16">Type-Safe Authentication Logic &amp; Session Management</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_assignee_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10228-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10228-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dz:4
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10228-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-15]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-15">Server-State Infrastructure with TanStack Query &amp; Axios</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_assignee_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10227-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10227-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dz:i
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10227-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-14]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-14">Core Identity Schema &amp; Referential Integrity</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="63f5f143e8216251ae4dde95"
+                id="word_reporter_63f5f143e8216251ae4dde95"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=63f5f143e8216251ae4dde95">
+                    Hein Htet
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                id="word_assignee_712020:98778731-1bb0-4a18-8a84-f81833759fd2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A98778731-1bb0-4a18-8a84-f81833759fd2">
+                    Terra
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10226-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10226-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dt:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10226-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li>As a Developer, I want a stable and constrained database schema for Users, Roles, and Faculties so that I can persist identity data without risk of data corruption or orphaned records.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Initialize the PostgreSQL database and implement the DDL (Data Definition Language) for the core identity cluster.</li>
+		<li><b>Tables:</b> <tt>Faculties</tt>, <tt>Roles</tt>, <tt>Users</tt>, and <tt>UserRoles</tt> (for M:M relationship if applicable, otherwise a <tt>RoleId</tt> FK in <tt>Users</tt>).</li>
+		<li><b>Constraints:</b> Implement <tt>UUID</tt> as Primary Keys, <tt>UNIQUE</tt> on <tt>Users.Email</tt>, and <tt>NOT NULL</tt> on critical fields.</li>
+		<li><b>Referential Integrity:</b> Set <tt>ON DELETE RESTRICT</tt> for Faculties to ensure no faculty is deleted while users are assigned to it.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>All tables are generated with correct data types (e.g., <tt>timestamp with time zone</tt> for dates).</li>
+		<li>The schema includes an <tt>IsActive</tt> boolean for soft-deletion of users.</li>
+		<li>An ERD (Entity Relationship Diagram) is generated and exported to the documentation folder.</li>
+		<li>The database is accessible to the Backend API via a connection string.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-13]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-13">Core Data Dictionary &amp; ERD Verification</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 27/Feb/26
+
+                                                    &nbsp;Resolved: 27/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_reporter_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_assignee_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10225-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10225-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:v
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10225-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-12]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-12">API Blueprint &amp; JSON Schema Specification</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 27/Feb/26
+
+                                                    &nbsp;Resolved: 27/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_reporter_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_assignee_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10224-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10224-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:r
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10224-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-10]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-10">Infrastructure Design &amp; Stack Justification</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 25/Feb/26
+
+                                                    &nbsp;Resolved: 25/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_reporter_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                id="word_assignee_712020:ffbd4a3e-9674-4feb-af6e-3b99849696ef"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Affbd4a3e-9674-4feb-af6e-3b99849696ef">
+                    Aung Kaung Myat
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10222-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            4 hours
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            4 hours
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10222-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Start date:</b></td>
+                <td id="customfield_10015-10222-value" class="value" bgcolor="#ffffff" width="80%">          <span title="23/Feb/26"><time datetime="2026-02-23">23/Feb/26</time></span>
+    </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10222-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-9]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-9">Role-Based UI Component Filtering (RBAC)</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                High
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_reporter_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_assignee_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10221-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10221-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dy:9
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10221-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-8]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-8">Client-Side Routing &amp; Protected Route Guards</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_reporter_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_assignee_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10220-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10220-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dy:i
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10220-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-7]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-7">Responsive App Shell with Shadcn &amp; Tailwind 4</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 28/Feb/26
+
+                                                    &nbsp;Resolved: 28/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Highest
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_reporter_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                id="word_assignee_712020:c1502271-1b71-4db2-a76e-5663274983c2"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3Ac1502271-1b71-4db2-a76e-5663274983c2">
+                    Thet Wai Aung
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10219-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10219-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dy:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10219-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-6]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-6">Cross-Browser &amp; Responsive Layout Audit (Vite/Tailwind 4)</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_reporter_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_assignee_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10218-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10218-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dy:b
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10218-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-5]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-5">RBAC Verification &amp; JWT Claim Audit</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Highest
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_reporter_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_assignee_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10217-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10217-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dz:2
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10217-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-4]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-4">API Security &amp; Authentication Test Suite</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 01/Mar/26
+
+                                                    &nbsp;Resolved: 01/Mar/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_reporter_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                id="word_assignee_712020:57ce7491-6e91-4b9a-8de5-14e378ccbd2c"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A57ce7491-6e91-4b9a-8de5-14e378ccbd2c">
+                    haru
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10216-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10216-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dy:d
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10216-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-3]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-3">V2 Feature: Last-Login Persistence &amp; Security Notification Logic</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 28/Feb/26
+
+                                                    &nbsp;Resolved: 28/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_assignee_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10215-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10215-value" class="value" bgcolor="#ffffff" width="80%">      0|i000e0:m
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10215-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li><b>User Story:</b> As a User, I want the system to capture my login metadata so that I can be notified of my "Last Login" time for security monitoring.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Extend the <tt>Login</tt> endpoint logic to perform a "Read-then-Update" operation:
+		<ol>
+			<li>Fetch the <tt>LastLoginDate</tt> current value from the <tt>Users</tt> table.</li>
+			<li>Store this value in the <tt>LoginResponseDto</tt>.</li>
+			<li>Update the <tt>Users</tt> record with the <em>current</em> <tt>DateTime.UtcNow</tt> and the <tt>RemoteIpAddress</tt>.</li>
+		</ol>
+		</li>
+		<li>Integrate the <tt>UserActivityLogs</tt> service (built by Terra) to record a "Login" event type.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>The API JSON response includes a <tt>previousLogin</tt> field containing the timestamp of the <em>prior</em> session.</li>
+		<li>If a user has never logged in, the <tt>previousLogin</tt> field returns <tt>null</tt>.</li>
+		<li>The database update must be successful before the $200\text
+{ OK}
+<p>$ response is returned to ensure data consistency.</p></li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-2]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-2">Security Token Service (STS) &amp; Claims-Based RBAC</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 25/Feb/26
+
+                                                    &nbsp;Resolved: 25/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Highest
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_assignee_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10214-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            1 day
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10214-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dz:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10214-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li><b>User Story:</b> As a Developer, I want a signed JWT token containing user role and faculty claims so that the frontend and API can enforce security boundaries without repetitive DB lookups.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Configure <tt>Microsoft.AspNetCore.Authentication.JwtBearer</tt> in <tt>Program.cs</tt>.</li>
+		<li>Implement a <tt>JwtProvider</tt> to generate tokens with the following claims:
+		<ul>
+			<li><tt>sub</tt>: Unique User ID (UUID).</li>
+			<li><tt>role</tt>: User Role (e.g., "Student", "MarketingCoordinator").</li>
+			<li><tt>faculty_id</tt>: The ID of the faculty the user belongs to.</li>
+		</ul>
+		</li>
+		<li>Configure a Global Authorization Policy that requires a valid Bearer token for all <tt><span class="error">&#91;Authorize&#93;</span></tt> attributes.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>The JWT is signed using <tt>SymmetricSecurityKey</tt> with <tt>HMACSHA256</tt>.</li>
+		<li>The token contains an <tt>exp</tt> (expiration) claim set to 8 hours.</li>
+		<li>Middleware successfully returns $403\text
+{ Forbidden}
+<p>$ if a user with the "Student" role attempts to access an endpoint decorated with <tt><span class="error">&#91;Authorize(Roles = &quot;Admin&quot;)&#93;</span></tt>.</p></li>
+		<li>The token is retrievable via a standard <tt>Bearer</tt> header in Postman.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://hhaheinms.atlassian.net/browse/EP-11">EP-11</a>)</span>
+                <h3 class="formtitle"><img src="https://hhaheinms.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [EP-1]&nbsp;<a href="https://hhaheinms.atlassian.net/browse/EP-1">Argon2id Identity &amp; Secure Credential Service</a>
+            <span class="subText">
+               Created: 22/Feb/26                   &nbsp;Updated: 25/Feb/26
+
+                                                    &nbsp;Resolved: 24/Feb/26
+                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">Done</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/secure/BrowseProject.jspa?id=10165">EchoPress</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://hhaheinms.atlassian.net/browse/EP-11">Identity</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_reporter_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                id="word_assignee_712020:258f8b51-fcaa-4a8e-86af-0e988d46d44e"
+                href="https://hhaheinms.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A258f8b51-fcaa-4a8e-86af-0e988d46d44e">
+                    Min Khant
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                            Done
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-10213-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            6 hours
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            6 hours
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10019-10213-value" class="value" bgcolor="#ffffff" width="80%">      0|i000dx:
+  </td>
+            </tr>
+                                <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Sprint:</b></td>
+                <td id="customfield_10020-10213-value" class="value" bgcolor="#ffffff" width="80%">EP Sprint 1</td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <ul>
+	<li><b>User Story:</b> As a System User, I want my credentials to be hashed using the Argon2id algorithm so that my identity remains protected against brute-force and rainbow table attacks.</li>
+	<li><b>Technical Scope:</b>
+	<ul>
+		<li>Implement an <tt>IPasswordHasher</tt> interface and an <tt>Argon2PasswordHasher</tt> implementation.</li>
+		<li><b>Parameters:</b> Use a Salt size of 128-bit, Time cost of 3 iterations, and Memory cost of 64MB (standard for modern .NET security).</li>
+		<li>Develop the <tt>AuthService.VerifyCredentials(LoginDto dto)</tt> logic to compare incoming plain-text with stored hashes.</li>
+	</ul>
+	</li>
+	<li><b>Acceptance Criteria:</b>
+	<ul>
+		<li>Passwords are <b>never</b> stored in the database in plain text.</li>
+		<li>The hashing process is non-deterministic (unique salt per user).</li>
+		<li>The system returns a $401\text
+{ Unauthorized}
+<p>$ for invalid credentials without revealing whether the email or password was wrong (Security best practice).</p></li>
+		<li>The implementation passes a unit test validating that a known password matches its generated hash.</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+<hr class='fullcontent'><br /><br style='page-break-before:always;'/><br />Generated at Sun Mar 15 08:08:31 UTC 2026 by Hein Htet using Jira 1001.0.0-SNAPSHOT#100291-rev:f56d3133991a4abae1b3282cc1b7dd184d512591.
+
+</body>
+</html>

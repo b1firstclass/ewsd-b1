@@ -14,6 +14,14 @@ export const useUserProfile = () => {
     return useQuery(profileQueryOptions);
 };
 
+export const useUserDetail = (id: string | null, enabled = true) => {
+    return useQuery({
+        queryKey: userKeys.detail(id ?? "unknown"),
+        queryFn: () => userApi.getById(id!),
+        enabled: enabled && Boolean(id),
+    });
+};
+
 export const useUserMutations = () => {
     const queryClient = useQueryClient();
 

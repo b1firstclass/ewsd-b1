@@ -1,19 +1,24 @@
-import { api } from "@/lib/api/client";
+import { backendApi } from "@/lib/backendApi";
 import type { LoginCrendential, LoginResponse, RefreshTokenRequest, RefreshTokenResponse } from "@/types/authType";
-import { ApiRoute } from "@/types/constantApiRoute";
-import type { ApiResponse } from "@/types/sharedType";
 
 export const authApi = {
     login: async (credentials: LoginCrendential): Promise<LoginResponse> => {
-
-        const response = await api.post<ApiResponse<LoginResponse>>(ApiRoute.Auth.Login, credentials);
-        return response.data.data;
+        const response = await backendApi.auth.login(credentials);
+        return {
+            token: response.token,
+            expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour expiry
+            refreshToken: response.refreshToken
+        };
     },
     logout: async () => {
-
+        await backendApi.auth.logout();
     },
     refreshToken: async (request: RefreshTokenRequest): Promise<RefreshTokenResponse> => {
-        const response = await api.post<ApiResponse<RefreshTokenResponse>>(ApiRoute.Auth.RefreshToken, request);
-        return response.data.data;
+        const response = await backendApi.auth.refreshToken(request);
+        return {
+            token: response.token,
+            refreshToken: response.refreshToken,
+            expiresAt: new Date(Date.now() + 3600000).toISOString() // 1 hour expiry
+        };
     },
 }

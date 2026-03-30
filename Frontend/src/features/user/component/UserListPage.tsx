@@ -5,7 +5,7 @@ import { getErrorMessage } from "@/lib/utils";
 import type { User } from "@/types/userType";
 import { useFaculityList } from "@/features/faculity/hooks/useFaculityList";
 import { useRoleList } from "@/features/role/hook/useRoleList";
-import { useUserMutations } from "../hooks/useUser";
+import { useUserDetail, useUserMutations } from "../hooks/useUser";
 import { useUserTableController } from "../hooks/useUserListTableController";
 import { UserFormDialog, type UserFormValues } from "./UserFormDialog";
 import { UserTable } from "./UserTable";
@@ -20,6 +20,7 @@ export const UserListPage = () => {
 
   const { createMutation, updateMutation, deleteMutation } = useUserMutations();
   const tableController = useUserTableController();
+  const userDetailQuery = useUserDetail(editingUser?.id ?? null, formOpen && Boolean(editingUser?.id));
 
   const faculityListQuery = useFaculityList({
     pageNumber: 1,
@@ -35,6 +36,8 @@ export const UserListPage = () => {
 
   const faculityOptions = faculityListQuery.data?.items ?? [];
   const roleOptions = roleListQuery.data?.items ?? [];
+  const resolvedEditingUser = editingUser ? userDetailQuery.data ?? editingUser : null;
+  const isUserLoading = Boolean(editingUser) && !userDetailQuery.data && userDetailQuery.isLoading;
 
   const relationOptionsError = useMemo(() => {
     if (faculityListQuery.isError) {
@@ -47,6 +50,14 @@ export const UserListPage = () => {
 
     return null;
   }, [faculityListQuery.error, faculityListQuery.isError, roleListQuery.error, roleListQuery.isError]);
+
+  const userLoadError = useMemo(() => {
+    if (!editingUser || !userDetailQuery.isError || userDetailQuery.data) {
+      return null;
+    }
+
+    return getErrorMessage(userDetailQuery.error, "Failed to load user details.");
+  }, [editingUser, userDetailQuery.data, userDetailQuery.error, userDetailQuery.isError]);
 
   const isOptionsLoading =
     (faculityListQuery.isLoading && !faculityOptions.length) ||
@@ -148,11 +159,20 @@ export const UserListPage = () => {
         open={formOpen}
         onOpenChange={handleFormOpenChange}
         mode={editingUser ? "edit" : "create"}
-        value={editingUser}
+        value={resolvedEditingUser}
         faculityOptions={faculityOptions}
         roleOptions={roleOptions}
         isOptionsLoading={isOptionsLoading}
         optionsError={relationOptionsError}
+        isUserLoading={isUserLoading}
+        userLoadError={userLoadError}
+        onRetryUser={
+          editingUser
+            ? () => {
+                void userDetailQuery.refetch();
+              }
+            : undefined
+        }
         isPending={createMutation.isPending || updateMutation.isPending}
         error={formError}
         onSubmit={handleFormSubmit}

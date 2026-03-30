@@ -35,6 +35,11 @@ export const UserTable = ({
         render: (item) => item.fullName,
       },
       {
+        key: "role",
+        header: "Role",
+        render: (item) => item.role?.name ?? "-",
+      },
+      {
         key: "email",
         header: "Email",
         sortable: true,

@@ -8,6 +8,7 @@ import { ProtectedLayout } from "@/components/layout/ProtectedLayout"
 import { FaculityPage } from "@/features/faculity/components/FaculityPage"
 import { RolePage } from "@/features/role/components/RolePage"
 import { UserListPage } from "@/features/user/component/UserListPage"
+import { ContributionWindowPage } from "@/features/contributionWindow/components/ContributionWindowPage"
 
 export const AppRoutes = () => {
     return (
@@ -29,6 +30,7 @@ export const AppRoutes = () => {
                 }
             >
                 <Route path={PageUrl.Home} element={<HomePage />} />
+                <Route path={PageUrl.ContributionWindow} element={<ContributionWindowPage />} />
                 <Route path={PageUrl.Role} element={<RolePage />} />
                 <Route path={PageUrl.Faculity} element={<FaculityPage />} />
                 <Route path={PageUrl.User} element={<UserListPage />} />

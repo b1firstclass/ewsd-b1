@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { DeleteDialog } from "@/components/common/DeleteDialog";
 import { getErrorMessage } from "@/lib/utils";
 import type { Role } from "@/types/roleType";
+import type { RoleName } from "@/types/constants/roleConstants";
 import { useActivePermissionList } from "../hook/useActivePermissionList";
 import { useRoleDetail } from "../hook/useRoleDetail";
 import { useRoleMutations } from "../hook/useRoleMutation";
@@ -77,7 +78,7 @@ export const RolePage = () => {
                 await updateMutation.mutateAsync({
                     id: editingRole.id,
                     request: {
-                        name: values.name,
+                        name: values.name as RoleName,
                         description: values.description,
                         permissionIds: values.permissionIds,
                         isActive: true,
@@ -85,7 +86,7 @@ export const RolePage = () => {
                 });
             } else {
                 await createMutation.mutateAsync({
-                    name: values.name,
+                    name: values.name as RoleName,
                     description: values.description,
                     permissionIds: values.permissionIds,
                 });
