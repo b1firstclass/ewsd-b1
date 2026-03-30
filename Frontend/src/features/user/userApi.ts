@@ -21,6 +21,7 @@ export const userApi = {
     },
     getById: async (id: string): Promise<User> => {
         const response = await api.get<ApiResponse<User>>(ApiRoute.User.GetById(id));
+        console.log("User Detail => ",response.data.data);
         return response.data.data;
     },
     create: async (request: UserCreateRequest): Promise<User> => {

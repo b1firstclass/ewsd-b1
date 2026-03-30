@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useReducer, useRef, type FormEvent } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEditDialogInitialFocus } from "@/hooks/useEditDialogInitialFocus";
-import { getErrorMessage, getFieldError } from "@/lib/utils";
+import { cn, getErrorMessage, getFieldError } from "@/lib/utils";
 import type { Faculity } from "@/types/faculityType";
 import type { Role } from "@/types/roleType";
 import type { User } from "@/types/userType";
@@ -45,6 +45,9 @@ interface UserFormDialogProps {
   roleOptions: Role[];
   isOptionsLoading: boolean;
   optionsError?: string | null;
+  isUserLoading?: boolean;
+  userLoadError?: string | null;
+  onRetryUser?: () => void;
   isPending: boolean;
   error?: unknown;
   onSubmit: (values: UserFormValues) => Promise<void>;
@@ -57,6 +60,8 @@ interface LocalFieldErrors {
   fullName?: string;
   email?: string;
   password?: string;
+  roleId?: string;
+  facultyIds?: string;
 }
 
 interface MultiSelectOption {
@@ -71,10 +76,12 @@ interface MultiSelectFieldProps {
   selectedValues: string[];
   onChange: (values: string[]) => void;
   placeholder: string;
+  helperText: string;
   loadingText: string;
   emptyText: string;
   disabled?: boolean;
   loading?: boolean;
+  error?: string;
 }
 
 interface SingleSelectFieldProps {
@@ -84,11 +91,139 @@ interface SingleSelectFieldProps {
   selectedValue: string;
   onChange: (value: string) => void;
   placeholder: string;
+  helperText: string;
   loadingText: string;
   emptyText: string;
   disabled?: boolean;
   loading?: boolean;
+  error?: string;
 }
+
+interface InlineStateCardProps {
+  message: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  tone?: "default" | "error";
+}
+
+interface UserFormState {
+  loginId: string;
+  fullName: string;
+  email: string;
+  password: string;
+  facultyIds: string[];
+  roleId: string;
+  fieldErrors: LocalFieldErrors;
+}
+
+type UserFormAction =
+  | { type: "hydrate"; value: UserFormState }
+  | { type: "set-login-id"; value: string }
+  | { type: "set-full-name"; value: string }
+  | { type: "set-email"; value: string }
+  | { type: "set-password"; value: string }
+  | { type: "set-role-id"; value: string; role?: Role }
+  | { type: "set-faculty-ids"; value: string[] }
+  | { type: "set-field-errors"; value: LocalFieldErrors };
+
+const resolveRoleById = (roleId: string, roleOptions: Role[], fallbackRole?: Role) => {
+  if (!roleId) {
+    return undefined;
+  }
+
+  return roleOptions.find((item) => item.id === roleId) ?? fallbackRole;
+};
+
+const normalizeFacultyIdsForRole = (role: Role | undefined, currentFacultyIds: string[]) => {
+  if (!role?.isFacultyAssignable) {
+    return [];
+  }
+
+  if (!role.isMultipleFaculty) {
+    return currentFacultyIds.slice(0, 1);
+  }
+
+  return currentFacultyIds;
+};
+
+const createUserFormState = (
+  mode: UserFormMode,
+  value?: User | null,
+  roleForNormalization?: Role,
+): UserFormState => {
+  const roleId = mode === "edit" ? value?.role?.id ?? "" : "";
+  const rawFacultyIds = (value?.faculties ?? []).map((item) => item.id);
+
+  return {
+    loginId: value?.loginId ?? "",
+    fullName: value?.fullName ?? "",
+    email: value?.email ?? "",
+    password: "",
+    facultyIds:
+      mode === "edit"
+        ? roleForNormalization
+          ? normalizeFacultyIdsForRole(roleForNormalization, rawFacultyIds)
+          : rawFacultyIds
+        : [],
+    roleId,
+    fieldErrors: {},
+  };
+};
+
+const userFormReducer = (state: UserFormState, action: UserFormAction): UserFormState => {
+  switch (action.type) {
+    case "hydrate":
+      return action.value;
+    case "set-login-id":
+      return {
+        ...state,
+        loginId: action.value,
+        fieldErrors: { ...state.fieldErrors, loginId: undefined },
+      };
+    case "set-full-name":
+      return {
+        ...state,
+        fullName: action.value,
+        fieldErrors: { ...state.fieldErrors, fullName: undefined },
+      };
+    case "set-email":
+      return {
+        ...state,
+        email: action.value,
+        fieldErrors: { ...state.fieldErrors, email: undefined },
+      };
+    case "set-password":
+      return {
+        ...state,
+        password: action.value,
+        fieldErrors: { ...state.fieldErrors, password: undefined },
+      };
+    case "set-role-id":
+      return {
+        ...state,
+        roleId: action.value,
+        facultyIds: normalizeFacultyIdsForRole(action.role, state.facultyIds),
+        fieldErrors: {
+          ...state.fieldErrors,
+          roleId: undefined,
+          facultyIds: undefined,
+        },
+      };
+    case "set-faculty-ids":
+      return {
+        ...state,
+        facultyIds: action.value,
+        fieldErrors: { ...state.fieldErrors, facultyIds: undefined },
+      };
+    case "set-field-errors":
+      return {
+        ...state,
+        fieldErrors: action.value,
+      };
+    default:
+      return state;
+  }
+};
 
 const toggleSelectedValue = (current: string[], value: string, checked: boolean) => {
   if (checked) {
@@ -105,10 +240,12 @@ const MultiSelectField = ({
   selectedValues,
   onChange,
   placeholder,
+  helperText,
   loadingText,
   emptyText,
   disabled = false,
   loading = false,
+  error,
 }: MultiSelectFieldProps) => {
   const selectedOptionLabels = options
     .filter((option) => selectedValues.includes(option.value))
@@ -128,7 +265,10 @@ const MultiSelectField = ({
             type="button"
             variant="outline"
             disabled={disabled}
-            className="h-11 w-full justify-between rounded-xl font-normal"
+            className={cn(
+              "h-11 w-full justify-between rounded-xl font-normal",
+              error && "border-destructive focus-visible:ring-destructive",
+            )}
           >
             <span className="truncate text-left">{summaryText}</span>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -159,7 +299,9 @@ const MultiSelectField = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <p className="text-xs text-muted-foreground">Choose multiple values from the dropdown.</p>
+      <p className={cn("text-xs text-muted-foreground", error && "text-destructive")}>
+        {error ?? helperText}
+      </p>
 
       {selectedOptionLabels.length ? (
         <div className="flex flex-wrap gap-1">
@@ -186,10 +328,12 @@ const SingleSelectField = ({
   selectedValue,
   onChange,
   placeholder,
+  helperText,
   loadingText,
   emptyText,
   disabled = false,
   loading = false,
+  error,
 }: SingleSelectFieldProps) => {
   const selectedOption = options.find((option) => option.value === selectedValue);
   const summaryText = selectedOption?.label ?? placeholder;
@@ -204,7 +348,10 @@ const SingleSelectField = ({
             type="button"
             variant="outline"
             disabled={disabled}
-            className="h-11 w-full justify-between rounded-xl font-normal"
+            className={cn(
+              "h-11 w-full justify-between rounded-xl font-normal",
+              error && "border-destructive focus-visible:ring-destructive",
+            )}
           >
             <span className="truncate text-left">{summaryText}</span>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -237,7 +384,9 @@ const SingleSelectField = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <p className="text-xs text-muted-foreground">Choose one role.</p>
+      <p className={cn("text-xs text-muted-foreground", error && "text-destructive")}>
+        {error ?? helperText}
+      </p>
 
       {selectedOption ? (
         <div className="flex flex-wrap gap-1">
@@ -245,6 +394,39 @@ const SingleSelectField = ({
             {selectedOption.label}
           </Badge>
         </div>
+      ) : null}
+    </div>
+  );
+};
+
+const InlineStateCard = ({
+  message,
+  actionLabel,
+  onAction,
+  tone = "default",
+}: InlineStateCardProps) => {
+  const isError = tone === "error";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl border px-4 py-4 text-sm sm:flex-row sm:items-center sm:justify-between",
+        isError
+          ? "border-destructive/30 bg-destructive/5 text-destructive"
+          : "border-border/70 bg-muted/30 text-muted-foreground",
+      )}
+    >
+      <span>{message}</span>
+      {actionLabel && onAction ? (
+        <Button
+          type="button"
+          variant={isError ? "outline" : "ghost"}
+          size="sm"
+          onClick={onAction}
+          className={cn(isError && "border-destructive/30 text-destructive hover:bg-destructive/10")}
+        >
+          {actionLabel}
+        </Button>
       ) : null}
     </div>
   );
@@ -259,30 +441,88 @@ const UserFormDialogBody = ({
   roleOptions,
   isOptionsLoading,
   optionsError,
+  isUserLoading = false,
+  userLoadError,
+  onRetryUser,
   isPending,
   error,
   onSubmit,
 }: UserFormDialogBodyProps) => {
-  const [loginId, setLoginId] = useState(value?.loginId ?? "");
-  const [fullName, setFullName] = useState(value?.fullName ?? "");
-  const [email, setEmail] = useState(value?.email ?? "");
-  const [password, setPassword] = useState("");
-  const [facultyIds, setFacultyIds] = useState<string[]>(value?.faculties?.map((item) => item.id) ?? []);
-  const [roleId, setRoleId] = useState<string>(value?.role?.id ?? "");
-  const [fieldErrors, setFieldErrors] = useState<LocalFieldErrors>({});
-  const loginIdInputRef = useRef<HTMLInputElement>(null);
-
   const isCreateMode = mode === "create";
+  const initialRoleForNormalization = resolveRoleById(value?.role?.id ?? "", roleOptions);
+  const [state, dispatch] = useReducer(userFormReducer, undefined, () =>
+    createUserFormState(mode, value, initialRoleForNormalization),
+  );
+  const loginIdInputRef = useRef<HTMLInputElement>(null);
+  const valueRoleId = value?.role?.id ?? "";
+  const hydratedRawFacultyIds = useMemo(
+    () => (value?.faculties ?? []).map((item) => item.id),
+    [value?.faculties],
+  );
+  const hydrationRole = useMemo(
+    () => resolveRoleById(valueRoleId, roleOptions),
+    [roleOptions, valueRoleId],
+  );
+  const hydratedState = useMemo(
+    () => ({
+      loginId: value?.loginId ?? "",
+      fullName: value?.fullName ?? "",
+      email: value?.email ?? "",
+      password: "",
+      facultyIds:
+        mode === "edit"
+          ? hydrationRole
+            ? normalizeFacultyIdsForRole(hydrationRole, hydratedRawFacultyIds)
+            : hydratedRawFacultyIds
+          : [],
+      roleId: mode === "edit" ? valueRoleId : "",
+      fieldErrors: {},
+    }),
+    [
+      hydratedRawFacultyIds,
+      hydrationRole,
+      mode,
+      value?.email,
+      value?.fullName,
+      value?.loginId,
+      valueRoleId,
+    ],
+  );
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    dispatch({
+      type: "hydrate",
+      value: hydratedState,
+    });
+  }, [hydratedState, open]);
 
   const serverLoginIdError = getFieldError(error, "loginId");
   const serverFullNameError = getFieldError(error, "fullName");
   const serverEmailError = getFieldError(error, "email");
   const serverPasswordError = getFieldError(error, "password");
+  const serverRoleIdError = getFieldError(error, "roleId");
+  const serverFacultyIdsError = getFieldError(error, "facultyIds");
 
-  const resolvedLoginIdError = fieldErrors.loginId ?? serverLoginIdError;
-  const resolvedFullNameError = fieldErrors.fullName ?? serverFullNameError;
-  const resolvedEmailError = fieldErrors.email ?? serverEmailError;
-  const resolvedPasswordError = fieldErrors.password ?? serverPasswordError;
+  const resolvedLoginIdError = state.fieldErrors.loginId ?? serverLoginIdError;
+  const resolvedFullNameError = state.fieldErrors.fullName ?? serverFullNameError;
+  const resolvedEmailError = state.fieldErrors.email ?? serverEmailError;
+  const resolvedPasswordError = state.fieldErrors.password ?? serverPasswordError;
+  const resolvedRoleIdError = state.fieldErrors.roleId ?? serverRoleIdError;
+  const resolvedFacultyIdsError = state.fieldErrors.facultyIds ?? serverFacultyIdsError;
+  const selectedRole = useMemo(
+    () => resolveRoleById(state.roleId, roleOptions, value?.role),
+    [roleOptions, state.roleId, value?.role],
+  );
+  const isFacultyAssignable = selectedRole?.isFacultyAssignable ?? false;
+  const isMultipleFaculty = selectedRole?.isMultipleFaculty ?? false;
+  const normalizedFacultyIds = useMemo(
+    () => normalizeFacultyIdsForRole(selectedRole, state.facultyIds),
+    [selectedRole, state.facultyIds],
+  );
 
   const serverGeneralError = useMemo(() => {
     if (!error) {
@@ -293,14 +533,25 @@ const UserFormDialogBody = ({
       serverLoginIdError ||
       serverFullNameError ||
       serverEmailError ||
-      (isCreateMode && serverPasswordError);
+      (isCreateMode && serverPasswordError) ||
+      serverRoleIdError ||
+      serverFacultyIdsError;
 
     if (hasMappedFieldError) {
       return null;
     }
 
     return getErrorMessage(error);
-  }, [error, isCreateMode, serverEmailError, serverFullNameError, serverLoginIdError, serverPasswordError]);
+  }, [
+    error,
+    isCreateMode,
+    serverEmailError,
+    serverFacultyIdsError,
+    serverFullNameError,
+    serverLoginIdError,
+    serverPasswordError,
+    serverRoleIdError,
+  ]);
 
   const handleCancel = () => {
     onOpenChange(false);
@@ -309,10 +560,14 @@ const UserFormDialogBody = ({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const trimmedLoginId = loginId.trim();
-    const trimmedFullName = fullName.trim();
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
+    if (!isCreateMode && (isUserLoading || userLoadError)) {
+      return;
+    }
+
+    const trimmedLoginId = state.loginId.trim();
+    const trimmedFullName = state.fullName.trim();
+    const trimmedEmail = state.email.trim();
+    const trimmedPassword = state.password.trim();
 
     const nextErrors: LocalFieldErrors = {};
 
@@ -334,7 +589,19 @@ const UserFormDialogBody = ({
       nextErrors.password = "Password is required.";
     }
 
-    setFieldErrors(nextErrors);
+    if (!state.roleId) {
+      nextErrors.roleId = "Role is required.";
+    }
+
+    if (selectedRole?.isFacultyAssignable) {
+      if (normalizedFacultyIds.length === 0) {
+        nextErrors.facultyIds = "At least one faculty is required for this role.";
+      } else if (!selectedRole.isMultipleFaculty && normalizedFacultyIds.length > 1) {
+        nextErrors.facultyIds = "Only one faculty can be selected for this role.";
+      }
+    }
+
+    dispatch({ type: "set-field-errors", value: nextErrors });
     if (Object.keys(nextErrors).length > 0) {
       return;
     }
@@ -344,20 +611,24 @@ const UserFormDialogBody = ({
       fullName: trimmedFullName,
       email: trimmedEmail,
       password: isCreateMode ? trimmedPassword : undefined,
-      facultyIds,
-      roleId,
+      facultyIds: normalizedFacultyIds,
+      roleId: state.roleId,
     });
   };
 
   const title = isCreateMode ? "Create user" : "Update user";
   const submitLabel = isCreateMode ? "Create" : "Update";
-  const isFaculityDisabled = isPending || (isOptionsLoading && !faculityOptions.length);
-  const isRoleDisabled = isPending || (isOptionsLoading && !roleOptions.length);
+  const isFormLocked = isPending || (!isCreateMode && isUserLoading);
+  const isFormDisabled = isFormLocked || Boolean(userLoadError);
+  const isSubmitDisabled = isPending || (!isCreateMode && (isUserLoading || Boolean(userLoadError)));
+  const isRoleDisabled = isFormDisabled || (isOptionsLoading && !roleOptions.length);
+  const isFaculityDisabled = isFormDisabled || (isOptionsLoading && !faculityOptions.length);
+  const facultyOptions = faculityOptions.map((item) => ({ value: item.id, label: item.name }));
   const { onOpenAutoFocus } = useEditDialogInitialFocus({
     open,
     enabled: mode === "edit",
     inputRef: loginIdInputRef,
-    value: loginId,
+    value: state.loginId,
   });
 
   return (
@@ -376,15 +647,10 @@ const UserFormDialogBody = ({
             ref={loginIdInputRef}
             id="user-login-id"
             placeholder="Enter login ID"
-            value={loginId}
-            onChange={(event) => {
-              setLoginId(event.target.value);
-              if (fieldErrors.loginId) {
-                setFieldErrors((current) => ({ ...current, loginId: undefined }));
-              }
-            }}
+            value={state.loginId}
+            onChange={(event) => dispatch({ type: "set-login-id", value: event.target.value })}
             error={resolvedLoginIdError}
-            disabled={isPending}
+            disabled={isFormDisabled}
           />
         </div>
 
@@ -393,15 +659,10 @@ const UserFormDialogBody = ({
           <Input
             id="user-full-name"
             placeholder="Enter full name"
-            value={fullName}
-            onChange={(event) => {
-              setFullName(event.target.value);
-              if (fieldErrors.fullName) {
-                setFieldErrors((current) => ({ ...current, fullName: undefined }));
-              }
-            }}
+            value={state.fullName}
+            onChange={(event) => dispatch({ type: "set-full-name", value: event.target.value })}
             error={resolvedFullNameError}
-            disabled={isPending}
+            disabled={isFormDisabled}
           />
         </div>
 
@@ -411,15 +672,10 @@ const UserFormDialogBody = ({
             id="user-email"
             type="email"
             placeholder="Enter email"
-            value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              if (fieldErrors.email) {
-                setFieldErrors((current) => ({ ...current, email: undefined }));
-              }
-            }}
+            value={state.email}
+            onChange={(event) => dispatch({ type: "set-email", value: event.target.value })}
             error={resolvedEmailError}
-            disabled={isPending}
+            disabled={isFormDisabled}
           />
         </div>
 
@@ -430,45 +686,82 @@ const UserFormDialogBody = ({
               id="user-password"
               type="password"
               placeholder="Enter password"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (fieldErrors.password) {
-                  setFieldErrors((current) => ({ ...current, password: undefined }));
-                }
-              }}
+              value={state.password}
+              onChange={(event) => dispatch({ type: "set-password", value: event.target.value })}
               error={resolvedPasswordError}
-              disabled={isPending}
+              disabled={isFormDisabled}
             />
           </div>
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <MultiSelectField
-            id="user-faculties"
-            label="Faculties"
-            options={faculityOptions.map((item) => ({ value: item.id, label: item.name }))}
-            selectedValues={facultyIds}
-            onChange={setFacultyIds}
-            placeholder="Select faculties"
-            loadingText="Loading faculties..."
-            emptyText="No faculties available."
-            disabled={isFaculityDisabled}
-            loading={isOptionsLoading}
+        {!isCreateMode && userLoadError ? (
+          <InlineStateCard
+            tone="error"
+            message={userLoadError}
+            actionLabel="Retry"
+            onAction={onRetryUser}
           />
+        ) : null}
 
+        {!isCreateMode && isUserLoading ? (
+          <InlineStateCard message="Loading current user details..." />
+        ) : null}
+
+        <div className="grid gap-4 md:grid-cols-2">
           <SingleSelectField
             id="user-roles"
             label="Roles"
             options={roleOptions.map((item) => ({ value: item.id, label: item.name }))}
-            selectedValue={roleId}
-            onChange={setRoleId}
+            selectedValue={state.roleId}
+            onChange={(nextRoleId) => {
+              const nextRole = resolveRoleById(nextRoleId, roleOptions, value?.role);
+
+              dispatch({ type: "set-role-id", value: nextRoleId, role: nextRole });
+            }}
             placeholder="Select a role"
+            helperText="Choose one role."
             loadingText="Loading roles..."
             emptyText="No roles available."
             disabled={isRoleDisabled}
             loading={isOptionsLoading}
+            error={resolvedRoleIdError}
           />
+
+          {isFacultyAssignable ? (
+            isMultipleFaculty ? (
+              <MultiSelectField
+                id="user-faculties"
+                label="Faculties"
+                options={facultyOptions}
+                selectedValues={normalizedFacultyIds}
+                onChange={(nextFacultyIds) => dispatch({ type: "set-faculty-ids", value: nextFacultyIds })}
+                placeholder="Select faculties"
+                helperText="Choose multiple values from the dropdown."
+                loadingText="Loading faculties..."
+                emptyText="No faculties available."
+                disabled={isFaculityDisabled}
+                loading={isOptionsLoading}
+                error={resolvedFacultyIdsError}
+              />
+            ) : (
+              <SingleSelectField
+                id="user-faculties"
+                label="Faculty"
+                options={facultyOptions}
+                selectedValue={normalizedFacultyIds[0] ?? ""}
+                onChange={(nextFacultyId) =>
+                  dispatch({ type: "set-faculty-ids", value: nextFacultyId ? [nextFacultyId] : [] })
+                }
+                placeholder="Select a faculty"
+                helperText="Choose one faculty."
+                loadingText="Loading faculties..."
+                emptyText="No faculties available."
+                disabled={isFaculityDisabled}
+                loading={isOptionsLoading}
+                error={resolvedFacultyIdsError}
+              />
+            )
+          ) : null}
         </div>
 
         {optionsError ? <p className="text-sm text-destructive">{optionsError}</p> : null}
@@ -478,7 +771,7 @@ const UserFormDialogBody = ({
           <Button type="button" variant="outline" onClick={handleCancel} disabled={isPending}>
             Cancel
           </Button>
-          <Button type="submit" isLoading={isPending}>
+          <Button type="submit" isLoading={isPending} disabled={isSubmitDisabled}>
             {submitLabel}
           </Button>
         </DialogFooter>
@@ -496,6 +789,9 @@ export const UserFormDialog = ({
   roleOptions,
   isOptionsLoading,
   optionsError,
+  isUserLoading,
+  userLoadError,
+  onRetryUser,
   isPending,
   error,
   onSubmit,
@@ -504,7 +800,6 @@ export const UserFormDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {open ? (
         <UserFormDialogBody
-          key={`${mode}-${value?.id ?? "create"}`}
           open={open}
           onOpenChange={onOpenChange}
           mode={mode}
@@ -513,6 +808,9 @@ export const UserFormDialog = ({
           roleOptions={roleOptions}
           isOptionsLoading={isOptionsLoading}
           optionsError={optionsError}
+          isUserLoading={isUserLoading}
+          userLoadError={userLoadError}
+          onRetryUser={onRetryUser}
           isPending={isPending}
           error={error}
           onSubmit={onSubmit}

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageUrl } from "@/types/constantPageUrl";
-import { Building2, LayoutDashboard, LogOut, UserCircle, Users } from "lucide-react";
+import { Building2, CalendarDays, LayoutDashboard, LogOut, UserCircle, Users } from "lucide-react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AppShell } from "./AppShell";
 import type { SidebarNavItem } from "./AppSidebar";
@@ -39,6 +39,11 @@ const navItems: SidebarNavItem[] = [
     href: PageUrl.Faculity,
     label: "Faculty",
     icon: Building2,
+  },
+    {
+    href: PageUrl.ContributionWindow,
+    label: "Contribution Window",
+    icon: CalendarDays,
   },
 ];
 
