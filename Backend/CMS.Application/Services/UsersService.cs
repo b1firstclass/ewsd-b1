@@ -55,6 +55,42 @@ namespace CMS.Application.Services
             return new PagedResponse<UserInfo>(mappedUsers, pagedUsers.TotalCount);
         }
 
+        public async Task<PagedResponse<UserInfo>> GetGuestUsersByFacultyIdsAsync(IReadOnlyList<Guid> facultyIds, PaginationRequest paginationRequest)
+        {
+            if (facultyIds.Count == 0)
+            {
+                return new PagedResponse<UserInfo>([], 0);
+            }
+
+            var users = await _unitOfWork.UsersRepository.GetGuestUsersByFacultyIdAsync(facultyIds.ToList());
+
+            var filteredUsers = users.AsQueryable();
+
+            if (paginationRequest.IsActive.HasValue)
+            {
+                filteredUsers = filteredUsers.Where(user => user.IsActive == paginationRequest.IsActive.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(paginationRequest.SearchKeyword))
+            {
+                var keyword = paginationRequest.SearchKeyword.Trim();
+                filteredUsers = filteredUsers.Where(user =>
+                    (user.LoginId != null && user.LoginId.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
+                    (user.FullName != null && user.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
+                    (user.Email != null && user.Email.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            var totalCount = filteredUsers.Count();
+            var pagedUsers = filteredUsers
+                .OrderByDescending(user => user.CreatedDate)
+                .Skip(paginationRequest.GetSkipCount())
+                .Take(paginationRequest.PageSize)
+                .ToList();
+
+            var mappedUsers = _mapper.Map<List<UserInfo>>(pagedUsers);
+            return new PagedResponse<UserInfo>(mappedUsers, totalCount);
+        }
+
         public async Task<UserInfo?> GetUserByIdAsync(Guid userId)
         {
             if (userId == Guid.Empty)

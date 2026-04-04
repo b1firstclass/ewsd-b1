@@ -146,5 +146,21 @@ namespace CMS.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<List<User>> GetGuestUsersByFacultyIdAsync(List<Guid> facultyIds)
+        {
+            if (facultyIds == null || facultyIds.Count == 0)
+            {
+                return new List<User>();
+            }
+
+            var normalizedRoleName = RoleNames.Guest;
+            var query = _context.Users
+                .AsNoTracking()
+                .Where(user => user.Role.Name.ToLower() == normalizedRoleName)
+                .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
+
+            return await query.ToListAsync();
+        }
     }
 }

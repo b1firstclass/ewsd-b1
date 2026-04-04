@@ -49,6 +49,32 @@ namespace CMS.Api.Controllers
         }
 
         [HasPermission(PermissionNames.UsersRead)]
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HttpGet("guest-users")]
+        public async Task<IActionResult> GetGuestUsersByCoordinatorFaculties([FromQuery] PaginationRequest? paginationRequest)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                paginationRequest ??= new PaginationRequest();
+
+                var facultyIds = _currentUserService.FacultyIds;
+                var users = await _userService.GetGuestUsersByFacultyIdsAsync(facultyIds, paginationRequest);
+
+                return users.ToApiResponse(ApiResponseMessages.Retrieved("Guest users"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving guest users by coordinator faculties");
+                return this.ToErrorResponse(ApiResponseMessages.ErrorRetrieving("guest users"), 500);
+            }
+        }
+
+        [HasPermission(PermissionNames.UsersRead)]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {

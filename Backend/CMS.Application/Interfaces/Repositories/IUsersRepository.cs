@@ -11,6 +11,7 @@ namespace CMS.Application.Interfaces.Repositories
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetByRefreshTokenAsync(string refreshToken);
         Task<List<User>> GetUsersByFacultyIdAsync(List<Guid> facultyIds, string roleName);
+        Task<List<User>> GetGuestUsersByFacultyIdAsync(List<Guid> facultyIds);
         Task<bool> ExistsUserInRoleWithFacultiesAsync(string roleName, IReadOnlyCollection<Guid> facultyIds, Guid? excludeUserId = null);
     }
 }
