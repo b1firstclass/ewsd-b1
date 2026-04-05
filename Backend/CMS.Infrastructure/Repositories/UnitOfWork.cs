@@ -1,4 +1,4 @@
-﻿using CMS.Application.Interfaces.Repositories;
+using CMS.Application.Interfaces.Repositories;
 using CMS.Infrastructure.Persistence;
 
 namespace CMS.Infrastructure.Repositories
