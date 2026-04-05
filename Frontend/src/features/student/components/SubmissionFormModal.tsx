@@ -3,10 +3,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Upload, FileText, Image as ImageIcon, AlertCircle, Loader2, X } from "lucide-react";
+import { categoryApi } from "@/features/category/categoryApi";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { contributionWindowApi } from "@/features/contributionWindow/contributionWindowApi";
 import { ApiRoute } from "@/types/constantApiRoute";
@@ -14,6 +16,7 @@ import { useDeadlineLogic, formatDeadlineDisplay, getDeadlineColor } from "../ho
 import { useAuth } from "@/contexts/AuthContext";
 import { ContributionFileConstraints } from "@/types/contributionType";
 import type { ContributionDocumentInfo, ContributionInfo } from "@/types/contributionType";
+import type { CategoryInfo } from "@/types/categoryType";
 import type { ContributionWindowInfo } from "@/types/contributionWindowType";
 import { toast } from "sonner";
 
@@ -25,6 +28,7 @@ interface SubmissionFormModalProps {
 }
 
 interface FormState {
+    categoryId: string;
     subject: string;
     description: string;
     documentFile: File | null;
@@ -32,6 +36,7 @@ interface FormState {
 }
 
 const INITIAL_FORM: FormState = {
+    categoryId: "",
     subject: "",
     description: "",
     documentFile: null,
@@ -63,6 +68,9 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
     const [step, setStep] = useState(1);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [form, setForm] = useState<FormState>(INITIAL_FORM);
+    const [categories, setCategories] = useState<CategoryInfo[]>([]);
+    const [categoriesLoading, setCategoriesLoading] = useState(false);
+    const [categoriesError, setCategoriesError] = useState<string | null>(null);
     const [existingDocument, setExistingDocument] = useState<ContributionDocumentInfo | null>(null);
     const [existingImage, setExistingImage] = useState<ContributionDocumentInfo | null>(null);
     const [hideExistingDocument, setHideExistingDocument] = useState(false);
@@ -82,6 +90,8 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
         let cancelled = false;
 
         setError(null);
+        setCategoriesError(null);
+        setCategoriesLoading(false);
         setExistingDocument(null);
         setExistingImage(null);
         setHideExistingDocument(false);
@@ -91,6 +101,7 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
         const initialize = async () => {
             if (existingContribution) {
                 setForm({
+                    categoryId: existingContribution.categoryId ?? "",
                     subject: existingContribution.subject,
                     description: existingContribution.description,
                     documentFile: null,
@@ -104,6 +115,26 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
                 setAgreedToTerms(false);
                 setStep(1);
                 setLoadingExistingContribution(false);
+            }
+
+            try {
+                if (!cancelled) {
+                    setCategoriesLoading(true);
+                }
+                const activeCategories = await categoryApi.getActiveList();
+                if (!cancelled) {
+                    setCategories(activeCategories);
+                }
+            } catch (err) {
+                console.error("Failed to load categories:", err);
+                if (!cancelled) {
+                    setCategories([]);
+                    setCategoriesError("Categories are temporarily unavailable.");
+                }
+            } finally {
+                if (!cancelled) {
+                    setCategoriesLoading(false);
+                }
             }
 
             try {
@@ -129,6 +160,7 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
                 if (cancelled) return;
 
                 setForm({
+                    categoryId: detail.categoryId ?? "",
                     subject: detail.subject,
                     description: detail.description,
                     documentFile: null,
@@ -290,6 +322,7 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
 
             if (isEditing) {
                 result = await contributionApi.update(existingContribution.id, {
+                    categoryId: form.categoryId || null,
                     subject: form.subject,
                     description: form.description,
                     documentFile: form.documentFile,
@@ -299,6 +332,7 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
                 result = await contributionApi.create({
                     contributionWindowId: currentWindow.id,
                     facultyId: facultyId!,
+                    categoryId: form.categoryId || null,
                     subject: form.subject,
                     description: form.description,
                     documentFile: form.documentFile!,
@@ -434,10 +468,38 @@ export const SubmissionFormModal = ({ open, onOpenChange, existingContribution, 
                                     </div>
                                 )}
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="subject">Article Title *</Label>
-                                    <Input
-                                        id="subject"
+                        <div className="space-y-2">
+                            <Label htmlFor="categoryId">Category</Label>
+                            <NativeSelect
+                                id="categoryId"
+                                className="w-full"
+                                selectClassName="h-10 rounded-xl border-border/80 bg-card px-3 pr-10 font-medium text-foreground shadow-sm transition-shadow hover:border-primary/50 focus-visible:border-primary focus-visible:ring-primary/20"
+                                value={form.categoryId}
+                                onChange={(e) => setForm((prev) => ({ ...prev, categoryId: e.target.value }))}
+                                disabled={categoriesLoading || categories.length === 0}
+                            >
+                                <NativeSelectOption value="">
+                                    {categoriesLoading
+                                        ? "Loading categories..."
+                                        : categories.length > 0
+                                            ? "Select a category"
+                                            : "No categories available"}
+                                </NativeSelectOption>
+                                {categories.map((category) => (
+                                    <NativeSelectOption key={category.id} value={category.id}>
+                                        {category.name}
+                                    </NativeSelectOption>
+                                ))}
+                            </NativeSelect>
+                            {categoriesError && (
+                                <p className="text-xs text-muted-foreground">{categoriesError}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="subject">Article Title *</Label>
+                            <Input
+                                id="subject"
                                         placeholder="Enter the title of your article"
                                         value={form.subject}
                                         onChange={(e) => setForm((prev) => ({ ...prev, subject: e.target.value }))}

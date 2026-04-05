@@ -79,3 +79,21 @@ export const contributionWindowKeys = {
     ] as const,
 };
 
+export const guestUserKeys = {
+  all: ["guest-users"] as const,
+  list: (
+    pageNumber: number,
+    pageSize: number,
+    searchKeyword: string,
+    isActive?: boolean,
+  ) =>
+    [
+      ...guestUserKeys.all,
+      "list",
+      pageNumber,
+      pageSize,
+      searchKeyword,
+      isActive ?? "all",
+    ] as const,
+};
+

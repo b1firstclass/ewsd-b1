@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -132,7 +133,7 @@ export const StudentDashboard = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <div className="text-lg text-muted-foreground">Loading dashboard...</div>
+                <Spinner label="Loading dashboard" />
             </div>
         );
     }

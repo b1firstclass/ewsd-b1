@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -148,7 +149,7 @@ export const CoordinatorAnalyticsPage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <p className="text-muted-foreground">Loading analytics...</p>
+                <Spinner label="Loading analytics" />
             </div>
         );
     }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Loader2, ArrowLeft } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { ApiRoute } from "@/types/constantApiRoute";
 import type { ContributionInfo } from "@/types/contributionType";
@@ -75,8 +76,7 @@ export const ManagerExportCenter = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin text-muted-foreground" />
-                <p className="text-muted-foreground">Loading export center…</p>
+                <Spinner label="Loading export center" />
             </div>
         );
     }

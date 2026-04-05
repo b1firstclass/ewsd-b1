@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-    FileText, CheckCircle, Star, Download, BarChart3, Loader2, Award,
+    FileText, CheckCircle, Star, Download, BarChart3, Award,
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { reportApi } from "@/features/report/reportApi";
 import { ApiRoute } from "@/types/constantApiRoute";
@@ -169,8 +170,7 @@ export const ManagerDashboard = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin text-muted-foreground" />
-                <p className="text-muted-foreground">Loading dashboard…</p>
+                <Spinner label="Loading dashboard" />
             </div>
         );
     }

@@ -5,6 +5,9 @@ export function toContributionCreateFormData(data: ContributionCreateForm): Form
 
     fd.append("ContributionWindowId", data.contributionWindowId);
     fd.append("FacultyId", data.facultyId);
+    if (data.categoryId) {
+        fd.append("CategoryId", data.categoryId);
+    }
     fd.append("Subject", data.subject);
     fd.append("Description", data.description);
     fd.append("DocumentFile", data.documentFile);
@@ -25,6 +28,10 @@ export function toContributionUpdateFormData(data: ContributionUpdateForm): Form
 
     if (data.description) {
         fd.append("Description", data.description);
+    }
+
+    if (data.categoryId) {
+        fd.append("CategoryId", data.categoryId);
     }
 
     if (data.documentFile) {

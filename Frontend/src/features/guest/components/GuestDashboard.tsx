@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,7 @@ export const GuestDashboard = ({ onView }: GuestDashboardProps = {}) => {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <p className="text-muted-foreground">Loading guest dashboard...</p>
+                <Spinner label="Loading guest dashboard" />
             </div>
         );
     }

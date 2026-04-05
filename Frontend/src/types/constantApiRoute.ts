@@ -22,6 +22,10 @@ export const ApiRoute = {
     Permission: {
         getActiveList: "/permissions/activePermissions"
     },
+    Category: {
+        getActiveList: "/Categories/ActiveCategories",
+        ...getActionsRoute("/Categories"),
+    },
     ContributionWindow: {
         getStatus: "/ContributionWindows/status",
         ...getActionsRoute("/ContributionWindows"),
@@ -69,7 +73,7 @@ export const ApiRoute = {
     },
     // New guest management routes
     GuestManagement: {
-        getGuestList: "/Faculties/guests",
+        getGuestList: "/Users/guest-users",
         triggerNotification: (facultyId: string) => `/Faculties/${facultyId}/notify-coordinator`,
         getGuestContributions: "/Contributions/guest-contributions",
     },

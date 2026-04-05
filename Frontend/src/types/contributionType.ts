@@ -1,4 +1,5 @@
 import type { CommentInfo } from "./commentType";
+import type { CategoryInfo } from "./categoryType";
 import type { PageResponse } from "./sharedType";
 
 /**
@@ -8,6 +9,7 @@ import type { PageResponse } from "./sharedType";
 export interface ContributionInfo {
     id: string;
     contributionWindowId: string;
+    categoryId?: string | null;
     subject: string;
     description: string;
     status: ContributionStatusValue;
@@ -37,6 +39,7 @@ export interface ContributionDocumentInfo {
  * Returned by GET /Contributions/{id} — includes documents and comments
  */
 export interface ContributionDetailInfo extends ContributionInfo {
+    category?: CategoryInfo | null;
     documents: ContributionDocumentInfo[];
     comments: CommentInfo[];
 }
@@ -50,6 +53,7 @@ export interface ContributionDetailInfo extends ContributionInfo {
 export interface ContributionCreateForm {
     contributionWindowId: string;
     facultyId: string;
+    categoryId?: string | null;
     subject: string;
     description: string;
     documentFile: File;
@@ -66,6 +70,7 @@ export interface ContributionCreateForm {
 export interface ContributionUpdateForm {
     subject?: string | null;
     description?: string | null;
+    categoryId?: string | null;
     documentFile?: File | null;
     imageFile?: File | null;
 }

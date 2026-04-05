@@ -163,7 +163,7 @@ const DocumentCard = ({ doc }: { doc: ContributionDocumentInfo }) => {
     };
 
     return (
-        <div className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2.5 transition-colors hover:bg-muted/50 sm:gap-3 sm:p-3">
             <div className={cn(
                 "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
                 isImage ? "bg-chart-2/10 text-chart-2" : "bg-primary/10 text-primary",
@@ -172,16 +172,17 @@ const DocumentCard = ({ doc }: { doc: ContributionDocumentInfo }) => {
             </div>
             <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-foreground">{doc.fileName}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="truncate text-xs text-muted-foreground">
                     {doc.extension.toUpperCase().replace(".", "")} · {formatSize(doc.size)}
                 </p>
             </div>
             <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 shrink-0 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="h-8 w-8 shrink-0 p-0 sm:h-9 sm:w-9"
                 onClick={handleDownload}
                 disabled={downloading}
+                aria-label={`Download ${doc.fileName}`}
             >
                 {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
             </Button>
@@ -363,6 +364,15 @@ export const ContributionDetailPanel = ({
                                         </>
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="mt-3">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Category
+                                </span>
+                                <p className="mt-1 text-sm font-medium text-foreground">
+                                    {detail.category?.name || "Not selected"}
+                                </p>
                             </div>
 
                             <Separator />

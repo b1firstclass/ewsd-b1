@@ -6,8 +6,9 @@ export const authApi = {
         const response = await backendApi.auth.login(credentials);
         return {
             token: response.token,
-            expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour expiry
-            refreshToken: response.refreshToken
+            expiresAt: response.expiresAt || new Date(Date.now() + 3600000).toISOString(),
+            refreshToken: response.refreshToken,
+            firstTimeLogin: response.firstTimeLogin,
         };
     },
     logout: async () => {

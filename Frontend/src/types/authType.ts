@@ -14,10 +14,10 @@ export interface LoginCrendential{
 }
 
 export interface LoginResponse{
-    //user: User;
     token: string;
     expiresAt: string;
     refreshToken: string;
+    firstTimeLogin: boolean;
 }
 
 export interface RefreshTokenRequest{

@@ -1,49 +1,126 @@
-## Contribution Card — Banner Footer Enhancement
 
-### Current State
 
-The card has: status stripe (top) → status badge + date → title → description → footer (edited date + action icons). Between the footer text and the bottom border, there is empty space — this is the opportunity zone.
+# User Flow Diagrams — Discussion for All 5 Participants
 
-### Recommended Approach: **Banner Strip in Footer Zone**
+Here is the complete user journey I've mapped from the codebase for each role. Let's confirm these flows before I generate the Mermaid diagrams.
 
-Rather than a transparent background overlay (which risks hurting text readability), place a **slim decorative banner image strip** between the footer content and the card bottom edge. This keeps text crisp while adding visual warmth.
+---
+
+## 1. Student User Flow
 
 ```text
-┌──────────────────────────────┐
-│ ▓▓▓▓▓▓ status stripe ▓▓▓▓▓▓ │  ← 4px colored bar
-│ ● SUBMITTED          Today   │
-│                              │
-│ Digital Transformation...    │  ← title + description
-│ This research examines...    │
-│                              │
-│ Edited Today           👁    │  ← footer actions
-│ ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄│
-│ ░░░░░ banner image strip ░░░ │  ← NEW: 40px tall, object-cover
-│ ░░░░░ with gradient fade ░░░ │     fades from transparent → image
-└──────────────────────────────┘
+Open Website → Login Screen → Enter Credentials
+  ├─ Auth Fails → Error Message → Retry
+  └─ Auth Success → First Login? → Welcome Modal → Student Dashboard
+                    └─ Returning → Show Last Login → Student Dashboard
+
+Student Dashboard:
+  ├─ View Stat Cards (Total, Draft, Submitted, Under Review, Approved, Selected)
+  ├─ View Deadline Progress (Submission + Final Closure dates)
+  ├─ Click Stat Card → My Submissions (filtered by status)
+  ├─ Click "Start New Contribution" → Submission Form Modal
+  │     ├─ Select Category
+  │     ├─ Enter Subject + Description
+  │     ├─ Upload Word Doc + Image (validated)
+  │     ├─ Accept Terms & Conditions (mandatory)
+  │     └─ Save as Draft OR Submit
+  ├─ Click Contribution Card → Detail Panel
+  │     ├─ View Status Timeline (Draft→Submitted→Under Review→Approved→Selected)
+  │     ├─ View/Download Attachments
+  │     ├─ Read Coordinator Comments
+  │     ├─ Edit (if Draft/Revision Required)
+  │     └─ Submit (if Draft)
+  └─ Sidebar: My Submissions → Full submissions list with search/filter
 ```
 
-### Design Details
+## 2. Coordinator User Flow
 
-1. **Banner strip placement** — A `40px` tall image section at the card bottom, below the footer border. Uses `object-cover` + `object-bottom` for cinematic crop. A subtle top gradient overlay fades from card background → transparent so it blends smoothly.
-2. **Randomized per card** — Use `contribution.id` to deterministically pick one of the 4 banners (`banner1.jpg` through `banner4.jpg`). This gives visual variety without randomness on re-render. Simple hash: `id.charCodeAt(0) % 4`.
-3. **Low opacity approach** — The banner strip renders at `opacity-30` to `opacity-40`, keeping it decorative rather than dominant. On hover, it subtly increases to `opacity-50` for a living feel.
-4. **No text overlap** — Unlike a full transparent background, this approach keeps all text on a clean `bg-card` surface. The banner is purely decorative in a dedicated zone.
+```text
+Open Website → Login → Auth Success → Coordinator Dashboard
 
-### Alternative Considered (and why not)
+Coordinator Dashboard:
+  ├─ View 14-Day Comment Deadline Alerts (critical/warning badges)
+  ├─ View Stat Cards (Submitted, Under Review, Revision Req., Approved, Selected, Rejected)
+  ├─ Click Stat Card → Review Queue (filtered)
+  ├─ Click Contribution Card → Detail Panel
+  │     ├─ View Status Timeline
+  │     ├─ View/Download Documents
+  │     ├─ Add Comments (within 14-day window)
+  │     └─ Change Status: Approve / Reject / Request Revision / Select
+  ├─ Sidebar: Review Queue → Full queue with search, status filter, deadline filter, grid/list view
+  ├─ Sidebar: Analytics → Faculty Analytics Page
+  │     ├─ Status Distribution Chart
+  │     ├─ Exception Report: Contributions Without Comments
+  │     └─ Exception Report: Contributions Overdue 14 Days
+  └─ Sidebar: Guest List → View faculty's registered guests
+```
 
-- **Full card transparent background**: Risks readability issues with serif headings over complex images. Would need heavy overlay which defeats the purpose.
-- **Verdict**: Footer strip is cleaner, more magazine-editorial, and safer.
+## 3. Manager User Flow
 
-### Technical Scope
+```text
+Open Website → Login → Auth Success → Manager Dashboard
 
+Manager Dashboard (READ-ONLY cross-faculty):
+  ├─ View Contribution Count by Faculty (Bar Chart)
+  ├─ View Contribution Percentage by Faculty (Doughnut Chart)
+  ├─ View Faculty User Distribution (Horizontal Bar Chart)
+  ├─ View Top Contributors
+  ├─ View Exception Reports (Without Comment + 14-Day Overdue)
+  ├─ Filter by Academic Year
+  └─ Sidebar: Export Center
+        ├─ View all Selected contributions
+        ├─ Select individual / Select All
+        └─ Download as ZIP file
+```
 
-| File                   | Change                                                                                                 |
-| ---------------------- | ------------------------------------------------------------------------------------------------------ |
-| `ContributionCard.tsx` | Import `banner1-4.jpg`, add banner strip div after footer, deterministic selection via contribution ID |
+## 4. Guest User Flow
 
+```text
+Open Website → Login → Auth Success → Guest Dashboard
 
-Single file change, no new dependencies, uses existing banner assets.  
-  
-We should not have seperate  NEW: 40px tall, object-cover fades from transparent → image below footer actions because it will become taller card design and break card design UI.  
-instead of having a new section for image under footer actions of card, i recommend you to use footer action to use as banner image  for cinematic crop. current footer action's Edited Today indicator should be next to Today indicator at the top of card and view details icon appear only when hover should be clickable to the card itself as well.
+Guest Dashboard (READ-ONLY, single faculty):
+  ├─ View Faculty Info + Statistics (total selected, categories)
+  ├─ View Faculty Timeline
+  ├─ Browse Selected Contribution Cards
+  ├─ Click Card → View Detail (read-only, no edit/comment)
+  └─ Sidebar: Selected Contributions → Browse all selected works
+```
+
+## 5. Admin User Flow
+
+```text
+Open Website → Login → Auth Success → System Monitoring
+
+System Monitoring:
+  ├─ Overview Tab: Most Viewed Pages, Most Active Users, Browser Stats (charts)
+  ├─ Analytics Tab: Hourly Activity Trends (date-range picker), Device Breakdown
+  └─ Summary Tab: Faculty User Distribution, System Health
+
+Sidebar Navigation:
+  ├─ Contribution Windows → CRUD table (academic year, faculty, dual deadlines)
+  ├─ User Management → CRUD table (assign roles + faculties)
+  ├─ Role Management → CRUD table (permissions per role)
+  └─ Faculty Management → CRUD table (faculty names)
+```
+
+---
+
+## Diagram Style
+
+Each diagram will be a **top-down flowchart** with:
+- Decision diamonds for auth/conditions
+- Rounded boxes for screens/pages
+- Subgraphs grouping related actions (e.g., "Dashboard", "Detail Panel")
+- Color-coded nodes per role for visual distinction
+
+## Deliverables
+
+5 separate `.mmd` files in `/mnt/documents/`:
+1. `Student_UserFlow.mmd`
+2. `Coordinator_UserFlow.mmd`
+3. `Manager_UserFlow.mmd`
+4. `Guest_UserFlow.mmd`
+5. `Admin_UserFlow.mmd`
+
+**Does this flow mapping look correct and complete? Any screens or actions I should add/remove before generating the diagrams?**
+

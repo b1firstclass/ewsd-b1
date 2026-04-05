@@ -4,11 +4,19 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Lock, User } from "lucide-react"
 import { useState, type FormEvent } from "react"
+import { useNavigate } from "@tanstack/react-router"
 import { useLogin } from "../hooks/useLogin"
 import { inputIconClass } from "@/tailwindStyle"
+import { getRoleBasedRedirect, getUserRoleFromToken } from "@/utils/jwtUtils"
+import { storage } from "@/lib/utils"
+
+const formatRoleLabel = (role: string) =>
+    role
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
 
 export const LoginForm = () => {
-
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({ loginId: "", password: "" });
     const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState<{ userName?: string; password?: string }>();
@@ -35,10 +43,23 @@ export const LoginForm = () => {
         e.preventDefault();
 
         if (validate()) {
-            login({
-                credentials: { loginId: formData.loginId, password: formData.password },
-                rememberMe,
-            });
+            login(
+                {
+                    credentials: { loginId: formData.loginId, password: formData.password },
+                    rememberMe,
+                },
+                {
+                    onSuccess: (data) => {
+                        const redirectPath = getRoleBasedRedirect(data.token);
+
+                        if (data.firstTimeLogin) {
+                            storage.setFirstLoginWelcome(formatRoleLabel(getUserRoleFromToken(data.token)));
+                        }
+
+                        navigate({ to: redirectPath });
+                    },
+                }
+            );
         }
     };
 
@@ -90,7 +111,7 @@ export const LoginForm = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="flex items-center justify-between gap-3 pt-1">
+                    <div className="flex items-center pt-1">
                         <label
                             htmlFor="rememberMe"
                             className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"
@@ -104,12 +125,6 @@ export const LoginForm = () => {
                             />
                             <span>Remember me</span>
                         </label>
-                        <button
-                            type="button"
-                            className="rounded-sm text-sm font-medium text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
-                        >
-                            Forgot password?
-                        </button>
                     </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
