@@ -7,10 +7,13 @@ import { Search, Plus, LayoutGrid, List } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { categoryApi } from "@/features/category/categoryApi";
 import { contributionApi } from "@/features/contribution/contributionApi";
+import { contributionWindowApi } from "@/features/contributionWindow/contributionWindowApi";
+import { useDeadlineLogic } from "@/features/student/hooks/useDeadlineLogic";
 import { ApiRoute } from "@/types/constantApiRoute";
 import { ContributionStatus } from "@/types/contributionType";
 import { ContributionGrid } from "@/features/contribution/components/ContributionCard";
 import type { ContributionInfo, ContributionStatusValue } from "@/types/contributionType";
+import type { ContributionWindowInfo } from "@/types/contributionWindowType";
 import { toast } from "sonner";
 
 interface MySubmissionsListProps {
@@ -41,6 +44,16 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>(initialStatusFilter || 'all');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [currentWindow, setCurrentWindow] = useState<ContributionWindowInfo | null>(null);
+
+    const deadline = useDeadlineLogic(currentWindow);
+    const canCreateNew = deadline?.canSubmit ?? false;
+
+    useEffect(() => {
+        contributionWindowApi.getStatus().then((res) => {
+            setCurrentWindow(res.window ?? null);
+        }).catch(() => setCurrentWindow(null));
+    }, []);
 
     const loadSubmissions = useCallback(async () => {
         setLoading(true);
@@ -120,7 +133,12 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
                         {submissions.length} contribution{submissions.length !== 1 ? 's' : ''}
                     </p>
                 </div>
-                <Button onClick={onCreateNew} size="sm">
+                <Button
+                    onClick={onCreateNew}
+                    size="sm"
+                    disabled={!canCreateNew}
+                    title={!canCreateNew ? "Submission period has ended" : undefined}
+                >
                     <Plus className="mr-1.5 h-4 w-4" />
                     New Contribution
                 </Button>
