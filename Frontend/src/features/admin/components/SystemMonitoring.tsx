@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -86,7 +87,7 @@ export const SystemMonitoring = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="text-lg text-muted-foreground">Loading system monitoring...</div>
+        <Spinner label="Loading system monitoring" />
       </div>
     );
   }

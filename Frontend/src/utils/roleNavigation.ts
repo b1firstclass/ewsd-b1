@@ -16,6 +16,7 @@ const studentNav: SidebarNavItem[] = [
 const coordinatorNav: SidebarNavItem[] = [
   { href: "/coordinator/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
   { href: "/coordinator/review-queue", label: "Review Queue", icon: Eye },
+  { href: "/coordinator/guest-list", label: "Guest List", icon: Users },
   { href: "/coordinator/analytics", label: "Analytics", icon: BarChart3 },
 ];
 

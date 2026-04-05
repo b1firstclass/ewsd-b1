@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const USER_KEY = 'user';
+const FIRST_LOGIN_WELCOME_KEY = "first_login_welcome";
 
 type AuthStorageMode = "local" | "session";
 
@@ -53,9 +54,19 @@ export const storage = {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(FIRST_LOGIN_WELCOME_KEY);
     // Keep legacy cleanup for older sessions that stored user snapshots.
     localStorage.removeItem(USER_KEY);
     sessionStorage.removeItem(USER_KEY);
+  },
+  setFirstLoginWelcome: (role: string) => {
+    sessionStorage.setItem(FIRST_LOGIN_WELCOME_KEY, role);
+  },
+  getFirstLoginWelcome: (): string | null => {
+    return sessionStorage.getItem(FIRST_LOGIN_WELCOME_KEY);
+  },
+  clearFirstLoginWelcome: () => {
+    sessionStorage.removeItem(FIRST_LOGIN_WELCOME_KEY);
   },
 };
 

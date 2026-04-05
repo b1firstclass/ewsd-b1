@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Plus, LayoutGrid, List } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { categoryApi } from "@/features/category/categoryApi";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { ApiRoute } from "@/types/constantApiRoute";
 import { ContributionStatus } from "@/types/contributionType";
@@ -34,6 +36,7 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
     const { user } = useAuth();
     const facultyName = user?.faculties?.[0]?.name;
     const [submissions, setSubmissions] = useState<ContributionInfo[]>([]);
+    const [categoryNameById, setCategoryNameById] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>(initialStatusFilter || 'all');
@@ -57,6 +60,35 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
     useEffect(() => {
         loadSubmissions();
     }, [loadSubmissions]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadCategories = async () => {
+            try {
+                const categories = await categoryApi.getActiveList();
+                if (cancelled) return;
+
+                setCategoryNameById(
+                    categories.reduce<Record<string, string>>((acc, category) => {
+                        acc[category.id] = category.name;
+                        return acc;
+                    }, {})
+                );
+            } catch (error) {
+                console.error("Failed to load categories:", error);
+                if (!cancelled) {
+                    setCategoryNameById({});
+                }
+            }
+        };
+
+        loadCategories();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     // Compute counts from all submissions (unfiltered) — we could cache this
     const filteredSubmissions = useMemo(() => {
@@ -146,7 +178,7 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
             {/* Loading State */}
             {loading ? (
                 <div className="flex items-center justify-center py-16">
-                    <p className="text-muted-foreground">Loading contributions...</p>
+                    <Spinner label="Loading contributions" />
                 </div>
             ) : viewMode === 'grid' ? (
                 /* Pinterest Masonry Grid */
@@ -156,6 +188,7 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
                     onEdit={onEditSubmission}
                     onSubmit={handleSubmitContribution}
                     facultyName={facultyName}
+                    categoryNameById={categoryNameById}
                     emptyMessage={
                         searchTerm
                             ? 'No contributions match your search.'
@@ -184,6 +217,11 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
                                     <div className="min-w-0 flex-1">
                                         <p className="truncate text-sm font-medium">{submission.subject}</p>
                                         <p className="truncate text-xs text-muted-foreground">{submission.description}</p>
+                                        {submission.categoryId && categoryNameById[submission.categoryId] && (
+                                            <p className="mt-1 truncate text-[11px] font-medium text-primary">
+                                                {categoryNameById[submission.categoryId]}
+                                            </p>
+                                        )}
                                     </div>
                                     <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
                                         {submission.status}

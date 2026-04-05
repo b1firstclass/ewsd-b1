@@ -31,19 +31,9 @@ export interface LoginRequest {
 
 export interface LoginResponse {
     token: string;
+    expiresAt: string;
     refreshToken: string;
-    user: {
-        userId: string;
-        loginId: string;
-        email: string;
-        fullName: string;
-        roleId: string;
-        roleName: string;
-        isActive: boolean;
-        createdDate: string;
-        modifiedDate: string;
-        lastLoginDate?: string;
-    };
+    firstTimeLogin: boolean;
 }
 
 export interface RefreshTokenRequest {

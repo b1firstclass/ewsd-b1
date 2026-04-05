@@ -1,9 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext"
 import type { LoginCrendential } from "@/types/authType";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { authApi } from "../authApi";
-import { getRoleBasedRedirect } from "@/utils/jwtUtils";
 
 type LoginMutationInput = {
     credentials: LoginCrendential;
@@ -12,7 +10,6 @@ type LoginMutationInput = {
 
 export const useLogin = () => {
     const { login } = useAuth();
-    const navigate = useNavigate();
 
     return useMutation({
         mutationFn: async ({ credentials, rememberMe }: LoginMutationInput) => {
@@ -23,10 +20,6 @@ export const useLogin = () => {
                 console.warn("Profile fetch failed after login, continuing with redirect");
             });
             return data;
-        },
-        onSuccess: (data) => {
-            const redirectPath = getRoleBasedRedirect(data.token);
-            navigate({ to: redirectPath });
         },
     });
 }
