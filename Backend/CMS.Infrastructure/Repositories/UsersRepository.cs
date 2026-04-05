@@ -10,6 +10,7 @@ namespace CMS.Infrastructure.Repositories
     public class UsersRepository : Repository<User>, IUsersRepository
     {
         private readonly AppDbContext _context;
+
         public UsersRepository(AppDbContext context) : base(context)
         {
             _context = context;
@@ -147,20 +148,60 @@ namespace CMS.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<User>> GetGuestUsersByFacultyIdAsync(List<Guid> facultyIds)
+        public async Task<PagedResult<User>> GetGuestUsersByFacultyIdAsync(
+            IReadOnlyCollection<Guid> facultyIds,
+            int skip,
+            int take,
+            string? searchKeyword = null,
+            bool? isActive = null)
         {
             if (facultyIds == null || facultyIds.Count == 0)
             {
-                return new List<User>();
+                return new PagedResult<User>([], 0);
             }
 
-            var normalizedRoleName = RoleNames.Guest;
+            if (skip < 0)
+            {
+                skip = 0;
+            }
+
+            if (take <= 0)
+            {
+                take = 20;
+            }
+
+            var normalizedFacultyIds = facultyIds
+                .Where(id => id != Guid.Empty)
+                .Distinct()
+                .ToList();
+
+            if (normalizedFacultyIds.Count == 0)
+            {
+                return new PagedResult<User>([], 0);
+            }
+
+            var normalizedRoleName = RoleNames.Guest.Trim().ToLowerInvariant();
             var query = _context.Users
                 .AsNoTracking()
-                .Where(user => user.Role.Name.ToLower() == normalizedRoleName)
-                .Where(user => user.Faculties.Any(faculty => facultyIds.Contains(faculty.FacultyId)));
+                .Where(user => user.Role.Name != null && user.Role.Name.Trim().ToLower() == normalizedRoleName)
+                .Where(user => user.Faculties.Any(faculty => normalizedFacultyIds.Contains(faculty.FacultyId)))
+                .ApplySearch(searchKeyword);
 
-            return await query.ToListAsync();
+            if (isActive.HasValue)
+            {
+                query = query.Where(user => user.IsActive == isActive.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+            var users = await query
+                .OrderByDescending(user => user.CreatedDate)
+                .Include(user => user.Role)
+                .Include(user => user.Faculties)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedResult<User>(users, totalCount);
         }
     }
 }
