@@ -38,6 +38,12 @@ namespace CMS.Application.DTOs
         public ContributionFileRequest? ImageFile { get; set; }
     }
 
+    public class ContributionRatingRequest
+    {
+        [Range(1, 5)]
+        public int Rating { get; set; }
+    }
+
     public class ContributionStatusUpdateRequest
     {
         [Required]
@@ -73,10 +79,24 @@ namespace CMS.Application.DTOs
         public Guid? CategoryId { get; set; }
         public string Subject { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public int Rating { get; set; }
         public string Status { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    public class ContributionImageInfo
+    {
+        public Guid Id { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
+        public byte[]? Data { get; set; }
+    }
+
+    public class ContributionListInfo : ContributionInfo
+    {
+        public ContributionImageInfo? Image { get; set; }
     }
 
     public class ContributionDocumentInfo

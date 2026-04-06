@@ -292,6 +292,54 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+
+        public async Task<ContributionInfo?> RateContributionAsync(Guid contributionId, int rating)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            if (rating < 1 || rating > 5)
+            {
+                throw new ArgumentException("Rating must be between 1 and 5.");
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Coordinator, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for rating: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusUnderReview(contribution.Status))
+            {
+                throw new InvalidOperationException("Only contributions under review can be rated.");
+            }
+
+            if (!contribution.ReviewedBy.HasValue || contribution.ReviewedBy.Value != currentUser.UserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            contribution.Rating = rating;
+            contribution.ModifiedDate = DateTime.UtcNow;
+            contribution.ModifiedBy = currentUser.UserId;
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution rated: {ContributionId} with {Rating}", contributionId, rating);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+
         public async Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request)
         {
             if (contributionId == Guid.Empty)
@@ -360,14 +408,14 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
+        public async Task<PagedResponse<ContributionListInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
             var currentWindow = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(DateTime.UtcNow);
 
             if (currentWindow == null)
             {
-                return new PagedResponse<ContributionInfo>(Array.Empty<ContributionInfo>(), 0);
+                return new PagedResponse<ContributionListInfo>(Array.Empty<ContributionListInfo>(), 0);
             }
 
             var skip = paginationRequest.GetSkipCount();
@@ -407,11 +455,11 @@ namespace CMS.Application.Services
                     paginationRequest.IsActive);
             }
 
-            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+            var mappedContributions = _mapper.Map<List<ContributionListInfo>>(pagedContributions.Items);
 
-            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+            return new PagedResponse<ContributionListInfo>(mappedContributions, pagedContributions.TotalCount);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
+        public async Task<PagedResponse<ContributionListInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
 
@@ -434,9 +482,9 @@ namespace CMS.Application.Services
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 
-            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+            var mappedContributions = _mapper.Map<List<ContributionListInfo>>(pagedContributions.Items);
 
-            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+            return new PagedResponse<ContributionListInfo>(mappedContributions, pagedContributions.TotalCount);
         }
         public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
         {
@@ -462,6 +510,7 @@ namespace CMS.Application.Services
                 Category = contribution.Category != null ? _mapper.Map<CategoryInfo>(contribution.Category) : null,
                 Subject = contribution.Subject,
                 Description = contribution.Description,
+                Rating = contribution.Rating,
                 Status = contribution.Status,
                 CreatedDate = DateTimeHelper.NormalizeToUtc(contribution.CreatedDate),
                 ModifiedDate = DateTimeHelper.NormalizeToUtc(contribution.ModifiedDate),

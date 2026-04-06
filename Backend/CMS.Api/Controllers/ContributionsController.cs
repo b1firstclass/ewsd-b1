@@ -456,6 +456,53 @@ namespace CMS.Api.Controllers
 
         [Authorize(Roles = RoleNames.Coordinator)]
         [HasPermission(PermissionNames.ContributionUpdate)]
+        [HttpPut("{id:guid}/rating")]
+        public async Task<IActionResult> RateContribution(Guid id, [FromBody] ContributionRatingRequest request)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.ValidationFailed, 400, ModelState);
+                }
+
+                var updated = await _contributionsService.RateContributionAsync(id, request.Rating);
+                if (updated == null)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution"), 404);
+                }
+
+                return updated.ToApiResponse(ApiResponseMessages.Updated("Contribution rating"));
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Contribution rating validation failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 400);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution rating failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error rating contribution {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorUpdating("contribution rating"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Coordinator)]
+        [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/approve")]
         public async Task<IActionResult> ApproveContribution(Guid id)
         {
