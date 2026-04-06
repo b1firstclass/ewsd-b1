@@ -109,6 +109,20 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.CreatedDate)))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTimeHelper.NormalizeToUtc(src.ModifiedDate)));
 
+            CreateMap<Document, ContributionImageInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DocumentId))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Extension, opt => opt.MapFrom(src => src.Extension))
+                .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
+
+            CreateMap<Contribution, ContributionListInfo>()
+                .IncludeBase<Contribution, ContributionInfo>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src =>
+                    src.Documents
+                        .Where(d => d.IsActive && d.Extension != null && ContributionConstants.AllowedImageExtensions.Contains(d.Extension))
+                        .OrderByDescending(d => d.CreatedDate)
+                        .FirstOrDefault()));
+
             CreateMap<Document, ContributionDocumentInfo>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DocumentId))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))

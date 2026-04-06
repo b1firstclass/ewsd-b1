@@ -86,6 +86,19 @@ namespace CMS.Application.DTOs
         public DateTime? ModifiedDate { get; set; }
     }
 
+    public class ContributionImageInfo
+    {
+        public Guid Id { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
+        public byte[]? Data { get; set; }
+    }
+
+    public class ContributionListInfo : ContributionInfo
+    {
+        public ContributionImageInfo? Image { get; set; }
+    }
+
     public class ContributionDocumentInfo
     {
         public Guid Id { get; set; }

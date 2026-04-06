@@ -408,14 +408,14 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
+        public async Task<PagedResponse<ContributionListInfo>> GetMyContributionsAsync(PaginationRequest paginationRequest, string? status = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
             var currentWindow = await _unitOfWork.ContributionWindowsRepository.GetCurrentWindowAsync(DateTime.UtcNow);
 
             if (currentWindow == null)
             {
-                return new PagedResponse<ContributionInfo>(Array.Empty<ContributionInfo>(), 0);
+                return new PagedResponse<ContributionListInfo>(Array.Empty<ContributionListInfo>(), 0);
             }
 
             var skip = paginationRequest.GetSkipCount();
@@ -455,11 +455,11 @@ namespace CMS.Application.Services
                     paginationRequest.IsActive);
             }
 
-            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+            var mappedContributions = _mapper.Map<List<ContributionListInfo>>(pagedContributions.Items);
 
-            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+            return new PagedResponse<ContributionListInfo>(mappedContributions, pagedContributions.TotalCount);
         }
-        public async Task<PagedResponse<ContributionInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
+        public async Task<PagedResponse<ContributionListInfo>> GetSelectedContributionsForFacultyViewerAsync(PaginationRequest paginationRequest, Guid? contributionWindowId = null)
         {
             var currentUser = await GetAuthenticatedUserAsync();
 
@@ -482,9 +482,9 @@ namespace CMS.Application.Services
                 paginationRequest.SearchKeyword,
                 paginationRequest.IsActive);
 
-            var mappedContributions = _mapper.Map<List<ContributionInfo>>(pagedContributions.Items);
+            var mappedContributions = _mapper.Map<List<ContributionListInfo>>(pagedContributions.Items);
 
-            return new PagedResponse<ContributionInfo>(mappedContributions, pagedContributions.TotalCount);
+            return new PagedResponse<ContributionListInfo>(mappedContributions, pagedContributions.TotalCount);
         }
         public async Task<ContributionDetailInfo?> GetContributionByIdAsync(Guid contributionId)
         {

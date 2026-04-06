@@ -76,6 +76,9 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(contribution => contribution.CreatedDate)
+                .Include(c => c.Documents.Where(d => d.IsActive &&
+                                d.Extension != null &&
+                                ContributionConstants.AllowedImageExtensions.Contains(d.Extension)))
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
@@ -121,6 +124,9 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(contribution => contribution.CreatedDate)
+                .Include(c => c.Documents.Where(d => d.IsActive &&
+                                d.Extension != null &&
+                                ContributionConstants.AllowedImageExtensions.Contains(d.Extension)))
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
@@ -160,6 +166,9 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(contribution => contribution.CreatedDate)
+                .Include(c => c.Documents.Where(d => d.IsActive &&
+                                d.Extension != null &&
+                                ContributionConstants.AllowedImageExtensions.Contains(d.Extension)))
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
