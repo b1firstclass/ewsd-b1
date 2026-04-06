@@ -374,8 +374,7 @@ export const ContributionDetailPanel = ({
     const handleRate = async (rating: number) => {
         if (!detail || !Number.isInteger(rating) || rating < 1 || rating > 5) return;
 
-        const canRateNow = coordinatorMode
-            && user?.role?.name === ROLES.COORDINATOR
+        const canRateNow = user?.role?.name === ROLES.COORDINATOR
             && detail.status === ContributionStatus.UnderReview;
 
         if (!canRateNow) {
@@ -401,15 +400,13 @@ export const ContributionDetailPanel = ({
     const currentRating = detail ? Math.min(5, Math.max(0, Math.trunc(detail.rating ?? 0))) : 0;
     const isCoordinatorUser = user?.role?.name === ROLES.COORDINATOR;
     const isUnderReview = detail?.status === ContributionStatus.UnderReview;
-    const canRateContribution = Boolean(coordinatorMode && isCoordinatorUser && isUnderReview);
+    const canRateContribution = Boolean(isCoordinatorUser && isUnderReview);
 
-    const ratingReadonlyMessage = !coordinatorMode
-        ? "Rating is managed by coordinators."
+    const ratingReadonlyMessage = canRateContribution
+        ? "Click a star to set a rating."
         : !isCoordinatorUser
-            ? "Only coordinators can rate."
-            : !isUnderReview
-                ? "Rating is editable only when status is Under Review."
-                : "Click a star to set a rating.";
+            ? "Read-only. Only coordinators can rate while contribution is under review."
+            : "Read-only. Rating is editable only when status is Under Review.";
 
     return (
         <div className="fixed inset-0 z-50 flex justify-end">
@@ -467,27 +464,25 @@ export const ContributionDetailPanel = ({
                             {/* Status Timeline */}
                             <StatusTimeline status={detail.status} />
 
-                            {coordinatorMode && (
-                                <div className="space-y-2">
-                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Rating
-                                    </h4>
-                                    <div className="flex items-center gap-3">
-                                        <RatingStars
-                                            value={currentRating}
-                                            editable={canRateContribution}
-                                            loading={ratingLoading}
-                                            onRate={(value) => void handleRate(value)}
-                                        />
-                                        <span className="text-sm font-medium text-foreground">
-                                            {currentRating > 0 ? `${currentRating}/5` : "Not rated"}
-                                        </span>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {ratingReadonlyMessage}
-                                    </p>
+                            <div className="space-y-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Rating
+                                </h4>
+                                <div className="flex items-center gap-3">
+                                    <RatingStars
+                                        value={currentRating}
+                                        editable={canRateContribution}
+                                        loading={ratingLoading}
+                                        onRate={(value) => void handleRate(value)}
+                                    />
+                                    <span className="text-sm font-medium text-foreground">
+                                        {currentRating > 0 ? `${currentRating}/5` : "Not rated"}
+                                    </span>
                                 </div>
-                            )}
+                                <p className="text-xs text-muted-foreground">
+                                    {ratingReadonlyMessage}
+                                </p>
+                            </div>
 
                             {/* Comment Deadline */}
                             {showCommentDeadline && (
