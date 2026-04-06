@@ -7,6 +7,7 @@ import type {
     ContributionDetailInfo,
     ContributionInfo,
     ContributionListResponse,
+    ContributionRatingRequest,
     ContributionStatusValue,
     ContributionUpdateForm,
 } from "@/types/contributionType";
@@ -106,6 +107,14 @@ export const contributionApi = {
      */
     select: async (id: string): Promise<ContributionInfo> => {
         const response = await api.put<ApiResponse<ContributionInfo>>(ApiRoute.Contribution.select(id));
+        return response.data.data;
+    },
+
+    /**
+     * PUT /Contributions/{id}/rating — set coordinator rating (1..5 integer)
+     */
+    rate: async (id: string, request: ContributionRatingRequest): Promise<ContributionInfo> => {
+        const response = await api.put<ApiResponse<ContributionInfo>>(ApiRoute.Contribution.rate(id), request);
         return response.data.data;
     },
 

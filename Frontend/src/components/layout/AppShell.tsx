@@ -8,6 +8,7 @@ interface AppShellProps {
   navItems: SidebarNavItem[];
   sidebarFooter?: ReactNode;
   headerRight?: ReactNode;
+  appFooter?: ReactNode;
   contentClassName?: string;
   children: ReactNode;
 }
@@ -16,6 +17,7 @@ export const AppShell = ({
   navItems,
   sidebarFooter,
   headerRight,
+  appFooter,
   contentClassName,
   children,
 }: AppShellProps) => {
@@ -30,6 +32,7 @@ export const AppShell = ({
         <AppHeader rightSlot={headerRight} />
 
         <main className={cn("flex-1 px-4 py-6 sm:px-6 lg:px-8", contentClassName)}>{children}</main>
+        {appFooter}
       </SidebarInset>
     </SidebarProvider>
   );

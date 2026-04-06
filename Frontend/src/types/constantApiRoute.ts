@@ -38,6 +38,7 @@ export const ApiRoute = {
         review: (id: string) => `/Contributions/${id}/review`,
         approve: (id: string) => `/Contributions/${id}/approve`,
         select: (id: string) => `/Contributions/${id}/select`,
+        rate: (id: string) => `/Contributions/${id}/rating`,
         selectList: "/Contributions/select",
         reject: (id: string) => `/Contributions/${id}/reject`,
         requestRevision: (id: string) => `/Contributions/${id}/request-revision`,

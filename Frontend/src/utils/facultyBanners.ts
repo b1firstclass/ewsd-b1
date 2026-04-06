@@ -8,17 +8,21 @@
  * Faculties without dedicated banners fall back to a default set.
  */
 
-import bannerArt1 from "@/assets/banner_art_1.jpg";
-import bannerArt2 from "@/assets/banner_art_2.jpg";
-import bannerArt3 from "@/assets/banner_art_3.jpg";
-import bannerArt4 from "@/assets/banner_art_4.jpg";
-import bannerArt5 from "@/assets/banner_art_5.jpg";
+import bannerArt1 from "@/assets/art/banner_art_1.jpg";
+import bannerArt2 from "@/assets/art/banner_art_2.jpg";
+import bannerArt3 from "@/assets/art/banner_art_3.jpg";
+import bannerArt4 from "@/assets/art/banner_art_4.jpg";
+import bannerArt5 from "@/assets/art/banner_art_5.jpg";
+import bannerArt6 from "@/assets/art/banner_art_6.jpg";
+import bannerArt7 from "@/assets/art/banner_art_7.jpg";
+import bannerArt8 from "@/assets/art/banner_art_8.jpg";
+import bannerArt9 from "@/assets/art/banner_art_9.jpg";
 import bannerEng1 from "@/assets/banner_engineering_1.jpg";
 import bannerEng2 from "@/assets/banner_engineering_2.jpg";
 import bannerEng3 from "@/assets/banner_engineering_3.jpg";
 
 const FACULTY_BANNERS: Record<string, string[]> = {
-  "Arts & Humanities": [bannerArt1, bannerArt2, bannerArt3, bannerArt4, bannerArt5],
+  "Arts & Humanities": [bannerArt1, bannerArt2, bannerArt3, bannerArt4, bannerArt5, bannerArt6, bannerArt7, bannerArt8, bannerArt9],
   "Engineering": [bannerEng1, bannerEng2, bannerEng3],
 };
 
