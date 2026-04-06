@@ -292,6 +292,54 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+
+        public async Task<ContributionInfo?> RateContributionAsync(Guid contributionId, int rating)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return null;
+            }
+
+            if (rating < 1 || rating > 5)
+            {
+                throw new ArgumentException("Rating must be between 1 and 5.");
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+            if (!string.Equals(currentUser.Role.Name, RoleNames.Coordinator, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for rating: {ContributionId}", contributionId);
+                return null;
+            }
+
+            if (!_statusService.IsStatusUnderReview(contribution.Status))
+            {
+                throw new InvalidOperationException("Only contributions under review can be rated.");
+            }
+
+            if (!contribution.ReviewedBy.HasValue || contribution.ReviewedBy.Value != currentUser.UserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            contribution.Rating = rating;
+            contribution.ModifiedDate = DateTime.UtcNow;
+            contribution.ModifiedBy = currentUser.UserId;
+
+            _unitOfWork.ContributionsRepository.Update(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution rated: {ContributionId} with {Rating}", contributionId, rating);
+
+            return _mapper.Map<ContributionInfo>(contribution);
+        }
+
         public async Task<ContributionInfo?> UpdateContributionAsync(Guid contributionId, ContributionUpdateRequest request)
         {
             if (contributionId == Guid.Empty)
@@ -462,6 +510,7 @@ namespace CMS.Application.Services
                 Category = contribution.Category != null ? _mapper.Map<CategoryInfo>(contribution.Category) : null,
                 Subject = contribution.Subject,
                 Description = contribution.Description,
+                Rating = contribution.Rating,
                 Status = contribution.Status,
                 CreatedDate = DateTimeHelper.NormalizeToUtc(contribution.CreatedDate),
                 ModifiedDate = DateTimeHelper.NormalizeToUtc(contribution.ModifiedDate),

@@ -17,6 +17,7 @@ namespace CMS.Application.Interfaces.Services
         Task<IReadOnlyList<ContributionInfo>> SelectedContributionsAsync(IReadOnlyCollection<Guid> contributionIds);
         Task<ContributionInfo?> RejectedContributionAsync(Guid contributionId);
         Task<ContributionInfo?> RequestRevisionContributionAsync(Guid contributionId);
+        Task<ContributionInfo?> RateContributionAsync(Guid contributionId, int rating);
         Task<ContributionInfo?> UpdateContributionStatusAsync(Guid contributionId, string status);
         Task<ContributionFilesDownload?> DownloadContributionFilesAsync(Guid contributionId);
         Task<ContributionFileDownload?> DownloadDocumentByIdAsync(Guid documentId);
