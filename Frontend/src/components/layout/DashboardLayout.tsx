@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Outlet } from "@tanstack/react-router";
 import { AppShell } from "./AppShell";
+import { AppFooter } from "./AppFooter";
 import { getNavItemsForRole } from "@/utils/roleNavigation";
 import { ROLES, type RoleName } from "@/types/constants/roleConstants";
 import { getUserRoleFromToken } from "@/utils/jwtUtils";
@@ -60,6 +61,7 @@ export const DashboardLayout = () => {
         navItems={navItems}
         sidebarFooter={<SidebarFacultyDisplay />}
         headerRight={<HeaderUserButton role={role} />}
+        appFooter={<AppFooter />}
       >
         <Outlet />
       </AppShell>

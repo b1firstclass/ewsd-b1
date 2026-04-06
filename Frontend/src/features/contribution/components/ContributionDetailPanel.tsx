@@ -19,7 +19,9 @@ import {
 } from "lucide-react";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { commentApi } from "@/features/comment/commentApi";
+import { useAuth } from "@/contexts/AuthContext";
 import { ContributionStatus, EDITABLE_STATUSES, SUBMITTABLE_STATUSES } from "@/types/contributionType";
+import { ROLES } from "@/types/constants/roleConstants";
 import type { ContributionDetailInfo, ContributionStatusValue, ContributionDocumentInfo } from "@/types/contributionType";
 import type { CommentInfo } from "@/types/commentType";
 import { cn } from "@/lib/utils";
@@ -246,6 +248,48 @@ const CommentDeadlineIndicator = ({ submittedDate }: { submittedDate?: string })
     );
 };
 
+const RatingStars = ({
+    value,
+    editable,
+    loading,
+    onRate,
+}: {
+    value: number;
+    editable: boolean;
+    loading: boolean;
+    onRate: (rating: number) => void;
+}) => {
+    return (
+        <div className="flex items-center gap-1.5">
+            {[1, 2, 3, 4, 5].map((starValue) => {
+                const isActive = starValue <= value;
+                return (
+                    <button
+                        key={starValue}
+                        type="button"
+                        className={cn(
+                            "rounded-md p-1 transition-transform",
+                            editable && !loading && "hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                            !editable && "cursor-default",
+                        )}
+                        onClick={() => onRate(starValue)}
+                        disabled={!editable || loading}
+                        aria-label={`Set rating to ${starValue} star${starValue > 1 ? "s" : ""}`}
+                    >
+                        <Star
+                            className={cn(
+                                "h-5 w-5",
+                                isActive ? "fill-amber-400 text-amber-500" : "text-muted-foreground/35",
+                            )}
+                        />
+                    </button>
+                );
+            })}
+            {loading && <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />}
+        </div>
+    );
+};
+
 // ─── Main Detail Panel ──────────────────────────────────────────────────────
 
 interface ContributionDetailPanelProps {
@@ -264,18 +308,25 @@ export const ContributionDetailPanel = ({
     onSubmit,
     coordinatorMode = false,
 }: ContributionDetailPanelProps) => {
+    const { user } = useAuth();
     const [detail, setDetail] = useState<ContributionDetailInfo | null>(null);
     const [comments, setComments] = useState<CommentInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [newComment, setNewComment] = useState("");
     const [submittingComment, setSubmittingComment] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [ratingLoading, setRatingLoading] = useState(false);
 
     const loadDetail = useCallback(async () => {
         try {
             const data = await contributionApi.getById(contributionId);
-            setDetail(data);
-            setComments(data.comments ?? []);
+            const normalizedData: ContributionDetailInfo = {
+                ...data,
+                rating: data.rating ?? (data as any).Rating ?? 0,
+                reviewedBy: data.reviewedBy ?? (data as any).ReviewedBy ?? null,
+            };
+            setDetail(normalizedData);
+            setComments(normalizedData.comments ?? []);
         } catch (err) {
             console.error("Failed to load contribution detail:", err);
             toast.error("Failed to load contribution details");
@@ -320,9 +371,45 @@ export const ContributionDetailPanel = ({
         }
     };
 
+    const handleRate = async (rating: number) => {
+        if (!detail || !Number.isInteger(rating) || rating < 1 || rating > 5) return;
+
+        const canRateNow = coordinatorMode
+            && user?.role?.name === ROLES.COORDINATOR
+            && detail.status === ContributionStatus.UnderReview;
+
+        if (!canRateNow) {
+            toast.error("Only coordinators can rate while contribution is under review.");
+            return;
+        }
+
+        setRatingLoading(true);
+        try {
+            await contributionApi.rate(detail.id, { rating });
+            toast.success("Rating updated");
+            await loadDetail();
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || "Failed to update rating");
+        } finally {
+            setRatingLoading(false);
+        }
+    };
+
     const canEdit = detail && !coordinatorMode && EDITABLE_STATUSES.includes(detail.status as ContributionStatusValue);
     const canSubmit = detail && !coordinatorMode && SUBMITTABLE_STATUSES.includes(detail.status as ContributionStatusValue);
     const showCommentDeadline = detail && [ContributionStatus.Submitted, ContributionStatus.UnderReview].includes(detail.status as any);
+    const currentRating = detail ? Math.min(5, Math.max(0, Math.trunc(detail.rating ?? 0))) : 0;
+    const isCoordinatorUser = user?.role?.name === ROLES.COORDINATOR;
+    const isUnderReview = detail?.status === ContributionStatus.UnderReview;
+    const canRateContribution = Boolean(coordinatorMode && isCoordinatorUser && isUnderReview);
+
+    const ratingReadonlyMessage = !coordinatorMode
+        ? "Rating is managed by coordinators."
+        : !isCoordinatorUser
+            ? "Only coordinators can rate."
+            : !isUnderReview
+                ? "Rating is editable only when status is Under Review."
+                : "Click a star to set a rating.";
 
     return (
         <div className="fixed inset-0 z-50 flex justify-end">
@@ -379,6 +466,28 @@ export const ContributionDetailPanel = ({
 
                             {/* Status Timeline */}
                             <StatusTimeline status={detail.status} />
+
+                            {coordinatorMode && (
+                                <div className="space-y-2">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Rating
+                                    </h4>
+                                    <div className="flex items-center gap-3">
+                                        <RatingStars
+                                            value={currentRating}
+                                            editable={canRateContribution}
+                                            loading={ratingLoading}
+                                            onRate={(value) => void handleRate(value)}
+                                        />
+                                        <span className="text-sm font-medium text-foreground">
+                                            {currentRating > 0 ? `${currentRating}/5` : "Not rated"}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {ratingReadonlyMessage}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Comment Deadline */}
                             {showCommentDeadline && (

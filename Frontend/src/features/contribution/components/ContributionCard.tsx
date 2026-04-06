@@ -229,13 +229,13 @@ export const ContributionCard = ({
         </h3>
 
         {/* Description */}
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">
           {contribution.description}
         </p>
       </div>
 
       {/* Banner Footer — purely decorative */}
-      <div className="relative h-12 w-full overflow-hidden">
+      <div className="relative h-20 w-full overflow-hidden">
         <div className="absolute inset-x-0 top-0 z-10 h-3 bg-gradient-to-b from-card/50 via-card/10 to-transparent" />
         <img
           src={getFacultyBanner(index, facultyName)}

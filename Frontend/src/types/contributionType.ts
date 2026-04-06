@@ -12,6 +12,8 @@ export interface ContributionInfo {
     categoryId?: string | null;
     subject: string;
     description: string;
+    rating?: number;
+    reviewedBy?: string | null;
     status: ContributionStatusValue;
     isActive: boolean;
     createdDate?: string;
@@ -73,6 +75,13 @@ export interface ContributionUpdateForm {
     categoryId?: string | null;
     documentFile?: File | null;
     imageFile?: File | null;
+}
+
+/**
+ * Request body for PUT /Contributions/{id}/rating
+ */
+export interface ContributionRatingRequest {
+    rating: number;
 }
 
 /**
