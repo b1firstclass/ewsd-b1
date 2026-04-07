@@ -1,6 +1,7 @@
 ﻿using CMS.Application.Interfaces.Repositories;
 using CMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace CMS.Infrastructure.Repositories
 {
@@ -42,6 +43,11 @@ namespace CMS.Infrastructure.Repositories
         public async Task<IReadOnlyList<TEntity>> GetAllAsync()
         {
             return await context.Set<TEntity>().ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await context.Set<TEntity>().AnyAsync(predicate);
         }
 
         public async Task AddAsync(TEntity entity)

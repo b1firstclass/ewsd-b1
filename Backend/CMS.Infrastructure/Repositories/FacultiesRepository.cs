@@ -58,5 +58,12 @@ namespace CMS.Infrastructure.Repositories
                 .OrderBy(f => f.FacultyName)
                 .ToListAsync();
         }
+
+        public async Task<bool> HasUsersOrContributionsAsync(Guid facultyId)
+        {
+            return await _context.Faculties
+                .Where(f => f.FacultyId == facultyId)
+                .AnyAsync(f => f.Users.Count != 0 || f.Contributions.Count != 0);
+        }
     }
 }

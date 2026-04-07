@@ -54,6 +54,12 @@ namespace CMS.Application.Services
             _fileService.ValidateDocumentFile(request.DocumentFile);
             _fileService.ValidateImageFile(request.ImageFile);
 
+            //await ValidateFileNameNotExistsAsync(request.DocumentFile.FileName);
+            //if (request.ImageFile != null)
+            //{
+            //    await ValidateFileNameNotExistsAsync(request.ImageFile.FileName);
+            //}
+
             var contribution = CreateNewContribution(request, currentUser.UserId);
             AddDocumentsToContribution(contribution, request, currentUser.UserId);
 
@@ -72,6 +78,41 @@ namespace CMS.Application.Services
 
             return _mapper.Map<ContributionInfo>(contribution);
         }
+
+        public async Task<bool> DeleteContributionAsync(Guid contributionId)
+        {
+            if (contributionId == Guid.Empty)
+            {
+                return false;
+            }
+
+            var currentUser = await GetAuthenticatedUserAsync();
+
+            var contribution = await _unitOfWork.ContributionsRepository.GetByIdAsync(contributionId);
+            if (contribution == null)
+            {
+                _logger.LogWarning("Contribution not found for delete: {ContributionId}", contributionId);
+                return false;
+            }
+
+            if (contribution.CreatedBy != currentUser.UserId)
+            {
+                throw new UnauthorizedAccessException("Forbidden");
+            }
+
+            if (!_statusService.IsStatusDraft(contribution.Status))
+            {
+                throw new InvalidOperationException("Only draft contributions can be deleted.");
+            }
+
+            _unitOfWork.ContributionsRepository.Remove(contribution);
+            await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Contribution deleted: {ContributionId}", contributionId);
+
+            return true;
+        }
+
         public async Task<ContributionInfo?> SubmitContributionAsync(Guid contributionId)
         {
             if (contributionId == Guid.Empty)
@@ -387,14 +428,16 @@ namespace CMS.Application.Services
             if (request.DocumentFile != null)
             {
                 _fileService.ValidateDocumentFile(request.DocumentFile);
-                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedDocumentExtensions, currentUserId);
+                //await ValidateFileNameNotExistsAsync(request.DocumentFile.FileName, contributionId);
+                _fileService.RemoveDocumentsOfType(contribution, ContributionConstants.AllowedDocumentExtensions);
                 contribution.Documents.Add(_fileService.CreateDocument(request.DocumentFile, contribution.ContributionId, currentUserId));
             }
 
             if (request.ImageFile != null)
             {
                 _fileService.ValidateImageFile(request.ImageFile);
-                _fileService.DisableDocumentsOfType(contribution, ContributionConstants.AllowedImageExtensions, currentUserId);
+                //await ValidateFileNameNotExistsAsync(request.ImageFile.FileName, contributionId);
+                _fileService.RemoveDocumentsOfType(contribution, ContributionConstants.AllowedImageExtensions);
                 contribution.Documents.Add(_fileService.CreateDocument(request.ImageFile, contribution.ContributionId, currentUserId));
             }
 
@@ -561,6 +604,17 @@ namespace CMS.Application.Services
             if (category == null || !category.IsActive)
             {
                 throw new InvalidOperationException("Category not found");
+            }
+        }
+
+        private async Task ValidateFileNameNotExistsAsync(string fileName, Guid excludeContributionId = default)
+        {
+            var exists = await _unitOfWork.Repository<Document>().AnyAsync(
+                d => d.FileName == fileName && d.IsActive && d.ContributionId != excludeContributionId);
+
+            if (exists)
+            {
+                throw new InvalidOperationException($"A file with the name '{fileName}' already exists.");
             }
         }
 

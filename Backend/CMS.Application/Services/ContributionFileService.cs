@@ -49,17 +49,15 @@ namespace CMS.Application.Services
             };
         }
 
-        public void DisableDocumentsOfType(Contribution contribution, HashSet<string> extensions, Guid currentUserId)
+        public void RemoveDocumentsOfType(Contribution contribution, HashSet<string> extensions)
         {
-            var documentsToDisable = contribution.Documents
+            var documentsToRemove = contribution.Documents
                 .Where(document => document.IsActive && extensions.Contains(document.Extension))
                 .ToList();
 
-            foreach (var document in documentsToDisable)
+            foreach (var document in documentsToRemove)
             {
-                document.IsActive = false;
-                document.ModifiedDate = DateTime.UtcNow;
-                document.ModifiedBy = currentUserId;
+                contribution.Documents.Remove(document);
             }
         }
 

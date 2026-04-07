@@ -366,6 +366,43 @@ namespace CMS.Api.Controllers
         }
 
         [Authorize(Roles = RoleNames.Student)]
+        [HasPermission(PermissionNames.ContributionDelete)]
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteContribution(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.IdRequired("Contribution"), 400);
+                }
+
+                var deleted = await _contributionsService.DeleteContributionAsync(id);
+                if (!deleted)
+                {
+                    return this.ToErrorResponse(ApiResponseMessages.NotFound("Contribution"), 404);
+                }
+
+                return this.ToSuccessResponse(ApiResponseMessages.Deleted("Contribution"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var statusCode = ex.Message.Equals("Forbidden", StringComparison.OrdinalIgnoreCase) ? 403 : 401;
+                return this.ToErrorResponse(ex.Message, statusCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Contribution deletion failed for contribution {ContributionId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting contribution {ContributionId}", id);
+                return this.ToErrorResponse(ApiResponseMessages.ErrorDeleting("contribution"), 500);
+            }
+        }
+
+        [Authorize(Roles = RoleNames.Student)]
         [HasPermission(PermissionNames.ContributionUpdate)]
         [HttpPut("{id:guid}/submit")]
         public async Task<IActionResult> SubmitContribution(Guid id)

@@ -181,6 +181,11 @@ namespace CMS.Api.Controllers
 
                 return this.ToSuccessResponse(ApiResponseMessages.Deleted("Faculty"));
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while deleting faculty {FacultyId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting faculty {FacultyId}", id);
