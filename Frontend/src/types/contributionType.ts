@@ -10,6 +10,7 @@ export interface ContributionInfo {
     id: string;
     contributionWindowId: string;
     categoryId?: string | null;
+    image?: ContributionImageInfo | null;
     subject: string;
     description: string;
     rating?: number;
@@ -18,6 +19,13 @@ export interface ContributionInfo {
     isActive: boolean;
     createdDate?: string;
     modifiedDate?: string;
+}
+
+export interface ContributionImageInfo {
+    id: string;
+    fileName: string;
+    extension: string;
+    data?: string | null;
 }
 
 /**

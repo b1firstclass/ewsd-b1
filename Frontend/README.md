@@ -1,58 +1,81 @@
 # EWSD Frontend
 
-Modern React + Vite + TypeScript frontend with Tailwind CSS v4 and shadcn/ui components.
+Role-based university magazine frontend built with React, TypeScript, and Vite.
 
-## Tech Stack
-- React 19 + Vite 7
-- TypeScript
+## Stack
+- React 19
+- TypeScript 5
+- Vite 6
+- TanStack Router + TanStack Query
 - Tailwind CSS v4
 - shadcn/ui + Radix UI
+- Axios
 
-## Getting Started
-
-### Requirements
+## Prerequisites
 - Node.js 18+ (recommended)
 - npm 9+
 
-### Installation
+## Setup
 ```bash
 npm install
 ```
 
-### Development
+## Run
 ```bash
 npm run dev
 ```
+Runs Vite in `dev` mode (`--mode dev`), which reads `.env.dev`.
 
-### Build
+## Build
 ```bash
 npm run build
 ```
 
-### Preview
+Optional build modes:
+```bash
+npm run build:dev
+npm run build:prod
+```
+
+## Preview Build
 ```bash
 npm run preview
 ```
 
+## Lint
+```bash
+npm run lint
+```
+
+## Environment
+This app reads:
+- `VITE_API_BASE_URL` (used by `src/lib/api/client.ts`)
+- `VITE_APP_NAME` (defined in env files)
+
+Current env files in repo:
+- `.env.dev`
+- `.env.prod`
+
+## Routing and Roles
+Routes are defined in `src/router/routeConfig.ts` using TanStack Router.
+
+Main role areas:
+- Student: dashboard, my submissions
+- Coordinator: dashboard, review queue, guest list, analytics
+- Manager: dashboard, export center
+- Guest: dashboard, selected contributions
+- Admin: system monitoring, contribution windows, user/role/faculty management
+
 ## Project Structure
-```
+```text
 src/
-  components/
-    common/        # Reusable layout and UI building blocks
-    ui/            # shadcn/ui primitives
-  contexts/        # React contexts (auth, etc.)
-  features/        # Feature modules
-  pages/           # Page-level components
-  routes/          # Route config and guards
-  lib/             # Helpers and utilities
+  components/   # shared layout + UI components
+  contexts/     # auth context and providers
+  features/     # feature modules by domain/role
+  hooks/        # shared hooks
+  lib/          # API client, query client, shared utilities
+  router/       # router config + provider
+  styles/       # theme/styles
+  types/        # TS domain types and constants
+  utils/        # helper functions
 ```
-
-## Environment Variables
-Create a `.env` file if you need API configuration:
-```
-VITE_API_URL=https://your-api.example.com
-```
-
-## Notes
-- Tailwind theme tokens live in `src/index.css`.
-- UI primitives are in `src/components/ui`.
