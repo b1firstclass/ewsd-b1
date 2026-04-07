@@ -218,5 +218,10 @@ namespace CMS.Infrastructure.Repositories
         {
             _context.Contributions.Update(contribution);
         }
+
+        public void Remove(Contribution contribution)
+        {
+            _context.Contributions.Remove(contribution);
+        }
     }
 }

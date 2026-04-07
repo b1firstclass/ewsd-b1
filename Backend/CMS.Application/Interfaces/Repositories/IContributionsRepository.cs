@@ -15,5 +15,6 @@ namespace CMS.Application.Interfaces.Repositories
         Task<IReadOnlyList<Contribution>> GetAllWithDocumentsAsync();
         Task AddAsync(Contribution contribution);
         void Update(Contribution contribution);
+        void Remove(Contribution contribution);
     }
 }

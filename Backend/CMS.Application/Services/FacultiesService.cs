@@ -123,6 +123,10 @@ namespace CMS.Application.Services
                 return false;
             }
 
+            if (await _unitOfWork.FacultiesRepository.HasUsersOrContributionsAsync(facultyId))
+            {
+                throw new InvalidOperationException("Faculty cannot be deleted because it has associated users or contributions.");
+            }
 
             _unitOfWork.Repository<Faculty>().Remove(faculty);
             await _unitOfWork.SaveChangesAsync();

@@ -8,5 +8,6 @@ namespace CMS.Application.Interfaces.Repositories
         Task<PagedResult<Faculty>> GetPagedAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null);
         Task<Faculty?> GetActiveFacultyByIdAsync(Guid id);
         Task<List<Faculty>> GetAllActiveFacultiesAsync();
+        Task<bool> HasUsersOrContributionsAsync(Guid facultyId);
     }
 }
