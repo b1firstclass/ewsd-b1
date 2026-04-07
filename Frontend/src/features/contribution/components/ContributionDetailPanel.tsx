@@ -398,6 +398,7 @@ export const ContributionDetailPanel = ({
     const canSubmit = detail && !coordinatorMode && SUBMITTABLE_STATUSES.includes(detail.status as ContributionStatusValue);
     const showCommentDeadline = detail && [ContributionStatus.Submitted, ContributionStatus.UnderReview].includes(detail.status as any);
     const currentRating = detail ? Math.min(5, Math.max(0, Math.trunc(detail.rating ?? 0))) : 0;
+    const isGuestUser = user?.role?.name === ROLES.GUEST;
     const isCoordinatorUser = user?.role?.name === ROLES.COORDINATOR;
     const isUnderReview = detail?.status === ContributionStatus.UnderReview;
     const canRateContribution = Boolean(isCoordinatorUser && isUnderReview);
@@ -462,7 +463,7 @@ export const ContributionDetailPanel = ({
                             <Separator />
 
                             {/* Status Timeline */}
-                            <StatusTimeline status={detail.status} />
+                            {!isGuestUser && <StatusTimeline status={detail.status} />}
 
                             <div className="space-y-2">
                                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">

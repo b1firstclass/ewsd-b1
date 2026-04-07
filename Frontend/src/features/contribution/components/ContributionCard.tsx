@@ -7,11 +7,10 @@ import {
 } from "@/types/contributionType";
 import type {
   ContributionInfo,
+  ContributionImageInfo,
   ContributionStatusValue,
 } from "@/types/contributionType";
 import { cn } from "@/lib/utils";
-
-import { getFacultyBanner } from "@/utils/facultyBanners";
 
 // ─── Status Visual Config ───────────────────────────────────────────────────
 
@@ -94,6 +93,32 @@ const formatRelativeDate = (dateString?: string): string => {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
+const getImageMimeType = (extension?: string): string => {
+  const normalizedExtension = (extension ?? "").replace(".", "").toLowerCase();
+  switch (normalizedExtension) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "gif":
+      return "image/gif";
+    case "webp":
+      return "image/webp";
+    default:
+      return "image/jpeg";
+  }
+};
+
+const getContributionBannerSrc = (
+  image?: ContributionImageInfo | null,
+): string | null => {
+  const rawData = image?.data?.trim();
+  if (!rawData) return null;
+  if (rawData.startsWith("data:")) return rawData;
+  return `data:${getImageMimeType(image?.extension)};base64,${rawData}`;
+};
+
 // ─── Card Component ─────────────────────────────────────────────────────────
 
 interface ContributionCardProps {
@@ -107,16 +132,16 @@ interface ContributionCardProps {
   categoryNameById?: Record<string, string>;
 }
 
-export const ContributionCard = ({
-  contribution,
-  index,
-  onView,
-  onEdit,
-  onSubmit,
-  coordinatorMode = false,
-  facultyName,
-  categoryNameById,
-}: ContributionCardProps) => {
+export const ContributionCard = (props: ContributionCardProps) => {
+  const {
+    contribution,
+    index,
+    onView,
+    onEdit,
+    onSubmit,
+    coordinatorMode = false,
+    categoryNameById,
+  } = props;
   const config = getStatusConfig(contribution.status);
   const canEdit =
     !coordinatorMode &&
@@ -134,6 +159,14 @@ export const ContributionCard = ({
     contribution.modifiedDate !== contribution.createdDate
       ? `· Edited ${formatRelativeDate(contribution.modifiedDate)}`
       : "";
+
+  const bannerSrc = getContributionBannerSrc(contribution.image);
+  const placeholderVariant = index % 3;
+  const placeholderGradients = [
+    "from-chart-2/20 via-primary/10 to-accent/20",
+    "from-chart-4/20 via-primary/5 to-chart-5/20",
+    "from-primary/15 via-chart-2/10 to-chart-4/20",
+  ] as const;
 
   return (
     <article
@@ -237,12 +270,27 @@ export const ContributionCard = ({
       {/* Banner Footer — purely decorative */}
       <div className="relative h-20 w-full overflow-hidden">
         <div className="absolute inset-x-0 top-0 z-10 h-3 bg-gradient-to-b from-card/50 via-card/10 to-transparent" />
-        <img
-          src={getFacultyBanner(index, facultyName)}
-          alt=""
-          aria-hidden
-          className="h-full w-full object-cover object-bottom opacity-80 transition-opacity duration-200 group-hover:opacity-90"
-        />
+        {bannerSrc ? (
+          <img
+            src={bannerSrc}
+            alt=""
+            aria-hidden
+            className="h-full w-full object-cover object-center opacity-85 transition-opacity duration-200 group-hover:opacity-95"
+          />
+        ) : (
+          <div
+            aria-hidden
+            className={cn(
+              "relative h-full w-full bg-gradient-to-br",
+              placeholderGradients[placeholderVariant],
+            )}
+          >
+            <div className="absolute -left-4 top-2 h-12 w-12 rounded-full bg-background/45 blur-xl" />
+            <div className="absolute right-2 -bottom-5 h-16 w-16 rounded-full bg-background/40 blur-xl" />
+            <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(125deg,transparent_0%,transparent_38%,rgba(255,255,255,0.55)_38%,rgba(255,255,255,0.55)_52%,transparent_52%,transparent_100%)]" />
+            <div className="absolute inset-0 opacity-35 [background-size:22px_22px] [background-image:radial-gradient(rgba(255,255,255,0.6)_1px,transparent_1px)]" />
+          </div>
+        )}
       </div>
     </article>
   );

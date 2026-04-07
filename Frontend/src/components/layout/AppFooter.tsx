@@ -44,6 +44,7 @@ const defaultSections: FooterSection[] = [
   {
     title: "Faculties",
     links: [
+      { label: "Arts & Humanities", href: "#" },
       { label: "Engineering", href: "#" },
       { label: "Medicine", href: "#" },
       { label: "Natural Sciences", href: "#" },
@@ -87,7 +88,6 @@ const defaultLegalLinks: FooterLink[] = [
   { label: "Privacy notice", href: "#" },
   { label: "Use of cookies", href: "#" },
   { label: "Report incorrect content", href: "#" },
-  { label: "Log in", href: "#" },
 ];
 
 export const AppFooter = ({
