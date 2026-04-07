@@ -267,7 +267,7 @@ namespace CMS.Application.Services
 
             var accessTokenInfo = _tokenService.GenerateAccessToken(user);
 
-            
+
 
             return new UserLoginResponse
             {

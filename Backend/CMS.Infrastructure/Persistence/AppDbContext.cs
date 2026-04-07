@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CMS.Domain.Entities;
-using CMS.Infrastructure;
+﻿using CMS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Infrastructure.Persistence;
@@ -116,8 +113,6 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Document>(entity =>
         {
             entity.HasKey(e => e.DocumentId).HasName("Documents_pkey");
-
-            entity.HasIndex(e => e.FileName, "Documents_FileName_key").IsUnique();
 
             entity.Property(e => e.DocumentId).ValueGeneratedNever();
             entity.Property(e => e.Extension).HasMaxLength(100);

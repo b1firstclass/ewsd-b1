@@ -83,7 +83,7 @@ namespace CMS.Application.Services
             {
                 Items = items,
                 TotalCount = items.Sum(x => x.Count)
-            }; 
+            };
         }
 
         public async Task<IReadOnlyList<FacultyContributionStatusSummaryDto>> GetContributionCountByStatusPerFacultyAsync()

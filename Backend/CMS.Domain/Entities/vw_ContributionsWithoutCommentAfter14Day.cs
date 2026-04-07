@@ -20,5 +20,5 @@ public partial class vw_ContributionsWithoutCommentAfter14Day
 
     public string? Subject { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? SubmittedDate { get; set; }
 }
