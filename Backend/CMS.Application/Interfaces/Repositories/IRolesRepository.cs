@@ -9,5 +9,6 @@ namespace CMS.Application.Interfaces.Repositories
         Task<List<Role>> GetAllActiveRolesAsync();
         Task<Role?> GetByIdWithPermissionsAsync(Guid roleId);
         Task<PagedResult<Role>> GetPagedWithPermissionsAsync(int skip, int take, string? searchKeyword = null, bool? isActive = null);
+        Task<bool> HasUsersAsync(Guid roleId);
     }
 }
