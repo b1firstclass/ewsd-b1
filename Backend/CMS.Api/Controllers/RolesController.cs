@@ -180,6 +180,11 @@ namespace CMS.Api.Controllers
 
                 return this.ToSuccessResponse(ApiResponseMessages.Deleted("Role"));
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while deleting role {RoleId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting role {RoleId}", id);

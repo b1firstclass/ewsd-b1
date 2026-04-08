@@ -70,5 +70,10 @@ namespace CMS.Infrastructure.Repositories
 
             return new PagedResult<Role>(items, totalCount);
         }
+
+        public async Task<bool> HasUsersAsync(Guid roleId)
+        {
+            return await _context.Users.AnyAsync(u => u.RoleId == roleId);
+        }
     }
 }

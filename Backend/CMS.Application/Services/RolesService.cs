@@ -180,6 +180,11 @@ namespace CMS.Application.Services
                 return false;
             }
 
+            if (await _unitOfWork.RolesRepository.HasUsersAsync(roleId))
+            {
+                throw new InvalidOperationException($"Role '{role.Name}' cannot be deleted because it is assigned to one or more users.");
+            }
+
             _unitOfWork.Repository<Role>().Remove(role);
             await _unitOfWork.SaveChangesAsync();
 
