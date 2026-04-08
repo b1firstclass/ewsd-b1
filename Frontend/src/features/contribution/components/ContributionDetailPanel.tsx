@@ -74,7 +74,47 @@ const StatusTimeline = ({ status }: { status: string }) => {
     return (
         <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status Timeline</h4>
-            <div className="flex items-center gap-0">
+            <div className="space-y-2 sm:hidden">
+                {TIMELINE_STEPS.map((step, i) => {
+                    const state = getStepState(step.status, status);
+                    const Icon = step.icon;
+                    return (
+                        <div key={step.status} className="flex items-start gap-3">
+                            <div className="flex flex-col items-center">
+                                <div
+                                    className={cn(
+                                        "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors",
+                                        state === "completed" && "border-primary bg-primary text-primary-foreground",
+                                        state === "current" && "border-primary bg-primary/10 text-primary",
+                                        state === "upcoming" && "border-border bg-muted text-muted-foreground",
+                                    )}
+                                >
+                                    <Icon className="h-3.5 w-3.5" />
+                                </div>
+                                {i < TIMELINE_STEPS.length - 1 && (
+                                    <div
+                                        className={cn(
+                                            "mt-1 h-6 w-0.5 rounded-full",
+                                            state === "completed" ? "bg-primary" : "bg-border",
+                                        )}
+                                    />
+                                )}
+                            </div>
+                            <span
+                                className={cn(
+                                    "pt-1 text-xs font-medium leading-tight",
+                                    state === "completed" && "text-primary",
+                                    state === "current" && "text-primary font-semibold",
+                                    state === "upcoming" && "text-muted-foreground",
+                                )}
+                            >
+                                {step.label}
+                            </span>
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="hidden items-center gap-0 sm:flex">
                 {TIMELINE_STEPS.map((step, i) => {
                     const state = getStepState(step.status, status);
                     const Icon = step.icon;
