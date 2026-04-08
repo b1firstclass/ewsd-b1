@@ -68,6 +68,13 @@ export const contributionApi = {
         return response.data.data;
     },
 
+    /**
+     * DELETE /Contributions/{id} — delete contribution (Draft only)
+     */
+    delete: async (id: string): Promise<void> => {
+        await api.delete(ApiRoute.Contribution.Delete(id));
+    },
+
     // ─── Coordinator Actions ────────────────────────────────────────────
 
     /**
@@ -176,3 +183,4 @@ export const contributionApi = {
         downloadBlobResponse(response);
     },
 };
+

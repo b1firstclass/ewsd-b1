@@ -35,6 +35,14 @@ const STATUS_FILTERS = [
     { label: "Rejected", value: ContributionStatus.Rejected },
 ] as const;
 
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (typeof error === "object" && error !== null) {
+        const apiError = error as { response?: { data?: { message?: string } }; message?: string };
+        return apiError.response?.data?.message || apiError.message || fallback;
+    }
+    return fallback;
+};
+
 export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmission, initialStatusFilter }: MySubmissionsListProps) => {
     const { user } = useAuth();
     const facultyName = user?.faculties?.[0]?.name;
@@ -118,8 +126,26 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
             await contributionApi.submit(contribution.id);
             toast.success(`"${contribution.subject}" submitted for review!`);
             loadSubmissions();
-        } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Failed to submit');
+        } catch (err: unknown) {
+            toast.error(getErrorMessage(err, 'Failed to submit'));
+        }
+    }, [loadSubmissions]);
+
+    const handleDeleteContribution = useCallback(async (contribution: ContributionInfo) => {
+        if (contribution.status !== ContributionStatus.Draft) {
+            toast.error("Only draft contributions can be deleted.");
+            return;
+        }
+
+        const confirmed = window.confirm(`Delete draft "${contribution.subject}"? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await contributionApi.delete(contribution.id);
+            toast.success(`"${contribution.subject}" deleted.`);
+            loadSubmissions();
+        } catch (err: unknown) {
+            toast.error(getErrorMessage(err, 'Failed to delete contribution'));
         }
     }, [loadSubmissions]);
 
@@ -205,6 +231,7 @@ export const MySubmissionsList = ({ onCreateNew, onEditSubmission, onViewSubmiss
                     onView={onViewSubmission}
                     onEdit={onEditSubmission}
                     onSubmit={handleSubmitContribution}
+                    onDelete={handleDeleteContribution}
                     facultyName={facultyName}
                     categoryNameById={categoryNameById}
                     emptyMessage={

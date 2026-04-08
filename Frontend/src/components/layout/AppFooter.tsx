@@ -42,16 +42,6 @@ const defaultSections: FooterSection[] = [
     ],
   },
   {
-    title: "Faculties",
-    links: [
-      { label: "Arts & Humanities", href: "#" },
-      { label: "Engineering", href: "#" },
-      { label: "Medicine", href: "#" },
-      { label: "Natural Sciences", href: "#" },
-      { label: "Business School", href: "#" },
-    ],
-  },
-  {
     title: "Directories",
     links: [
       { label: "Admin and support services", href: "#" },
@@ -100,7 +90,7 @@ export const AppFooter = ({
   return (
     <footer className="border-t border-[var(--burgundy-light)] bg-[var(--parchment)] text-primary">
       <div className="px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {sections.map((section) => (
             <section key={section.title} aria-label={section.title}>
               <h2 className="text-base font-semibold">{section.title}</h2>

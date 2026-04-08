@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit2, Send, FileText, Clock } from "lucide-react";
+import { Edit2, Send, FileText, Clock, Trash2 } from "lucide-react";
 import {
   ContributionStatus,
   EDITABLE_STATUSES,
@@ -127,6 +127,7 @@ interface ContributionCardProps {
   onView: (c: ContributionInfo) => void;
   onEdit?: (c: ContributionInfo) => void;
   onSubmit?: (c: ContributionInfo) => void;
+  onDelete?: (c: ContributionInfo) => void;
   coordinatorMode?: boolean;
   facultyName?: string;
   categoryNameById?: Record<string, string>;
@@ -139,6 +140,7 @@ export const ContributionCard = (props: ContributionCardProps) => {
     onView,
     onEdit,
     onSubmit,
+    onDelete,
     coordinatorMode = false,
     categoryNameById,
   } = props;
@@ -151,6 +153,8 @@ export const ContributionCard = (props: ContributionCardProps) => {
     SUBMITTABLE_STATUSES.includes(
       contribution.status as ContributionStatusValue,
     );
+  const canDelete =
+    !coordinatorMode && contribution.status === ContributionStatus.Draft;
   const categoryName = contribution.categoryId
     ? categoryNameById?.[contribution.categoryId]
     : undefined;
@@ -163,9 +167,9 @@ export const ContributionCard = (props: ContributionCardProps) => {
   const bannerSrc = getContributionBannerSrc(contribution.image);
   const placeholderVariant = index % 3;
   const placeholderGradients = [
-    "from-chart-2/20 via-primary/10 to-accent/20",
-    "from-chart-4/20 via-primary/5 to-chart-5/20",
-    "from-primary/15 via-chart-2/10 to-chart-4/20",
+    "[background-image:linear-gradient(138deg,rgba(128,0,0,0.34)_0%,rgba(128,0,0,0.14)_32%,rgba(197,160,89,0.25)_65%,rgba(249,248,241,0.88)_100%)]",
+    "[background-image:linear-gradient(142deg,rgba(197,160,89,0.34)_0%,rgba(128,0,0,0.19)_44%,rgba(250,249,245,0.85)_100%)]",
+    "[background-image:linear-gradient(132deg,rgba(128,0,0,0.28)_0%,rgba(197,160,89,0.2)_50%,rgba(255,248,231,0.9)_100%)]",
   ] as const;
 
   return (
@@ -246,6 +250,21 @@ export const ContributionCard = (props: ContributionCardProps) => {
                 <Send className="h-3 w-3" />
               </Button>
             )}
+
+            {canDelete && onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 rounded-full p-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(contribution);
+                }}
+                title="Delete draft"
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -281,14 +300,14 @@ export const ContributionCard = (props: ContributionCardProps) => {
           <div
             aria-hidden
             className={cn(
-              "relative h-full w-full bg-gradient-to-br",
+              "relative h-full w-full",
               placeholderGradients[placeholderVariant],
             )}
           >
-            <div className="absolute -left-4 top-2 h-12 w-12 rounded-full bg-background/45 blur-xl" />
-            <div className="absolute right-2 -bottom-5 h-16 w-16 rounded-full bg-background/40 blur-xl" />
-            <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(125deg,transparent_0%,transparent_38%,rgba(255,255,255,0.55)_38%,rgba(255,255,255,0.55)_52%,transparent_52%,transparent_100%)]" />
-            <div className="absolute inset-0 opacity-35 [background-size:22px_22px] [background-image:radial-gradient(rgba(255,255,255,0.6)_1px,transparent_1px)]" />
+            <div className="absolute -left-5 top-1 h-14 w-14 rounded-full bg-[rgba(128,0,0,0.22)] blur-2xl" />
+            <div className="absolute right-0 -bottom-6 h-20 w-20 rounded-full bg-[rgba(197,160,89,0.3)] blur-2xl" />
+            <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(125deg,transparent_0%,transparent_36%,rgba(255,248,231,0.58)_36%,rgba(255,248,231,0.58)_50%,transparent_50%,transparent_100%)]" />
+            <div className="absolute inset-0 opacity-25 [background-size:24px_24px] [background-image:radial-gradient(rgba(249,248,241,0.56)_1px,transparent_1px)]" />
           </div>
         )}
       </div>
@@ -303,6 +322,7 @@ interface ContributionGridProps {
   onView: (c: ContributionInfo) => void;
   onEdit?: (c: ContributionInfo) => void;
   onSubmit?: (c: ContributionInfo) => void;
+  onDelete?: (c: ContributionInfo) => void;
   coordinatorMode?: boolean;
   facultyName?: string;
   categoryNameById?: Record<string, string>;
@@ -314,6 +334,7 @@ export const ContributionGrid = ({
   onView,
   onEdit,
   onSubmit,
+  onDelete,
   coordinatorMode = false,
   facultyName,
   categoryNameById,
@@ -338,6 +359,7 @@ export const ContributionGrid = ({
             onView={onView}
             onEdit={onEdit}
             onSubmit={onSubmit}
+            onDelete={onDelete}
             coordinatorMode={coordinatorMode}
             facultyName={facultyName}
             categoryNameById={categoryNameById}

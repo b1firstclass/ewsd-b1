@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef, type FormEvent } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState, type FormEvent } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ import { cn, getErrorMessage, getFieldError } from "@/lib/utils";
 import type { Faculity } from "@/types/faculityType";
 import type { Role } from "@/types/roleType";
 import type { User } from "@/types/userType";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 
 type UserFormMode = "create" | "edit";
 
@@ -432,6 +432,47 @@ const InlineStateCard = ({
   );
 };
 
+const PasswordField = ({
+  value,
+  onChange,
+  error,
+  disabled,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  disabled?: boolean;
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="user-password">Password</Label>
+      <div className="relative">
+        <Input
+          id="user-password"
+          type={showPassword ? "text" : "password"}
+          placeholder="Enter password"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          error={error}
+          disabled={disabled}
+          className="pr-10"
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+        >
+          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const UserFormDialogBody = ({
   open,
   onOpenChange,
@@ -680,18 +721,12 @@ const UserFormDialogBody = ({
         </div>
 
         {isCreateMode ? (
-          <div className="space-y-2">
-            <Label htmlFor="user-password">Password</Label>
-            <Input
-              id="user-password"
-              type="password"
-              placeholder="Enter password"
-              value={state.password}
-              onChange={(event) => dispatch({ type: "set-password", value: event.target.value })}
-              error={resolvedPasswordError}
-              disabled={isFormDisabled}
-            />
-          </div>
+          <PasswordField
+            value={state.password}
+            onChange={(val) => dispatch({ type: "set-password", value: val })}
+            error={resolvedPasswordError}
+            disabled={isFormDisabled}
+          />
         ) : null}
 
         {!isCreateMode && userLoadError ? (
