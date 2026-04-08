@@ -15,6 +15,7 @@ import { ContributionCard } from "@/features/contribution/components/Contributio
 import { ContributionDetailPanel } from "@/features/contribution/components/ContributionDetailPanel";
 import { SubmissionFormModal } from "./SubmissionFormModal";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
     PlusCircle, FileText, Send, Eye, CheckCircle, Star,
     AlertCircle, Clock, ArrowRight, Sparkles,
@@ -37,6 +38,14 @@ const STAT_CARDS: StatCardConfig[] = [
     { label: "Approved", icon: CheckCircle, filterValue: ContributionStatus.Approved, accentClass: "text-chart-4" },
     { label: "Selected", icon: Star, filterValue: ContributionStatus.Selected, accentClass: "text-chart-2" },
 ];
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (typeof error === "object" && error !== null) {
+        const apiError = error as { response?: { data?: { message?: string } }; message?: string };
+        return apiError.response?.data?.message || apiError.message || fallback;
+    }
+    return fallback;
+};
 
 export const StudentDashboard = () => {
     const { user } = useAuth();
@@ -128,6 +137,27 @@ export const StudentDashboard = () => {
             setCurrentWindow(activeWindow);
             setMySubmissions(submissionsData.items);
         }).finally(() => setLoading(false));
+    };
+
+    const handleDeleteContribution = async (contribution: ContributionInfo) => {
+        if (contribution.status !== ContributionStatus.Draft) {
+            toast.error("Only draft contributions can be deleted.");
+            return;
+        }
+
+        const confirmed = window.confirm(`Delete draft "${contribution.subject}"? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await contributionApi.delete(contribution.id);
+            toast.success(`"${contribution.subject}" deleted.`);
+            if (viewingId === contribution.id) {
+                setViewingId(null);
+            }
+            handleRefresh();
+        } catch (err: unknown) {
+            toast.error(getErrorMessage(err, "Failed to delete contribution"));
+        }
     };
 
     if (loading) {
@@ -254,6 +284,7 @@ export const StudentDashboard = () => {
                                 contribution={item}
                                 index={index}
                                 onView={handleViewContribution}
+                                onDelete={handleDeleteContribution}
                                 facultyName={facultyName}
                             />
                         ))}
@@ -287,6 +318,10 @@ export const StudentDashboard = () => {
                 <ContributionDetailPanel
                     contributionId={viewingId}
                     onClose={() => setViewingId(null)}
+                    onDelete={() => {
+                        setViewingId(null);
+                        handleRefresh();
+                    }}
                 />
             )}
 

@@ -47,6 +47,11 @@ export const StudentSubmissionsPage = () => {
         }
     }, []);
 
+    const handleDeleteFromDetail = useCallback(() => {
+        setViewingId(null);
+        setRefreshKey(k => k + 1);
+    }, []);
+
     const handleSuccess = useCallback(() => {
         setRefreshKey(k => k + 1);
     }, []);
@@ -72,6 +77,7 @@ export const StudentSubmissionsPage = () => {
                     onClose={() => setViewingId(null)}
                     onEdit={(d) => handleEdit(d as ContributionInfo)}
                     onSubmit={(d) => handleSubmitFromDetail(d as ContributionInfo)}
+                    onDelete={handleDeleteFromDetail}
                 />
             )}
         </div>

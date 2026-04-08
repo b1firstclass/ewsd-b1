@@ -14,6 +14,7 @@ import {
     Star,
     XCircle,
     Edit3,
+    Trash2,
     MessageSquare,
     Loader2,
 } from "lucide-react";
@@ -297,6 +298,7 @@ interface ContributionDetailPanelProps {
     onClose: () => void;
     onEdit?: (contribution: ContributionDetailInfo) => void;
     onSubmit?: (contribution: ContributionDetailInfo) => void;
+    onDelete?: (contribution: ContributionDetailInfo) => void | Promise<void>;
     /** Coordinator mode shows different actions */
     coordinatorMode?: boolean;
 }
@@ -306,6 +308,7 @@ export const ContributionDetailPanel = ({
     onClose,
     onEdit,
     onSubmit,
+    onDelete,
     coordinatorMode = false,
 }: ContributionDetailPanelProps) => {
     const { user } = useAuth();
@@ -371,6 +374,29 @@ export const ContributionDetailPanel = ({
         }
     };
 
+    const handleDelete = async () => {
+        if (!detail) return;
+        if (detail.status !== ContributionStatus.Draft) {
+            toast.error("Only draft contributions can be deleted.");
+            return;
+        }
+
+        const confirmed = window.confirm(`Delete draft "${detail.subject}"? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        setActionLoading(true);
+        try {
+            await contributionApi.delete(detail.id);
+            toast.success(`"${detail.subject}" deleted.`);
+            await onDelete?.(detail);
+            onClose();
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || "Failed to delete contribution");
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     const handleRate = async (rating: number) => {
         if (!detail || !Number.isInteger(rating) || rating < 1 || rating > 5) return;
 
@@ -396,6 +422,7 @@ export const ContributionDetailPanel = ({
 
     const canEdit = detail && !coordinatorMode && EDITABLE_STATUSES.includes(detail.status as ContributionStatusValue);
     const canSubmit = detail && !coordinatorMode && SUBMITTABLE_STATUSES.includes(detail.status as ContributionStatusValue);
+    const canDelete = detail && !coordinatorMode && detail.status === ContributionStatus.Draft;
     const showCommentDeadline = detail && [ContributionStatus.Submitted, ContributionStatus.UnderReview].includes(detail.status as any);
     const currentRating = detail ? Math.min(5, Math.max(0, Math.trunc(detail.rating ?? 0))) : 0;
     const isGuestUser = user?.role?.name === ROLES.GUEST;
@@ -575,6 +602,12 @@ export const ContributionDetailPanel = ({
                                     <Button size="sm" onClick={() => onSubmit(detail)} disabled={actionLoading}>
                                         <Send className="mr-1.5 h-3.5 w-3.5" />
                                         Submit for Review
+                                    </Button>
+                                )}
+                                {canDelete && (
+                                    <Button size="sm" variant="destructive" onClick={() => void handleDelete()} disabled={actionLoading}>
+                                        <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                                        Delete Draft
                                     </Button>
                                 )}
                             </>
