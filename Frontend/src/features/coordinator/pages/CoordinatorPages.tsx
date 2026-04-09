@@ -9,11 +9,11 @@ export const CoordinatorDashboardPage = () => {
 };
 
 export const ReviewQueuePage = () => {
-    const [viewingId, setViewingId] = useState<string | null>(null);
-
     // Read initial status filter from URL
     const urlParams = new URLSearchParams(window.location.search);
     const initialStatus = urlParams.get('status') || undefined;
+    const contributionIdFromUrl = urlParams.get('contributionId');
+    const [viewingId, setViewingId] = useState<string | null>(contributionIdFromUrl);
 
     const handleViewDetails = useCallback((submission: ContributionInfo) => {
         setViewingId(submission.id);
