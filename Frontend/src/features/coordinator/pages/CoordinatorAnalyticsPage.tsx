@@ -17,8 +17,10 @@ import {
 } from "lucide-react";
 import { TinyBarChart } from "@/components/charts/TinyBarChart";
 import { TinyDoughnutChart } from "@/components/charts/TinyDoughnutChart";
+import { useNavigate } from "@tanstack/react-router";
 
 export const CoordinatorAnalyticsPage = () => {
+    const navigate = useNavigate();
     const [submissions, setSubmissions] = useState<ContributionInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [exceptionFilter, setExceptionFilter] = useState<'all' | 'overdue'>('all');
@@ -88,27 +90,54 @@ export const CoordinatorAnalyticsPage = () => {
             ? Math.round(((needsComment.length - overdue.length) / needsComment.length) * 100)
             : 100;
 
-        // Exception report from backend report views.
-        // Backend is source of truth for 14-day rule (will be switched to SubmittedDate basis).
-        const exceptions = exceptionFilter === 'overdue'
-            ? withoutCommentAfter14Days.map(item => ({
+        // Exception Report should only include submitted contributions that still have no comments.
+        // "All Pending" = submitted + without comment + within 14 days.
+        // "Overdue Only" = submitted + without comment + exceeds 14 days.
+        const submissionsById = new Map(submissions.map((submission) => [submission.id, submission]));
+
+        const mapExceptionItem = (item: ContributionsWithoutCommentInfo, isOverdue: boolean) => {
+            const createdDate = item.createdDate ?? undefined;
+            const deadline = createdDate ? computeCommentDeadline(createdDate) : null;
+            const daysElapsed = deadline?.daysElapsed ?? null;
+
+            return {
                 id: item.contributionId ?? `${item.facultyId ?? "unknown"}-${item.subject ?? "subject"}`,
-                subject: item.subject ?? 'Untitled',
-                createdDate: item.createdDate ?? undefined,
+                contributionId: item.contributionId,
+                subject: item.subject ?? "Untitled",
+                createdDate,
                 facultyName: item.facultyName ?? "N/A",
                 authorName: item.fullName ?? "N/A",
-                isOverdue: true,
-            }))
-            : withoutComment.map(item => ({
-                id: item.contributionId ?? `${item.facultyId ?? "unknown"}-${item.subject ?? "subject"}`,
-                subject: item.subject ?? 'Untitled',
-                createdDate: item.createdDate ?? undefined,
-                facultyName: item.facultyName ?? "N/A",
-                authorName: item.fullName ?? "N/A",
-                isOverdue: withoutCommentAfter14Days.some(
-                    (overdue) => overdue.contributionId && overdue.contributionId === item.contributionId
-                ),
-            }));
+                isOverdue,
+                daysRemaining: daysElapsed === null ? null : Math.max(0, 14 - daysElapsed),
+                overdueDays: daysElapsed === null ? null : Math.max(0, daysElapsed - 14),
+            };
+        };
+
+        const submittedWithoutComment = withoutComment.filter((item) => {
+            if (!item.contributionId) return false;
+            const contribution = submissionsById.get(item.contributionId);
+            return contribution?.status === ContributionStatus.Submitted;
+        });
+
+        const overdueSubmittedIds = new Set(
+            withoutCommentAfter14Days
+                .map((item) => item.contributionId)
+                .filter((id): id is string => {
+                    if (!id) return false;
+                    const contribution = submissionsById.get(id);
+                    return contribution?.status === ContributionStatus.Submitted;
+                }),
+        );
+
+        const pendingExceptions = submittedWithoutComment
+            .filter((item) => item.contributionId && !overdueSubmittedIds.has(item.contributionId))
+            .map((item) => mapExceptionItem(item, false));
+
+        const overdueExceptions = withoutCommentAfter14Days
+            .filter((item) => item.contributionId && overdueSubmittedIds.has(item.contributionId))
+            .map((item) => mapExceptionItem(item, true));
+
+        const exceptions = exceptionFilter === "overdue" ? overdueExceptions : pendingExceptions;
 
         // Status distribution for visual bar
         const statusDistribution = [
@@ -130,6 +159,8 @@ export const CoordinatorAnalyticsPage = () => {
             total, statusCounts, needsComment, deadlines,
             overdue, urgent, onTrack, complianceRate,
             exceptions, statusDistribution, approvalRate, reviewed,
+            pendingExceptionsCount: pendingExceptions.length,
+            overdueExceptionsCount: overdueExceptions.length,
         };
     }, [submissions, exceptionFilter, withoutComment, withoutCommentAfter14Days]);
 
@@ -337,7 +368,7 @@ export const CoordinatorAnalyticsPage = () => {
                                         : "bg-muted text-muted-foreground hover:bg-muted/80",
                                 )}
                             >
-                                All Pending
+                                All Pending ({analytics.pendingExceptionsCount})
                             </button>
                             <button
                                 onClick={() => setExceptionFilter('overdue')}
@@ -348,7 +379,7 @@ export const CoordinatorAnalyticsPage = () => {
                                         : "bg-destructive/10 text-destructive hover:bg-destructive/20",
                                 )}
                             >
-                                Overdue Only
+                                Overdue Only ({analytics.overdueExceptionsCount})
                             </button>
                         </div>
                     </div>
@@ -359,13 +390,38 @@ export const CoordinatorAnalyticsPage = () => {
                             {analytics.exceptions.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex items-center justify-between rounded-lg border border-border p-3"
+                                    className={cn(
+                                        "flex items-center justify-between rounded-lg border border-border p-3",
+                                        item.contributionId ? "cursor-pointer transition-colors hover:bg-muted/40" : "",
+                                    )}
+                                    role={item.contributionId ? "button" : undefined}
+                                    tabIndex={item.contributionId ? 0 : undefined}
+                                    onClick={() => {
+                                        if (!item.contributionId) return;
+                                        navigate({
+                                            to: `/coordinator/review-queue?status=${encodeURIComponent(ContributionStatus.Submitted)}&contributionId=${encodeURIComponent(item.contributionId)}`,
+                                        });
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (!item.contributionId) return;
+                                        if (event.key === "Enter" || event.key === " ") {
+                                            event.preventDefault();
+                                            navigate({
+                                                to: `/coordinator/review-queue?status=${encodeURIComponent(ContributionStatus.Submitted)}&contributionId=${encodeURIComponent(item.contributionId)}`,
+                                            });
+                                        }
+                                    }}
                                 >
                                     <div className="min-w-0 flex-1">
                                         <p className="truncate text-sm font-medium">{item.subject}</p>
                                         <p className="text-xs text-muted-foreground">Student: {item.authorName}</p>
                                         <p className="text-xs text-muted-foreground">Faculty: {item.facultyName}</p>
                                         <p className="text-xs text-muted-foreground">Submitted: {item.createdDate ? new Date(item.createdDate).toLocaleDateString() : 'N/A'}</p>
+                                        <p className={cn("text-xs", item.isOverdue ? "text-destructive" : "text-muted-foreground")}>
+                                            {item.isOverdue
+                                                ? `Overdue by ${item.overdueDays ?? 0} day${(item.overdueDays ?? 0) === 1 ? '' : 's'}`
+                                                : `${item.daysRemaining ?? "N/A"} day${item.daysRemaining === 1 ? '' : 's'} remaining to comment`}
+                                        </p>
                                     </div>
                                     <Badge className={cn("shrink-0 text-[10px]", item.isOverdue ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground")}>
                                         {item.isOverdue ? "Overdue" : "Pending"}
@@ -377,7 +433,7 @@ export const CoordinatorAnalyticsPage = () => {
                         <p className="py-8 text-center text-muted-foreground">
                             {exceptionFilter === 'overdue'
                                 ? 'No overdue submissions — excellent compliance!'
-                                : 'No submissions awaiting comments.'}
+                                : 'No submitted contributions awaiting comments within 14 days.'}
                         </p>
                     )}
                 </CardContent>
