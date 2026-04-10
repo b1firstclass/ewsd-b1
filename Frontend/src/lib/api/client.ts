@@ -8,7 +8,26 @@ import type {
 import axios, { AxiosHeaders } from "axios";
 import { storage } from "../utils";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
+
+const resolveApiBaseUrl = () => {
+    const configuredBaseUrl = trimTrailingSlash(import.meta.env.VITE_API_BASE_URL?.trim() || "");
+
+    if (!configuredBaseUrl || typeof window === "undefined") {
+        return configuredBaseUrl;
+    }
+
+    const isVercelPreviewHost = window.location.hostname.toLowerCase().endsWith(".vercel.app");
+
+    // Route API traffic through the same-origin Vercel rewrite to avoid browser CORS issues.
+    if (isVercelPreviewHost) {
+        return "/api";
+    }
+
+    return configuredBaseUrl;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 const isFormDataPayload = (data: unknown): data is FormData => {
     return typeof FormData !== "undefined" && data instanceof FormData;
@@ -33,7 +52,6 @@ export const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        console.log("api base url =>> ", API_BASE_URL);
         const headers = applyRequestContentType(config);
         const token = storage.getToken();
         if (token) {

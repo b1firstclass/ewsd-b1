@@ -24,18 +24,13 @@ npm install
 ```bash
 npm run dev
 ```
-Runs Vite in `dev` mode (`--mode dev`), which reads `.env.dev`.
+Runs Vite in development mode, which reads `.env.development`.
 
 ## Build
 ```bash
 npm run build
 ```
-
-Optional build modes:
-```bash
-npm run build:dev
-npm run build:prod
-```
+Builds for production, which reads `.env.production`.
 
 ## Preview Build
 ```bash
@@ -53,8 +48,8 @@ This app reads:
 - `VITE_APP_NAME` (defined in env files)
 
 Current env files in repo:
-- `.env.dev`
-- `.env.prod`
+- `.env.development`
+- `.env.production`
 
 ## Routing and Roles
 Routes are defined in `src/router/routeConfig.ts` using TanStack Router.
