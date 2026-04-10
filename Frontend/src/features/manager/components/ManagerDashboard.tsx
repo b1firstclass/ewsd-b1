@@ -2,11 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-    FileText, CheckCircle, Star, Download, BarChart3, Award,
+    FileText, CheckCircle, Star, Download, BarChart3, AlertTriangle, Users,
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { reportApi } from "@/features/report/reportApi";
+import { userApi } from "@/features/user/userApi";
 import { ApiRoute } from "@/types/constantApiRoute";
 import { ContributionStatus } from "@/types/contributionType";
 import type { ContributionInfo } from "@/types/contributionType";
@@ -14,13 +15,20 @@ import type {
     ContributionCountByFacultyAcademicYearInfo,
     ContributionPercentageByFacultyAcademicYearInfo,
     ContributionsWithoutCommentInfo,
-    FacultyUserCountInfo,
     TopContributorInfo,
 } from "@/types/reportType";
+import type { User } from "@/types/userType";
+import { ROLES } from "@/types/constants/roleConstants";
 import { useNavigate } from "@tanstack/react-router";
 import { TinyBarChart } from "@/components/charts/TinyBarChart";
 import { TinyDoughnutChart } from "@/components/charts/TinyDoughnutChart";
 import { TinyHorizontalBarChart } from "@/components/charts/TinyHorizontalBarChart";
+
+const normalizeFacultyKey = (facultyName?: string | null) =>
+    facultyName?.trim().toLowerCase() ?? "n/a";
+
+const isStudentRole = (roleName?: string | null) =>
+    roleName?.trim().toLowerCase() === ROLES.STUDENT.toLowerCase();
 
 // ─── Component ──────────────────────────────────────────────────────────────
 export const ManagerDashboard = () => {
@@ -28,7 +36,7 @@ export const ManagerDashboard = () => {
     const [contributions, setContributions] = useState<ContributionInfo[]>([]);
     const [countByFaculty, setCountByFaculty] = useState<ContributionCountByFacultyAcademicYearInfo[]>([]);
     const [percentageByFaculty, setPercentageByFaculty] = useState<ContributionPercentageByFacultyAcademicYearInfo[]>([]);
-    const [facultyUserCount, setFacultyUserCount] = useState<FacultyUserCountInfo[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [topContributors, setTopContributors] = useState<TopContributorInfo[]>([]);
     const [withoutComment, setWithoutComment] = useState<ContributionsWithoutCommentInfo[]>([]);
     const [withoutComment14Days, setWithoutComment14Days] = useState<ContributionsWithoutCommentInfo[]>([]);
@@ -36,6 +44,37 @@ export const ManagerDashboard = () => {
     const [selectedYear, setSelectedYear] = useState<string>("all");
 
     useEffect(() => {
+        const loadAllActiveUsers = async (): Promise<User[]> => {
+            const allUsers: User[] = [];
+            let pageNumber = 1;
+            let hasNextPage = true;
+            const pageSize = 200;
+
+            while (hasNextPage) {
+                const response = await userApi.getList({
+                    route: ApiRoute.User.List,
+                    pageNumber,
+                    pageSize,
+                    searchKeyword: "",
+                    isActive: true,
+                });
+
+                allUsers.push(...response.items);
+
+                if (typeof response.hasNextPage === "boolean") {
+                    hasNextPage = response.hasNextPage;
+                } else {
+                    const totalCount = typeof response.count === "number" ? response.count : undefined;
+                    hasNextPage = response.items.length === pageSize &&
+                        (typeof totalCount !== "number" || allUsers.length < totalCount);
+                }
+
+                pageNumber += 1;
+            }
+
+            return allUsers;
+        };
+
         const load = async () => {
             // Load all data in parallel with proper error handling
             const results = await Promise.allSettled([
@@ -47,7 +86,6 @@ export const ManagerDashboard = () => {
                 }),
                 reportApi.getContributionCountByFaculty(),
                 reportApi.getContributionPercentageByFaculty(),
-                reportApi.getFacultyUserCount(),
                 reportApi.getTopContributors(),
                 reportApi.getContributionsWithoutComment({
                     route: ApiRoute.Report.contributionsWithoutComment,
@@ -61,16 +99,17 @@ export const ManagerDashboard = () => {
                     pageSize: 100,
                     searchKeyword: "",
                 }),
+                loadAllActiveUsers(),
             ]);
 
             // Handle results individually for resilience
             if (results[0].status === "fulfilled") setContributions(results[0].value.items);
             if (results[1].status === "fulfilled") setCountByFaculty(results[1].value);
             if (results[2].status === "fulfilled") setPercentageByFaculty(results[2].value);
-            if (results[3].status === "fulfilled") setFacultyUserCount(results[3].value);
-            if (results[4].status === "fulfilled") setTopContributors(results[4].value);
-            if (results[5].status === "fulfilled") setWithoutComment(results[5].value.items);
-            if (results[6].status === "fulfilled") setWithoutComment14Days(results[6].value.items);
+            if (results[3].status === "fulfilled") setTopContributors(results[3].value);
+            if (results[4].status === "fulfilled") setWithoutComment(results[4].value.items);
+            if (results[5].status === "fulfilled") setWithoutComment14Days(results[5].value.items);
+            if (results[6].status === "fulfilled") setUsers(results[6].value);
 
             setLoading(false);
         };
@@ -109,7 +148,6 @@ export const ManagerDashboard = () => {
         const totalSelected = contributions.length;
         const selectedCount = contributions.filter(c => c.status === ContributionStatus.Selected).length;
         const yearContributionTotal = scopedCountByFaculty.reduce((sum, item) => sum + item.totalContributions, 0);
-        const contributorCount = topContributors.length;
 
         return {
             total: totalSelected,
@@ -117,41 +155,60 @@ export const ManagerDashboard = () => {
             selectionRate: totalSelected > 0 ? Math.round((selectedCount / totalSelected) * 100) : 100,
             facultyCount: scopedCountByFaculty.length,
             totalByYear: yearContributionTotal,
-            contributorCount,
             topFaculty: scopedCountByFaculty.reduce((prev, current) =>
                 prev.totalContributions > current.totalContributions ? prev : current,
                 { facultyName: "N/A", totalContributions: 0, academicYearStart: null, academicYearEnd: null }
             ),
         };
-    }, [contributions, scopedCountByFaculty, topContributors]);
+    }, [contributions, scopedCountByFaculty]);
 
-    const statusDistribution = useMemo(() => {
-        const statuses = [
-            { status: ContributionStatus.Selected, label: "Selected", color: "bg-chart-2" },
-            { status: ContributionStatus.Approved, label: "Approved", color: "bg-chart-4" },
-            { status: ContributionStatus.UnderReview, label: "Under Review", color: "bg-chart-3" },
-            { status: ContributionStatus.Submitted, label: "Submitted", color: "bg-chart-1" },
-            { status: ContributionStatus.Draft, label: "Draft", color: "bg-muted" },
-            { status: ContributionStatus.Rejected, label: "Rejected", color: "bg-destructive/20" },
-            { status: ContributionStatus.RevisionRequired, label: "Revision Required", color: "bg-amber-500/20" },
-        ];
-        return statuses.map(s => ({
-            ...s,
-            count: contributions.filter(c => c.status === s.status).length,
-            percentage: contributions.length > 0
-                ? ((contributions.filter(c => c.status === s.status).length / contributions.length) * 100)
-                : 0,
-        }));
-    }, [contributions]);
+    const studentContributorsByFaculty = useMemo(() => {
+        const counts = new Map<string, number>();
+
+        users
+            .filter((user) => user.isActive && isStudentRole(user.role?.name))
+            .forEach((user) => {
+                user.faculties.forEach((faculty) => {
+                    const facultyKey = normalizeFacultyKey(faculty.name);
+                    counts.set(facultyKey, (counts.get(facultyKey) ?? 0) + 1);
+                });
+            });
+
+        return counts;
+    }, [users]);
+
+    const fallbackContributorCountsByFaculty = useMemo(() => {
+        const contributorsByFaculty = new Map<string, Set<string>>();
+
+        topContributors.forEach((contributor) => {
+            const facultyKey = normalizeFacultyKey(contributor.facultyName);
+            const contributorIds = contributorsByFaculty.get(facultyKey) ?? new Set<string>();
+            contributorIds.add(contributor.userId);
+            contributorsByFaculty.set(facultyKey, contributorIds);
+        });
+
+        return new Map(
+            Array.from(contributorsByFaculty.entries()).map(([facultyKey, contributorIds]) => [
+                facultyKey,
+                contributorIds.size,
+            ]),
+        );
+    }, [topContributors]);
+
+    const contributorCountsByFaculty = useMemo(() => {
+        return studentContributorsByFaculty.size > 0
+            ? studentContributorsByFaculty
+            : fallbackContributorCountsByFaculty;
+    }, [fallbackContributorCountsByFaculty, studentContributorsByFaculty]);
 
     const facultyChartData = useMemo(() => {
         const labels = scopedCountByFaculty.map((f) => f.facultyName ?? "N/A");
         const contributionData = scopedCountByFaculty.map((f) => f.totalContributions);
         const contributorData = scopedCountByFaculty.map(
-            (f) => facultyUserCount.find((u) => u.facultyName === f.facultyName)?.count ?? 0
+            (f) => contributorCountsByFaculty.get(normalizeFacultyKey(f.facultyName)) ?? 0,
         );
         return { labels, contributionData, contributorData };
-    }, [scopedCountByFaculty, facultyUserCount]);
+    }, [contributorCountsByFaculty, scopedCountByFaculty]);
 
     const facultyPercentageChartData = useMemo(() => {
         const labels = scopedPercentageByFaculty.map((p) => p.facultyName ?? "N/A");
@@ -167,6 +224,47 @@ export const ManagerDashboard = () => {
         };
     }, [topContributors]);
 
+    const commentTrackingStats = useMemo(() => {
+        const getItemKey = (item: ContributionsWithoutCommentInfo) =>
+            item.contributionId ??
+            `${item.userId ?? "unknown-user"}-${item.subject ?? "untitled"}-${item.createdDate ?? "no-date"}`;
+
+        const overdueKeys = new Set(withoutComment14Days.map(getItemKey));
+        const submittedWithoutComment = withoutComment.filter((item) => !overdueKeys.has(getItemKey(item)));
+
+        return {
+            submittedWithoutCommentCount: submittedWithoutComment.length,
+            overdueWithoutCommentCount: withoutComment14Days.length,
+        };
+    }, [withoutComment, withoutComment14Days]);
+
+    const executiveOverview = useMemo(() => {
+        const totalStudentContributors = Array.from(contributorCountsByFaculty.values()).reduce(
+            (sum, count) => sum + count,
+            0,
+        );
+        const averageContributionsPerFaculty = stats.facultyCount > 0
+            ? (stats.totalByYear / stats.facultyCount)
+            : 0;
+        const contributionPerStudent = totalStudentContributors > 0
+            ? (stats.totalByYear / totalStudentContributors)
+            : 0;
+        const watchlistTotal =
+            commentTrackingStats.submittedWithoutCommentCount +
+            commentTrackingStats.overdueWithoutCommentCount;
+        const watchlistShare = stats.totalByYear > 0
+            ? Math.round((watchlistTotal / stats.totalByYear) * 100)
+            : 0;
+
+        return {
+            totalStudentContributors,
+            averageContributionsPerFaculty,
+            contributionPerStudent,
+            watchlistTotal,
+            watchlistShare,
+        };
+    }, [commentTrackingStats, contributorCountsByFaculty, stats]);
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -179,7 +277,7 @@ export const ManagerDashboard = () => {
         { label: "Total Selected", value: stats.total, icon: FileText, color: "text-blue-600" },
         { label: "Selected Publications", value: `${stats.selected} (${stats.selectionRate}%)`, icon: CheckCircle, color: "text-green-600" },
         { label: "Active Faculties", value: stats.facultyCount, icon: Star, color: "text-purple-600" },
-        { label: "Top Contributors", value: stats.contributorCount, icon: Award, color: "text-orange-600" },
+        { label: "Student Contributors", value: executiveOverview.totalStudentContributors, icon: Users, color: "text-orange-600" },
     ];
 
     return (
@@ -221,40 +319,106 @@ export const ManagerDashboard = () => {
                 ))}
             </div>
 
-            {/* Status Distribution */}
+            {/* Executive Overview */}
             <Card>
                 <CardHeader className="pb-3 sm:pb-6">
-                    <CardTitle className="text-base sm:text-lg">Contribution Status Overview</CardTitle>
-                    <p className="text-xs text-muted-foreground hidden sm:block">Complete workflow status distribution across all contributions</p>
+                    <CardTitle className="text-base sm:text-lg">Executive Overview</CardTitle>
+                    <p className="text-xs text-muted-foreground hidden sm:block">
+                        Publication reach, contributor base, and operational review risk in one snapshot.
+                    </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {/* Stacked bar */}
-                    <div className="mb-4 flex h-4 sm:h-6 w-full overflow-hidden rounded-full">
-                        {statusDistribution.filter(s => s.count > 0).map(s => (
-                            <div
-                                key={s.status}
-                                className={`${s.color} transition-all`}
-                                style={{ width: `${s.percentage}%` }}
-                                title={`${s.label}: ${s.count} (${s.percentage.toFixed(1)}%)`}
-                            />
-                        ))}
-                    </div>
-                    {/* Legend */}
-                    <div className="flex flex-wrap gap-x-3 gap-y-2 sm:gap-x-4 sm:gap-y-1">
-                        {statusDistribution.filter(s => s.count > 0).map(s => (
-                            <div key={s.status} className="flex items-center gap-1.5 text-xs">
-                                <span className={`inline-block h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${s.color}`} />
-                                <span className="text-muted-foreground hidden sm:inline">{s.label}</span>
-                                <span className="text-muted-foreground sm:hidden">{s.label.slice(0, 1)}</span>
-                                <span className="font-medium">{s.count}</span>
+                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                        <div className="rounded-lg border border-border p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs text-muted-foreground">Student Contributors</p>
+                                <Users className="h-4 w-4 text-muted-foreground" />
                             </div>
-                        ))}
+                            <p className="mt-2 text-2xl font-bold">{executiveOverview.totalStudentContributors}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Active student accounts across all faculties.
+                            </p>
+                        </div>
+
+                        <div className="rounded-lg border border-border p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs text-muted-foreground">Avg. Contributions / Faculty</p>
+                                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <p className="mt-2 text-2xl font-bold">{executiveOverview.averageContributionsPerFaculty.toFixed(1)}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Based on the current academic-year filter.
+                            </p>
+                        </div>
+
+                        <div className="rounded-lg border border-border p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs text-muted-foreground">Contribution Yield</p>
+                                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <p className="mt-2 text-2xl font-bold">{executiveOverview.contributionPerStudent.toFixed(2)}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Contributions per active student contributor.
+                            </p>
+                        </div>
+
+                        <div className="rounded-lg border border-border p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs text-muted-foreground">Review Watchlist</p>
+                                <AlertTriangle className="h-4 w-4 text-destructive" />
+                            </div>
+                            <p className="mt-2 text-2xl font-bold text-destructive">{executiveOverview.watchlistTotal}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                {commentTrackingStats.overdueWithoutCommentCount} overdue, {commentTrackingStats.submittedWithoutCommentCount} awaiting first comment.
+                            </p>
+                        </div>
                     </div>
-                    {statusDistribution.every(s => s.count === 0) && (
-                        <p className="text-center text-sm text-muted-foreground py-4">
-                            No contributions found in current dataset.
-                        </p>
-                    )}
+
+                    <div className="grid gap-3 lg:grid-cols-2">
+                        <div className="rounded-lg border border-border p-4">
+                            <p className="text-xs font-medium text-muted-foreground">Publication Footprint</p>
+                            <div className="mt-3 space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Selected publications</span>
+                                    <span className="font-semibold">{stats.selected}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Active faculties</span>
+                                    <span className="font-semibold">{stats.facultyCount}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Top faculty</span>
+                                    <span className="font-semibold">{stats.topFaculty.facultyName ?? "N/A"}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Top faculty output</span>
+                                    <span className="font-semibold">{stats.topFaculty.totalContributions}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="rounded-lg border border-border p-4">
+                            <p className="text-xs font-medium text-muted-foreground">Operational Attention</p>
+                            <div className="mt-3 space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Submitted without comment</span>
+                                    <span className="font-semibold">{commentTrackingStats.submittedWithoutCommentCount}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Overdue comments</span>
+                                    <span className="font-semibold text-destructive">{commentTrackingStats.overdueWithoutCommentCount}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Watchlist size</span>
+                                    <span className="font-semibold">{executiveOverview.watchlistTotal}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Watchlist share</span>
+                                    <span className="font-semibold">{executiveOverview.watchlistShare}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -266,7 +430,7 @@ export const ManagerDashboard = () => {
                             <BarChart3 className="h-4 w-4" />
                             Faculty Performance Analysis
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground hidden sm:block">Contribution metrics by academic year</p>
+                        <p className="text-xs text-muted-foreground hidden sm:block">Contribution volume compared with student contributor base by faculty</p>
                     </div>
                     <select
                         value={selectedYear}
@@ -289,7 +453,7 @@ export const ManagerDashboard = () => {
                                     <tr className="border-b border-border text-left">
                                         <th className="pb-2 font-medium text-muted-foreground">Faculty</th>
                                         <th className="pb-2 text-right font-medium text-muted-foreground hidden sm:table-cell">Contributions</th>
-                                        <th className="pb-2 text-right font-medium text-muted-foreground hidden md:table-cell">Contributors</th>
+                                        <th className="pb-2 text-right font-medium text-muted-foreground hidden md:table-cell">Student Contributors</th>
                                         <th className="pb-2 text-right font-medium text-muted-foreground">Share %</th>
                                         <th className="pb-2 text-center font-medium text-muted-foreground hidden lg:table-cell">Performance</th>
                                     </tr>
@@ -302,7 +466,7 @@ export const ManagerDashboard = () => {
                                                 p.academicYearStart === f.academicYearStart &&
                                                 p.academicYearEnd === f.academicYearEnd
                                         );
-                                        const contributors = facultyUserCount.find((u) => u.facultyName === f.facultyName);
+                                        const contributors = contributorCountsByFaculty.get(normalizeFacultyKey(f.facultyName)) ?? 0;
                                         const performance = f.totalContributions > 10 ? "High" : f.totalContributions > 5 ? "Medium" : "Low";
                                         const performanceColor = performance === "High" ? "text-green-600" : performance === "Medium" ? "text-yellow-600" : "text-red-600";
                                         
@@ -310,7 +474,7 @@ export const ManagerDashboard = () => {
                                             <tr key={`${f.facultyName}-${f.academicYearStart}`} className="border-b border-border/50 last:border-0">
                                                 <td className="py-2 sm:py-2.5 font-medium text-xs sm:text-sm">{f.facultyName ?? "N/A"}</td>
                                                 <td className="py-2 sm:py-2.5 text-right tabular-nums font-semibold text-xs sm:text-sm hidden sm:table-cell">{f.totalContributions}</td>
-                                                <td className="py-2 sm:py-2.5 text-right tabular-nums text-xs sm:text-sm hidden md:table-cell">{contributors?.count ?? 0}</td>
+                                                <td className="py-2 sm:py-2.5 text-right tabular-nums text-xs sm:text-sm hidden md:table-cell">{contributors}</td>
                                                 <td className="py-2 sm:py-2.5 text-right tabular-nums text-xs sm:text-sm">
                                                     {percentage ? `${percentage.contributionPercentage.toFixed(1)}%` : "0.0%"}
                                                 </td>
@@ -330,8 +494,8 @@ export const ManagerDashboard = () => {
             <div className="grid gap-4 lg:grid-cols-2">
                 <Card>
                     <CardHeader className="pb-3 sm:pb-6">
-                        <CardTitle className="text-base sm:text-lg">Faculty Contributions vs Contributors</CardTitle>
-                        <p className="text-xs text-muted-foreground hidden sm:block">Comparative analysis by faculty</p>
+                        <CardTitle className="text-base sm:text-lg">Faculty Contributions vs Student Contributors</CardTitle>
+                        <p className="text-xs text-muted-foreground hidden sm:block">Compare faculty output against active student contributor population</p>
                     </CardHeader>
                     <CardContent>
                         {facultyChartData.labels.length === 0 ? (
@@ -346,7 +510,7 @@ export const ManagerDashboard = () => {
                                         backgroundColor: "rgba(59, 130, 246, 0.8)", // Blue
                                     },
                                     {
-                                        label: "Contributors",
+                                        label: "Student Contributors",
                                         data: facultyChartData.contributorData,
                                         backgroundColor: "rgba(16, 185, 129, 0.8)", // Green
                                     },
@@ -385,16 +549,20 @@ export const ManagerDashboard = () => {
             <Card>
                 <CardHeader className="pb-3 sm:pb-6">
                     <CardTitle className="text-base sm:text-lg">Comment Tracking Reports</CardTitle>
-                    <p className="text-xs text-muted-foreground hidden sm:block">14-day comment deadline monitoring</p>
+                    <p className="text-xs text-muted-foreground hidden sm:block">
+                        Submitted means no coordinator comment yet but still within 14 days. Overdue means no comment after 14 days.
+                    </p>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-2">
                     <div className="rounded-lg border border-border p-3 sm:p-4">
-                        <p className="text-xs text-muted-foreground">Contributions Without Comment</p>
-                        <p className="mt-1 text-xl sm:text-2xl font-bold">{withoutComment.length}</p>
+                        <p className="text-xs text-muted-foreground">Submitted Without Comment</p>
+                        <p className="mt-1 text-xl sm:text-2xl font-bold">{commentTrackingStats.submittedWithoutCommentCount}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Submitted and still awaiting the first comment within the 14-day window.</p>
                     </div>
                     <div className="rounded-lg border border-border p-3 sm:p-4">
                         <p className="text-xs text-muted-foreground">Overdue Comments (14+ Days)</p>
-                        <p className="mt-1 text-xl sm:text-2xl font-bold text-destructive">{withoutComment14Days.length}</p>
+                        <p className="mt-1 text-xl sm:text-2xl font-bold text-destructive">{commentTrackingStats.overdueWithoutCommentCount}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Submitted contributions with no coordinator comment after 14 days.</p>
                     </div>
                 </CardContent>
             </Card>

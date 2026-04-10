@@ -19,6 +19,12 @@ export interface ContributionInfo {
     isActive: boolean;
     createdDate?: string;
     modifiedDate?: string;
+    /** Populated by selected-contributions/report endpoints */
+    facultyId?: string | null;
+    facultyName?: string | null;
+    createdUser?: string | null;
+    /** Legacy alias retained for older responses */
+    createdByName?: string | null;
 }
 
 export interface ContributionImageInfo {

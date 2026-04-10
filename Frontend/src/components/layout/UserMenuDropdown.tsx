@@ -166,30 +166,44 @@ export const SidebarFacultyDisplay = () => {
   const collapsed = !isMobile && isCollapsed;
   const { user } = useAuth();
   
-  const facultyNames = user?.faculties?.map((f) => f.name).join(", ");
+  const faculties = user?.faculties ?? [];
   
-  if (!facultyNames) return null;
-  
+  if (faculties.length === 0) return null;
+
+  // Collapsed: just show icon with count badge
+  if (collapsed) {
+    return (
+      <div className="flex flex-col items-center gap-0.5 px-0 py-1.5 text-sidebar-foreground">
+        <div className="relative">
+          <Building2 className="h-4 w-4 text-sidebar-foreground/80" />
+          {faculties.length > 1 && (
+            <span className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+              {faculties.length}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Expanded: show as compact pill tags (handles many faculties gracefully)
   return (
-    <div className={cn(
-      "px-2 py-1.5 text-sidebar-foreground",
-      collapsed && "px-0 text-center"
-    )}>
-      <div className={cn(
-        "flex items-center gap-2",
-        collapsed && "justify-center"
-      )}>
-        <Building2 className="h-4 w-4 text-sidebar-foreground/80 shrink-0" />
-        {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-medium opacity-80">
-              Affiliated Faculty
-            </div>
-            <div className="text-sm font-semibold truncate">
-              {facultyNames}
-            </div>
-          </div>
-        )}
+    <div className="px-2 py-1.5 text-sidebar-foreground">
+      <div className="flex items-center gap-1.5 mb-1">
+        <Building2 className="h-3.5 w-3.5 text-sidebar-foreground/70 shrink-0" />
+        <span className="text-[10px] font-medium uppercase tracking-wider opacity-70">
+          Affiliated {faculties.length > 1 ? "Faculties" : "Faculty"}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {faculties.map((f) => (
+          <span
+            key={f.id}
+            className="inline-flex items-center rounded-md border border-sidebar-border/40 bg-sidebar-accent/10 px-1.5 py-0.5 text-[11px] font-medium text-sidebar-foreground/90 leading-tight"
+          >
+            {f.name}
+          </span>
+        ))}
       </div>
     </div>
   );
