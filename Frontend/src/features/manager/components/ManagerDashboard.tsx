@@ -30,6 +30,8 @@ const normalizeFacultyKey = (facultyName?: string | null) =>
 const isStudentRole = (roleName?: string | null) =>
     roleName?.trim().toLowerCase() === ROLES.STUDENT.toLowerCase();
 
+const MAX_USER_PAGE_SIZE = 100;
+
 // ─── Component ──────────────────────────────────────────────────────────────
 export const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -48,7 +50,7 @@ export const ManagerDashboard = () => {
             const allUsers: User[] = [];
             let pageNumber = 1;
             let hasNextPage = true;
-            const pageSize = 200;
+            const pageSize = MAX_USER_PAGE_SIZE;
 
             while (hasNextPage) {
                 const response = await userApi.getList({
