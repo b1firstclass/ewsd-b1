@@ -35,7 +35,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"loginId\": \"admin\",\r\n  \"password\": \"password123\"\r\n}",
+              "raw": "{\r\n  \"loginId\": \"admin\",\r\n  \"password\": \"Admin@123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -528,7 +528,7 @@
               "raw": ""
             },
             "url": {
-              "raw": "{{BaseUrl}}/Users?PageNumber=1&PageSize=10&SearchKeyword=admin&IsActive=true",
+              "raw": "{{BaseUrl}}/Users?PageNumber=1&PageSize=10&SearchKeyword=&IsActive=true",
               "host": [
                 "{{BaseUrl}}"
               ],
@@ -546,7 +546,7 @@
                 },
                 {
                   "key": "SearchKeyword",
-                  "value": "admin"
+                  "value": ""
                 },
                 {
                   "key": "IsActive",
@@ -1033,6 +1033,52 @@
               ],
               "path": [
                 "Users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Guest Users within Coordinator's faculty",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{Token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseUrl}}/Users/guest-users?pageNumber=1&pageSize=20&isActive=true&searchKeyword=john",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "Users",
+                "guest-users"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true"
+                },
+                {
+                  "key": "searchKeyword",
+                  "value": "john"
+                }
               ]
             }
           },
@@ -2657,7 +2703,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "880ae725-acc8-4a3f-91fa-19ba08ab0bbd"
+                  "value": "d93954c0-fc69-431e-a4c2-8ffdd85f08b8"
                 }
               ]
             }
@@ -2773,7 +2819,7 @@
               "formdata": []
             },
             "url": {
-              "raw": "{{BaseUrl}}/Contributions?PageNumber=1&PageSize=10&SearchKeyword=&IsActive=true&status=",
+              "raw": "{{BaseUrl}}/Contributions?PageNumber=1&PageSize=1&SearchKeyword=&IsActive=true&status=",
               "host": [
                 "{{BaseUrl}}"
               ],
@@ -2787,7 +2833,7 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "10"
+                  "value": "1"
                 },
                 {
                   "key": "SearchKeyword",
@@ -3488,6 +3534,78 @@
               "path": [
                 "Contributions",
                 "select"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rating Contribution (Only by Coordinator while in under review)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{Token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"rating\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5014/api/Contributions/{{contributionId}}/rating",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5014",
+              "path": [
+                "api",
+                "Contributions",
+                "{{contributionId}}",
+                "rating"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Contribution",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{Token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7147/api/Contributions/{{contributionId}}",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7147",
+              "path": [
+                "api",
+                "Contributions",
+                "{{contributionId}}"
               ]
             }
           },
