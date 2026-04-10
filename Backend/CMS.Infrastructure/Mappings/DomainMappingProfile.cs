@@ -101,6 +101,8 @@ namespace CMS.Infrastructure.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ContributionId))
                 .ForMember(dest => dest.ContributionWindowId, opt => opt.MapFrom(src => src.ContributionWindowId))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.Faculty != null ? src.Faculty.FacultyName : null))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.User != null ? src.User.FullName : null))
                 .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Subject))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
