@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Spinner } from "@/components/ui/spinner";
 import { contributionApi } from "@/features/contribution/contributionApi";
 import { ApiRoute } from "@/types/constantApiRoute";
@@ -307,16 +308,15 @@ export const ManagerExportCenter = () => {
                                         className="overflow-hidden rounded-xl border border-border"
                                     >
                                         <div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 px-4 py-3">
-                                            <input
-                                                type="checkbox"
+                                            <Checkbox
                                                 checked={allGroupSelected}
                                                 ref={(element) => {
                                                     if (element) {
                                                         element.indeterminate = someGroupSelected;
                                                     }
                                                 }}
-                                                onChange={() => toggleFacultyGroup(group)}
-                                                className="rounded"
+                                                onCheckedChange={() => toggleFacultyGroup(group)}
+                                                aria-label={`Select all contributions for ${group.facultyName}`}
                                             />
                                             <Building2 className="h-4 w-4 text-primary" />
                                             <div className="min-w-0">
@@ -343,11 +343,11 @@ export const ManagerExportCenter = () => {
                                                         className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center"
                                                     >
                                                         <div className="flex items-start gap-3 sm:flex-1">
-                                                            <input
-                                                                type="checkbox"
+                                                            <Checkbox
                                                                 checked={checkedIds.has(contribution.id)}
-                                                                onChange={() => toggleCheck(contribution.id)}
-                                                                className="mt-1 rounded"
+                                                                onCheckedChange={() => toggleCheck(contribution.id)}
+                                                                className="mt-1"
+                                                                aria-label={`Select contribution ${contribution.subject}`}
                                                             />
 
                                                             <div className="min-w-0 flex-1">
