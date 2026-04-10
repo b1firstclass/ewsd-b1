@@ -384,6 +384,7 @@ export const ContributionDetailPanel = ({
 
     const handleAddComment = async () => {
         if (!newComment.trim() || !detail) return;
+        if (user?.role?.name === ROLES.GUEST) return;
         setSubmittingComment(true);
         try {
             const created = await commentApi.create({
@@ -469,6 +470,7 @@ export const ContributionDetailPanel = ({
     const isCoordinatorUser = user?.role?.name === ROLES.COORDINATOR;
     const isUnderReview = detail?.status === ContributionStatus.UnderReview;
     const canRateContribution = Boolean(isCoordinatorUser && isUnderReview);
+    const canAddComment = !isGuestUser;
 
     const ratingReadonlyMessage = canRateContribution
         ? "Click a star to set a rating."
@@ -594,29 +596,34 @@ export const ContributionDetailPanel = ({
                                     <p className="text-sm text-muted-foreground">No comments yet.</p>
                                 )}
 
-                                {/* Add Comment */}
-                                <div className="flex gap-2">
-                                    <Input
-                                        placeholder="Add a comment..."
-                                        value={newComment}
-                                        onChange={(e) => setNewComment(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleAddComment()}
-                                        className="h-9 text-sm"
-                                        maxLength={500}
-                                    />
-                                    <Button
-                                        size="sm"
-                                        className="h-9 shrink-0"
-                                        onClick={handleAddComment}
-                                        disabled={!newComment.trim() || submittingComment}
-                                    >
-                                        {submittingComment ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <Send className="h-4 w-4" />
-                                        )}
-                                    </Button>
-                                </div>
+                                {canAddComment ? (
+                                    <div className="flex gap-2">
+                                        <Input
+                                            placeholder="Add a comment..."
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleAddComment()}
+                                            className="h-9 text-sm"
+                                            maxLength={500}
+                                        />
+                                        <Button
+                                            size="sm"
+                                            className="h-9 shrink-0"
+                                            onClick={handleAddComment}
+                                            disabled={!newComment.trim() || submittingComment}
+                                        >
+                                            {submittingComment ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Send className="h-4 w-4" />
+                                            )}
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-muted-foreground">
+                                        Comment history is read-only for guest users.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
