@@ -87,6 +87,14 @@ export const GuestDashboard = ({ onView }: GuestDashboardProps = {}) => {
     const insights = useMemo(() => getGuestContributionInsights(contributions), [contributions]);
     const featuredContribution = insights.topRatedContribution ?? insights.latestContribution;
     const latestPreview = insights.newestContributions.slice(0, 4);
+    const archiveCoverageValue = insights.activeYears > 0
+        ? `${insights.activeYears} year${insights.activeYears > 1 ? "s" : ""}`
+        : "No archive yet";
+    const archiveCoverageHelper = insights.activeYears > 1
+        ? `Coverage from ${insights.archiveSpanLabel}`
+        : insights.activeYears === 1
+            ? `Coverage focused on ${insights.archiveSpanLabel.replace(" only", "")}`
+            : "Waiting for selected contributions";
     const snapshotItems = [
         {
             label: "Archive",
@@ -99,9 +107,9 @@ export const GuestDashboard = ({ onView }: GuestDashboardProps = {}) => {
             helper: `${insights.contributorCount === 1 ? "author" : "authors"} represented`,
         },
         {
-            label: "Archive span",
-            value: insights.archiveSpanLabel,
-            helper: insights.activeYears > 1 ? `${insights.activeYears} active years` : "single archive period",
+            label: "Coverage",
+            value: archiveCoverageValue,
+            helper: archiveCoverageHelper,
         },
     ];
     const snapshotRows = [

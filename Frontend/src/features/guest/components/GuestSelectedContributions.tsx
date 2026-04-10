@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
     ArrowRight,
-    ArrowUpDown,
     LayoutGrid,
     List,
     Search,
@@ -51,22 +50,6 @@ const sortLabels: Record<GuestContributionSort, string> = {
     "recently-updated": "Recently updated",
     "top-rated": "Top rated",
     title: "Title A-Z",
-};
-
-const getFeaturedLabel = (sortBy: GuestContributionSort) => {
-    switch (sortBy) {
-        case "top-rated":
-            return "Top rated match";
-        case "recently-updated":
-            return "Recently updated";
-        case "oldest":
-            return "Archive starting point";
-        case "title":
-            return "Featured match";
-        case "newest":
-        default:
-            return "Latest addition";
-    }
 };
 
 export const GuestSelectedContributions = ({ onView }: GuestSelectedContributionsProps) => {
@@ -126,8 +109,23 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
         [filteredContributions],
     );
 
-    const featuredContribution = filteredContributions[0] ?? null;
+    const singleArchiveYear = archiveInsights.availableYears[0] ?? null;
+    const hasMultipleYearChoices = archiveInsights.availableYears.length > 1;
     const hasActiveFilters = Boolean(searchTerm.trim()) || selectedYear !== "all" || sortBy !== "newest";
+    const yearScopeValue = selectedYear === "all"
+        ? hasMultipleYearChoices
+            ? "All years"
+            : singleArchiveYear ?? "No dated archive"
+        : selectedYear;
+    const yearScopeDetail = selectedYear === "all"
+        ? hasMultipleYearChoices
+            ? `${archiveInsights.activeYears} archive years currently included in this view`
+            : archiveInsights.activeYears === 1
+                ? `This archive currently contains selected contributions from ${singleArchiveYear}.`
+                : "No dated contributions available yet"
+        : hasMultipleYearChoices
+            ? `Filtered to ${selectedYear} for this archive view`
+            : `This archive currently contains selected contributions from ${selectedYear}.`;
     const archiveSummaryItems = [
         {
             label: "Archive size",
@@ -147,11 +145,9 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
     ];
     const signalRows = [
         {
-            label: "Archive span",
-            value: archiveInsights.archiveSpanLabel,
-            detail: archiveInsights.activeYears > 1
-                ? `${archiveInsights.activeYears} different years in view`
-                : "A focused single-year archive",
+            label: "Viewing scope",
+            value: yearScopeValue,
+            detail: yearScopeDetail,
         },
         {
             label: "Recent activity",
@@ -242,8 +238,8 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
 
             <Card>
                 <CardContent className="space-y-4 p-4 sm:p-5">
-                    <div className="grid gap-3 xl:grid-cols-[minmax(0,1.3fr)_180px_180px_auto]">
-                        <div className="relative">
+                    <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center xl:grid-cols-[minmax(320px,420px)_180px_180px_auto] xl:justify-between">
+                        <div className="relative md:col-span-3 xl:col-span-1 xl:max-w-[420px]">
                             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder="Search by title, description, or contributor..."
@@ -253,19 +249,28 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
                             />
                         </div>
 
-                        <NativeSelect
-                            value={selectedYear}
-                            onChange={(event) => setSelectedYear(event.target.value)}
-                            className="w-full"
-                            selectClassName="h-10 w-full rounded-2xl bg-background/85"
-                        >
-                            <NativeSelectOption value="all">All years</NativeSelectOption>
-                            {archiveInsights.availableYears.map((year) => (
-                                <NativeSelectOption key={year} value={year}>
-                                    {year}
-                                </NativeSelectOption>
-                            ))}
-                        </NativeSelect>
+                        {hasMultipleYearChoices ? (
+                            <NativeSelect
+                                value={selectedYear}
+                                onChange={(event) => setSelectedYear(event.target.value)}
+                                className="w-full"
+                                selectClassName="h-10 w-full rounded-2xl bg-background/85"
+                            >
+                                <NativeSelectOption value="all">All years</NativeSelectOption>
+                                {archiveInsights.availableYears.map((year) => (
+                                    <NativeSelectOption key={year} value={year}>
+                                        {year}
+                                    </NativeSelectOption>
+                                ))}
+                            </NativeSelect>
+                        ) : (
+                            <div className="flex h-10 items-center rounded-2xl border border-border/70 bg-background/85 px-3 text-sm">
+                                <span className="text-muted-foreground">Archive year</span>
+                                <span className="ml-auto font-medium text-foreground">
+                                    {singleArchiveYear ?? "N/A"}
+                                </span>
+                            </div>
+                        )}
 
                         <NativeSelect
                             value={sortBy}
@@ -280,30 +285,32 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
                             ))}
                         </NativeSelect>
 
-                        <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/85 p-1">
+                        <div className="flex w-fit rounded-lg border border-border md:justify-self-start xl:justify-self-auto">
                             <button
                                 type="button"
                                 onClick={() => setViewMode("grid")}
                                 className={cn(
-                                    "flex h-9 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors",
+                                    "rounded-l-lg p-1.5 transition-colors",
                                     viewMode === "grid"
                                         ? "bg-primary text-primary-foreground"
                                         : "text-muted-foreground hover:text-foreground",
                                 )}
+                                title="Grid view"
                             >
-                                <LayoutGrid className="h-4 w-4" />
+                                <LayoutGrid className="h-3.5 w-3.5" />
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setViewMode("list")}
                                 className={cn(
-                                    "flex h-9 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors",
+                                    "rounded-r-lg p-1.5 transition-colors",
                                     viewMode === "list"
                                         ? "bg-primary text-primary-foreground"
                                         : "text-muted-foreground hover:text-foreground",
                                 )}
+                                title="List view"
                             >
-                                <List className="h-4 w-4" />
+                                <List className="h-3.5 w-3.5" />
                             </button>
                         </div>
                     </div>
@@ -323,54 +330,6 @@ export const GuestSelectedContributions = ({ onView }: GuestSelectedContribution
                     </div>
                 </CardContent>
             </Card>
-
-            {!loading && featuredContribution ? (
-                <Card>
-                    <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <Badge variant="secondary">{getFeaturedLabel(sortBy)}</Badge>
-                                <span className="text-xs text-muted-foreground">
-                                    {formatGuestDate(featuredContribution.createdDate)}
-                                </span>
-                            </div>
-
-                            <h3 className="mt-3 font-display text-xl font-semibold leading-tight text-foreground">
-                                {featuredContribution.subject}
-                            </h3>
-                            <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">
-                                {featuredContribution.description}
-                            </p>
-
-                            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-                                <span className="inline-flex items-center gap-1.5">
-                                    <Users className="h-3.5 w-3.5" />
-                                    {getContributionContributorName(featuredContribution)}
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <ArrowUpDown className="h-3.5 w-3.5" />
-                                    Updated {formatGuestRelativeDate(featuredContribution.modifiedDate ?? featuredContribution.createdDate)}
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <Star className="h-3.5 w-3.5" />
-                                    {typeof featuredContribution.rating === "number" && featuredContribution.rating > 0
-                                        ? `${featuredContribution.rating}/5 rating`
-                                        : "Not rated yet"}
-                                </span>
-                            </div>
-                        </div>
-
-                        <Button
-                            variant="outline"
-                            className="shrink-0"
-                            onClick={() => onView(featuredContribution)}
-                        >
-                            Open details
-                            <ArrowRight className="h-4 w-4" />
-                        </Button>
-                    </CardContent>
-                </Card>
-            ) : null}
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
