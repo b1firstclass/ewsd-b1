@@ -77,6 +77,8 @@ namespace CMS.Application.DTOs
         public Guid Id { get; set; }
         public Guid ContributionWindowId { get; set; }
         public Guid? CategoryId { get; set; }
+        public string? FacultyName { get; set; }
+        public string? CreatedUser { get; set; }
         public string Subject { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Rating { get; set; }

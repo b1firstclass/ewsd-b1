@@ -124,6 +124,8 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(contribution => contribution.CreatedDate)
+                .Include(c => c.Faculty)
+                .Include(c => c.User)
                 .Include(c => c.Documents.Where(d => d.IsActive &&
                                 d.Extension != null &&
                                 ContributionConstants.AllowedImageExtensions.Contains(d.Extension)))
@@ -166,6 +168,8 @@ namespace CMS.Infrastructure.Repositories
 
             var items = await query
                 .OrderByDescending(contribution => contribution.CreatedDate)
+                .Include(c => c.Faculty)
+                .Include(c => c.User)
                 .Include(c => c.Documents.Where(d => d.IsActive &&
                                 d.Extension != null &&
                                 ContributionConstants.AllowedImageExtensions.Contains(d.Extension)))
