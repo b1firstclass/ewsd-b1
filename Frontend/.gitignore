@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Env files
+.env
+.env.*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Build caches
 .cache
@@ -107,7 +114,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
+############################################
+# Environment variables
+############################################
+.env
+!.env.example
 
 ############################################
 # Coverage / Tests
