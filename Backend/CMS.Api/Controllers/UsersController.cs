@@ -280,6 +280,11 @@ namespace CMS.Api.Controllers
 
                 return this.ToSuccessResponse(ApiResponseMessages.Deleted("User"));
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business validation failed while deleting user {UserId}", id);
+                return this.ToErrorResponse(ex.Message, 409);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting user {UserId}", id);

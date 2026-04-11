@@ -118,6 +118,12 @@ namespace CMS.Application.Services
             userEntity.IsActive = true;
 
             await _userAssigmentService.AssignRoleToUserAsync(userEntity, request.RoleId);
+
+            if (userEntity.Role?.Name == RoleNames.Admin)
+            {
+                throw new InvalidOperationException("Admin users cannot be created.");
+            }
+
             await _userAssigmentService.AssignFacultiesToUserAsync(userEntity, request.FacultyIds);
 
             await _unitOfWork.Repository<User>().AddAsync(userEntity);
@@ -214,11 +220,16 @@ namespace CMS.Application.Services
                 return false;
             }
 
-            var user = await _unitOfWork.Repository<User>().GetByIdAsync(userId);
+            var user = await _unitOfWork.UsersRepository.GetByUserIdAsync(userId);
             if (user == null)
             {
                 _logger.LogWarning("User not found for deletion: {UserId}", userId);
                 return false;
+            }
+
+            if (user.Role?.Name == RoleNames.Admin)
+            {
+                throw new InvalidOperationException("Admin users cannot be deleted.");
             }
 
             _unitOfWork.Repository<User>().Remove(user);
