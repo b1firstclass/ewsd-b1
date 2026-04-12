@@ -1,0 +1,21 @@
+﻿CREATE TABLE public."Users" (
+    "UserId" uuid NOT NULL,
+    "LoginId" character varying(50) NOT NULL,
+    "Password" character varying(255) NOT NULL,
+    "Email" character varying(100) NOT NULL,
+    "FullName" character varying(200) NOT NULL,
+    "LastLoginDate" timestamp with time zone,
+    "LastLoginIp" character varying(50),
+    "IsActive" boolean NOT NULL DEFAULT true,
+    "RefreshToken" character varying(200),
+    "RefreshTokenExpiresAt" timestamp with time zone,
+    "RoleId" uuid NOT NULL,
+    "CreatedDate" timestamp with time zone,
+    "CreatedBy" uuid,
+    "ModifiedDate" timestamp with time zone,
+    "ModifiedBy" uuid,
+    CONSTRAINT "Users_RoleId_fkey" FOREIGN KEY ("RoleId") REFERENCES "Roles"("RoleId") ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE,
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("UserId"),
+    CONSTRAINT "Users_Email_key" UNIQUE ("Email"),
+    CONSTRAINT "Users_LoginId_key" UNIQUE ("LoginId")
+);
