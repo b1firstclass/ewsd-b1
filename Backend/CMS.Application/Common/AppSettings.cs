@@ -5,6 +5,7 @@
         public const string SectionName = "AppSettings";
         public required JwtSettings JwtSettings { get; set; }
         public required EmailSettings EmailSettings { get; set; }
+        public required EncryptionSettings EncryptionSettings { get; set; }
     }
 
     public class JwtSettings
@@ -21,5 +22,11 @@
         public required string ApiKey { get; set; }
         public required string FromEmail { get; set; }
         public string? FromName { get; set; }
+    }
+
+    public class EncryptionSettings
+    {
+        /// <summary>Base64-encoded 256-bit (32-byte) AES key.</summary>
+        public required string Key { get; set; }
     }
 }

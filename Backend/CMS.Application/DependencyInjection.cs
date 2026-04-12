@@ -42,6 +42,13 @@ namespace CMS.Application
                 return new TokenService(appSettings.JwtSettings);
             });
 
+            // Encryption Helpers
+            services.AddSingleton<IEncryptionService>(sp =>
+            {
+                var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
+                return new EncryptionService(appSettings.EncryptionSettings);
+            });
+
             // User Helpers
             services.AddScoped<IUserValidationService, UserValidationService>();
             services.AddScoped<IUserAssignmentService, UserAssignmentService>();
