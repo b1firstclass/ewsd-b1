@@ -1,0 +1,62 @@
+graph TD
+    A([Open Website]) --> B[Login Screen]
+    B --> C{Authenticate}
+    C -->|Fails| D[Error Message]
+    D --> B
+    C -->|Success| E[System Monitoring]
+
+    subgraph Monitoring["System Monitoring Page"]
+        E --> T1[Overview Tab]
+        E --> T2[Analytics Tab]
+        E --> T3[Summary Tab]
+
+        T1 --> OV1[Most Viewed Pages]
+        T1 --> OV2[Most Active Users]
+        T1 --> OV3[Browser Stats Charts]
+
+        T2 --> AN1[Hourly Activity Trends]
+        T2 --> AN2[Date Range Picker]
+        T2 --> AN3[Device Breakdown]
+
+        T3 --> SM1[Faculty User Distribution]
+        T3 --> SM2[System Health]
+    end
+
+    subgraph CW["Contribution Windows Management"]
+        CW1[CRUD Table]
+        CW2[Academic Year]
+        CW3[Faculty Assignment]
+        CW4[Submission Open Date]
+        CW5[Submission End Date]
+        CW6[Final Closure Date]
+    end
+
+    subgraph UM["User Management"]
+        UM1[CRUD Table]
+        UM2[Assign Roles]
+        UM3[Assign Faculties]
+    end
+
+    subgraph RM["Role Management"]
+        RM1[CRUD Table]
+        RM2[Configure Permissions per Role]
+    end
+
+    subgraph FM["Faculty Management"]
+        FM1[CRUD Table]
+        FM2[Faculty Names]
+    end
+
+    subgraph Sidebar["Sidebar Navigation"]
+        SB1[System Monitoring]
+        SB2[Contribution Windows]
+        SB3[User Management]
+        SB4[Role Management]
+        SB5[Faculty Management]
+    end
+
+    SB1 --> E
+    SB2 --> CW
+    SB3 --> UM
+    SB4 --> RM
+    SB5 --> FM

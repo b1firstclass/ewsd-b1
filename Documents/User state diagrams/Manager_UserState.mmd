@@ -1,0 +1,44 @@
+stateDiagram-v2
+    [*] --> LoginScreen
+
+    state LoginScreen {
+        [*] --> Idle
+        Idle --> Authenticating : Submit Credentials
+        Authenticating --> Idle : Auth Fails (Show Error)
+    }
+
+    LoginScreen --> Dashboard : Auth Success
+
+    state Dashboard {
+        [*] --> ViewingCrossFacultyStats
+        ViewingCrossFacultyStats --> ViewingCrossFacultyStats : Filter by Academic Year
+    }
+
+    Dashboard --> ExceptionReports : View Exception Report
+
+    state ExceptionReports {
+        [*] --> ViewingReportList
+        ViewingReportList --> ViewingNoCommentReport : Select Without Comment
+        ViewingReportList --> ViewingOverdueReport : Select 14-Day Overdue
+    }
+
+    Dashboard --> ExportCenter : Click Sidebar [Export Center]
+    ExceptionReports --> ExportCenter : Click Sidebar [Export Center]
+
+    state ExportCenter {
+        [*] --> BrowsingSelectedItems
+        
+        BrowsingSelectedItems --> SelectingItems : Click Select Individual / All
+        SelectingItems --> Downloading : Click Download as ZIP
+        
+        state Downloading {
+            [*] --> GeneratingZIP
+            GeneratingZIP --> Complete : ZIP Ready
+        }
+        
+        Downloading --> BrowsingSelectedItems : Finish Download
+    }
+
+    %% Sidebar Navigation Transitions
+    ExportCenter --> Dashboard : Click Sidebar [Dashboard]
+    ExceptionReports --> Dashboard : Click Sidebar [Dashboard]

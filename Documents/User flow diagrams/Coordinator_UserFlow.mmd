@@ -1,0 +1,61 @@
+graph TD
+    A([Open Website]) --> B[Login Screen]
+    B --> C{Authenticate}
+    C -->|Fails| D[Error Message]
+    D --> B
+    C -->|Success| E[Coordinator Dashboard]
+
+    subgraph Dashboard["Coordinator Dashboard"]
+        E --> E1[14-Day Comment Deadline Alerts]
+        E --> E2[View Stat Cards]
+        E --> E3[View Recent Submissions]
+    end
+
+    E1 -->|Critical / Warning Badges| RQ
+    E2 -->|Click Stat Card| RQ
+
+    subgraph RQ["Review Queue Page"]
+        RQ1[Search and Filter by Status]
+        RQ2[Deadline Filter]
+        RQ3[Grid / List View Toggle]
+        RQ4[Browse Contribution Cards]
+    end
+
+    RQ4 -->|Click Card| DP
+
+    E3 -->|Click Card| DP
+
+    subgraph DP["Contribution Detail Panel"]
+        DP1[View Status Timeline]
+        DP2[View / Download Documents]
+        DP3{Within 14-Day Window?}
+        DP3 -->|Yes| DP4[Add Comments]
+        DP3 -->|No| DP5[Comment Window Closed]
+        DP6[Change Status]
+        DP6 --> ST1[Approve]
+        DP6 --> ST2[Reject]
+        DP6 --> ST3[Request Revision]
+        DP6 --> ST4[Select for Publication]
+    end
+
+    subgraph Analytics["Faculty Analytics Page"]
+        AN1[Status Distribution Chart]
+        AN2[Exception: Contributions Without Comments]
+        AN3[Exception: Contributions Overdue 14 Days]
+    end
+
+    subgraph GuestList["Guest List Page"]
+        GL1[View Registered Guests for Faculty]
+    end
+
+    subgraph Sidebar["Sidebar Navigation"]
+        SB1[Dashboard]
+        SB2[Review Queue]
+        SB3[Analytics]
+        SB4[Guest List]
+    end
+
+    SB1 --> E
+    SB2 --> RQ
+    SB3 --> Analytics
+    SB4 --> GuestList

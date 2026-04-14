@@ -1,0 +1,60 @@
+graph TD
+    A([Open Website]) --> B[Login Screen]
+    B --> C{Enter Credentials}
+    C -->|Auth Fails| D[Error Message]
+    D --> B
+    C -->|Auth Success| E{First Login?}
+    E -->|Yes| F[Welcome Modal]
+    F --> G[Student Dashboard]
+    E -->|No| H[Show Last Login Info]
+    H --> G
+
+    subgraph Dashboard["Student Dashboard"]
+        G --> G1[View Stat Cards]
+        G --> G2[View Deadline Progress Bar]
+        G --> G3[View Recent Contributions]
+        G --> G4[New Contribution Button]
+    end
+
+    G1 -->|Click Card| S1[My Submissions - Filtered by Status]
+
+    G4 --> SUB1
+
+    subgraph SUB1["Submission Form Modal"]
+        SF1[Select Category] --> SF2[Enter Subject + Description]
+        SF2 --> SF3[Upload Word Doc + Image]
+        SF3 --> SF4[Accept Terms and Conditions]
+        SF4 --> SF5{Save or Submit?}
+        SF5 -->|Save| SF6[Saved as Draft]
+        SF5 -->|Submit| SF7[Submitted to Coordinator]
+    end
+
+    SF6 --> G
+    SF7 --> G
+
+    G3 -->|Click Card| DP1
+
+    subgraph DP1["Contribution Detail Panel"]
+        DP2[View Status Timeline]
+        DP3[View / Download Attachments]
+        DP4[Read Coordinator Comments]
+        DP5{Can Edit?}
+        DP5 -->|Draft or Revision Required| DP6[Edit Contribution]
+        DP5 -->|No| DP7[View Only]
+        DP8{Can Submit?}
+        DP8 -->|Yes| DP9[Submit Contribution]
+    end
+
+    subgraph Sidebar["Sidebar Navigation"]
+        SB1[Dashboard]
+        SB2[My Submissions]
+    end
+
+    SB1 --> G
+    SB2 --> S1
+
+    subgraph MySubmissions["My Submissions Page"]
+        S1 --> MS1[Search and Filter]
+        S1 --> MS2[View All Contributions]
+        MS2 -->|Click Card| DP1
+    end

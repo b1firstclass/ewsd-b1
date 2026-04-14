@@ -1,0 +1,38 @@
+stateDiagram-v2
+    [*] --> LoginScreen
+
+    state LoginScreen {
+        [*] --> Idle
+        Idle --> Authenticating : Submit Credentials
+        Authenticating --> Idle : Auth Fails (Show Error)
+    }
+
+    LoginScreen --> Dashboard : Auth Success
+
+    state Dashboard {
+        [*] --> ViewingFacultyStats
+    }
+
+    Dashboard --> SelectedPage : Click Sidebar [Selected Contributions]
+    Dashboard --> ContributionDetail : Click Contribution Card
+
+    state SelectedPage {
+        [*] --> BrowsingSelectedWorks
+        BrowsingSelectedWorks --> BrowsingSelectedWorks : Search / Filter
+    }
+
+    SelectedPage --> ContributionDetail : Click Contribution Card
+    SelectedPage --> Dashboard : Click Sidebar [Dashboard]
+
+    state ContributionDetail {
+        [*] --> ReadOnlyAccess
+        
+        state ReadOnlyAccess {
+            [*] --> ViewingDetails
+            ViewingDetails --> Downloading : Click Download Attachments
+            Downloading --> ViewingDetails
+        }
+    }
+
+    ContributionDetail --> Dashboard : Navigate Away
+    ContributionDetail --> SelectedPage : Navigate Away

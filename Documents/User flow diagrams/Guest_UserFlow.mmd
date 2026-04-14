@@ -1,0 +1,37 @@
+graph TD
+    A([Open Website]) --> B[Login Screen]
+    B --> C{Authenticate}
+    C -->|Fails| D[Error Message]
+    D --> B
+    C -->|Success| E[Guest Dashboard]
+
+    subgraph Dashboard["Guest Dashboard - Read Only Single Faculty"]
+        E --> E1[View Faculty Info and Statistics]
+        E --> E2[Total Selected Contributions Count]
+        E --> E3[Category Breakdown]
+        E --> E4[Faculty Timeline]
+        E --> E5[Browse Selected Contribution Cards]
+    end
+
+    E5 -->|Click Card| DP
+
+    subgraph DP["Contribution Detail - Read Only"]
+        DP1[View Subject and Description]
+        DP2[View Status]
+        DP3[View / Download Attachments]
+        DP4[No Edit or Comment Access]
+    end
+
+    subgraph Selected["Selected Contributions Page"]
+        SC1[Browse All Selected Works]
+        SC2[Search and Filter]
+        SC1 -->|Click Card| DP
+    end
+
+    subgraph Sidebar["Sidebar Navigation"]
+        SB1[Dashboard]
+        SB2[Selected Contributions]
+    end
+
+    SB1 --> E
+    SB2 --> Selected
