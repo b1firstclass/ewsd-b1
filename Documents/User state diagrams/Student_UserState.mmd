@@ -1,0 +1,55 @@
+stateDiagram-v2
+    [*] --> LoginScreen
+
+    state LoginScreen {
+        [*] --> Idle
+        Idle --> Validating : Submit Credentials
+        Validating --> Idle : Auth Fails (Show Error)
+    }
+
+    LoginScreen --> WelcomeModal : Auth Success [First Login]
+    LoginScreen --> Dashboard : Auth Success [Returning User]
+
+    WelcomeModal --> Dashboard : Dismiss Modal
+
+    state Dashboard {
+        [*] --> ViewingDashboard
+    }
+
+    Dashboard --> SubmissionModal : Click "New Contribution"
+    Dashboard --> MySubmissions : Click Sidebar / Stat Card
+    Dashboard --> ContributionDetail : Click Recent Contribution
+
+    state SubmissionModal {
+        [*] --> FillingForm
+        FillingForm --> DraftSaved : Click Save
+        FillingForm --> SubmittedToCoordinator : Click Submit
+        DraftSaved --> [*]
+        SubmittedToCoordinator --> [*]
+    }
+
+    SubmissionModal --> Dashboard : Return to Dashboard
+
+    state MySubmissions {
+        [*] --> BrowsingSubmissions
+        BrowsingSubmissions --> BrowsingSubmissions : Apply Search / Filters
+    }
+
+    MySubmissions --> Dashboard : Click Sidebar "Dashboard"
+    MySubmissions --> ContributionDetail : Click Contribution Card
+
+    state ContributionDetail {
+        [*] --> CheckingPermissions
+        CheckingPermissions --> ReadOnlyView : Status Locked
+        CheckingPermissions --> EditableView : Status = Draft / Revision Required
+        
+        state EditableView {
+            [*] --> ViewingDetail
+            ViewingDetail --> Editing : Click Edit
+            ViewingDetail --> Submitting : Click Submit
+        }
+    }
+
+    ContributionDetail --> Dashboard : Navigate Away
+    ContributionDetail --> MySubmissions : Navigate Away
+    ContributionDetail --> SubmissionModal : Proceed to Edit

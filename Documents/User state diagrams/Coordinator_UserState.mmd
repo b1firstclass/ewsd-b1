@@ -1,0 +1,69 @@
+stateDiagram-v2
+    [*] --> LoginScreen
+
+    state LoginScreen {
+        [*] --> Idle
+        Idle --> Authenticating : Submit Credentials
+        Authenticating --> Idle : Auth Fails (Show Error)
+    }
+
+    LoginScreen --> Dashboard : Auth Success
+
+    state Dashboard {
+        [*] --> ViewingDashboard
+    }
+
+    Dashboard --> ReviewQueue : Click Alert / Stat Card
+    Dashboard --> ContributionDetail : Click Recent Submission
+
+    state ReviewQueue {
+        [*] --> BrowsingQueue
+        BrowsingQueue --> BrowsingQueue : Apply Filters / Toggle View
+    }
+
+    ReviewQueue --> ContributionDetail : Click Contribution Card
+
+    state ContributionDetail {
+        [*] --> CheckingCommentWindow
+        
+        CheckingCommentWindow --> CommentingAllowed : [Within 14-Day Window]
+        CheckingCommentWindow --> CommentingClosed : [Outside 14-Day Window]
+        
+        CommentingAllowed --> UpdatingStatus : Perform Action
+        CommentingClosed --> UpdatingStatus : Perform Action
+        
+        state UpdatingStatus {
+            [*] --> PendingStatusSelection
+            PendingStatusSelection --> Approved : Click Approve
+            PendingStatusSelection --> Rejected : Click Reject
+            PendingStatusSelection --> RevisionRequested : Click Request Revision
+            PendingStatusSelection --> SelectedForPub : Click Select for Publication
+        }
+    }
+
+    state Analytics {
+        [*] --> ViewingAnalytics
+    }
+
+    state GuestList {
+        [*] --> ViewingGuests
+    }
+
+    %% Sidebar Navigation Transitions
+    Dashboard --> Analytics : Click Sidebar [Analytics]
+    Dashboard --> GuestList : Click Sidebar [Guest List]
+    
+    ReviewQueue --> Dashboard : Click Sidebar [Dashboard]
+    ReviewQueue --> Analytics : Click Sidebar [Analytics]
+    ReviewQueue --> GuestList : Click Sidebar [Guest List]
+    
+    Analytics --> Dashboard : Click Sidebar [Dashboard]
+    Analytics --> ReviewQueue : Click Sidebar [Review Queue]
+    Analytics --> GuestList : Click Sidebar [Guest List]
+    
+    GuestList --> Dashboard : Click Sidebar [Dashboard]
+    GuestList --> ReviewQueue : Click Sidebar [Review Queue]
+    GuestList --> Analytics : Click Sidebar [Analytics]
+
+    ContributionDetail --> Dashboard : Navigate Away
+    ContributionDetail --> ReviewQueue : Navigate Away

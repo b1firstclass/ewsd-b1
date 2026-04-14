@@ -1,0 +1,81 @@
+stateDiagram-v2
+    [*] --> LoginScreen
+
+    state LoginScreen {
+        [*] --> Idle
+        Idle --> Authenticating : Submit Credentials
+        Authenticating --> Idle : Auth Fails (Show Error)
+    }
+
+    LoginScreen --> SystemMonitoring : Auth Success
+
+    state SystemMonitoring {
+        [*] --> OverviewTab
+        OverviewTab --> AnalyticsTab : Click Analytics Tab
+        AnalyticsTab --> SummaryTab : Click Summary Tab
+        SummaryTab --> OverviewTab : Click Overview Tab
+        
+        state AnalyticsTab {
+            [*] --> IdleView
+            IdleView --> LoadingFilteredData : Apply Date Range
+            LoadingFilteredData --> IdleView : Data Loaded
+        }
+    }
+
+    state ContributionWindows {
+        [*] --> BrowsingWindows
+        BrowsingWindows --> CreatingWindow : Click Add New
+        BrowsingWindows --> EditingWindow : Click Edit
+        CreatingWindow --> BrowsingWindows : Save / Cancel
+        EditingWindow --> BrowsingWindows : Save / Cancel
+    }
+
+    state UserManagement {
+        [*] --> BrowsingUsers
+        BrowsingUsers --> CreatingUser : Click Add User
+        BrowsingUsers --> EditingUser : Click Edit User / Assign Roles
+        CreatingUser --> BrowsingUsers : Save / Cancel
+        EditingUser --> BrowsingUsers : Save / Cancel
+    }
+
+    state RoleManagement {
+        [*] --> BrowsingRoles
+        BrowsingRoles --> CreatingRole : Click Add Role
+        BrowsingRoles --> ConfiguringPermissions : Click Configure Permissions
+        CreatingRole --> BrowsingRoles : Save / Cancel
+        ConfiguringPermissions --> BrowsingRoles : Save / Cancel
+    }
+
+    state FacultyManagement {
+        [*] --> BrowsingFaculties
+        BrowsingFaculties --> CreatingFaculty : Click Add Faculty
+        BrowsingFaculties --> EditingFaculty : Click Edit Faculty
+        CreatingFaculty --> BrowsingFaculties : Save / Cancel
+        EditingFaculty --> BrowsingFaculties : Save / Cancel
+    }
+
+    %% Sidebar Navigation Transitions
+    SystemMonitoring --> ContributionWindows : Click Sidebar [Contribution Windows]
+    SystemMonitoring --> UserManagement : Click Sidebar [User Management]
+    SystemMonitoring --> RoleManagement : Click Sidebar [Role Management]
+    SystemMonitoring --> FacultyManagement : Click Sidebar [Faculty Management]
+
+    ContributionWindows --> SystemMonitoring : Click Sidebar [System Monitoring]
+    ContributionWindows --> UserManagement : Click Sidebar [User Management]
+    ContributionWindows --> RoleManagement : Click Sidebar [Role Management]
+    ContributionWindows --> FacultyManagement : Click Sidebar [Faculty Management]
+
+    UserManagement --> SystemMonitoring : Click Sidebar [System Monitoring]
+    UserManagement --> ContributionWindows : Click Sidebar [Contribution Windows]
+    UserManagement --> RoleManagement : Click Sidebar [Role Management]
+    UserManagement --> FacultyManagement : Click Sidebar [Faculty Management]
+
+    RoleManagement --> SystemMonitoring : Click Sidebar [System Monitoring]
+    RoleManagement --> ContributionWindows : Click Sidebar [Contribution Windows]
+    RoleManagement --> UserManagement : Click Sidebar [User Management]
+    RoleManagement --> FacultyManagement : Click Sidebar [Faculty Management]
+
+    FacultyManagement --> SystemMonitoring : Click Sidebar [System Monitoring]
+    FacultyManagement --> ContributionWindows : Click Sidebar [Contribution Windows]
+    FacultyManagement --> UserManagement : Click Sidebar [User Management]
+    FacultyManagement --> RoleManagement : Click Sidebar [Role Management]

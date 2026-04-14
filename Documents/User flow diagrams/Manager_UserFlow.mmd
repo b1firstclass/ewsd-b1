@@ -1,0 +1,34 @@
+graph TD
+    A([Open Website]) --> B[Login Screen]
+    B --> C{Authenticate}
+    C -->|Fails| D[Error Message]
+    D --> B
+    C -->|Success| E[Manager Dashboard]
+
+    subgraph Dashboard["Manager Dashboard - Read Only Cross Faculty"]
+        E --> E1[Contribution Count by Faculty - Bar Chart]
+        E --> E2[Contribution Percentage by Faculty - Doughnut Chart]
+        E --> E3[Faculty User Distribution - Horizontal Bar Chart]
+        E --> E4[Top Contributors Table]
+        E --> E5[Exception Reports Summary]
+        E --> E6[Filter by Academic Year]
+    end
+
+    E5 --> EX1[Without Comment Report]
+    E5 --> EX2[14-Day Overdue Report]
+
+    subgraph Export["Export Center Page"]
+        EXP1[View All Selected Contributions]
+        EXP2[Select Individual Items]
+        EXP3[Select All]
+        EXP2 --> EXP4[Download as ZIP]
+        EXP3 --> EXP4
+    end
+
+    subgraph Sidebar["Sidebar Navigation"]
+        SB1[Dashboard]
+        SB2[Export Center]
+    end
+
+    SB1 --> E
+    SB2 --> Export
