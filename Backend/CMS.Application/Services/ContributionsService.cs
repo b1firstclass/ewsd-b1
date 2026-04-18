@@ -70,7 +70,7 @@ namespace CMS.Application.Services
 
             foreach (var coordinator in facultyCoordintors)
             {
-                var body = _emailService.GenerateEmailBody("New Contribution Created", coordinator.FullName, "A new contribution is submitted under your faculty.");
+                var body = _emailService.GenerateEmailBody("New Contribution Created", coordinator.FullName, "A new contribution is created under your faculty.");
                 await _emailService.SendEmailAsync(coordinator.Email, "New Contribution Created", body);
             }
 
